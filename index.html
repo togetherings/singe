@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SINGE: Studies In Geography</title>
+<script src="config.js"></script>
+<script src="lang/english.js"></script>   <!-- the default language is always loaded; others are listed in config.js -->
+<script>
+  /* Apply the saved Light / Dark / Auto choice before the page is drawn, so there is no flash. */
+  (function () {
+    try {
+      var o = JSON.parse(localStorage.getItem('singe_options')) || {};
+      var t = o.theme || (window.SINGE_CONFIG && window.SINGE_CONFIG.default_theme) || 'light';
+      var dark = t === 'dark' || (t === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    } catch (e) {}
+  })();
+</script>
+<style>
+  /* ---------- Colours (change here to re-theme the whole game) ----------
+     Light is the default. The dark theme (further down) overrides the same names. */
+  :root {
+    --sea: #dcebf2;      /* page background: "water" */
+    --land: #f6f1e4;     /* unanswered region */
+    --text: #1d2b36;     /* text */
+    --line: #1d2b36;     /* borders and outlines */
+    --good: #6fb98f;     /* correctly identified region (first try) */
+    --bad: #e0675a;      /* wrong-click flash, hint, needed the hint */
+    --retry: #f4e04d;    /* found on 2nd or 3rd try (before the hint) */
+    --card: #ffffff;     /* menu cards, information panel, buttons */
+    --accent: #1f6f8b;   /* button hover */
+    --met-bg: #cfeedd; --met-line: #2e8b57;   /* mode button once its accuracy goal is reached */
+    --header-bg: #1d2b36; --header-text: #ffffff;
+    --frame-bg: rgba(255,255,255,.35);   /* the outlined page area */
+    --box-bg: rgba(255,255,255,.35);     /* boxes around moved regions (Alaska etc.) */
+    --inbox-bg: #f0f7fa;                 /* the boxes under a world map: solid, so the map never shows through them */
+    --hover: #ffffff;                    /* region under the mouse */
+    --hint-pulse: #f6c9c3;               /* the hinted region pulses between red and this */
+    --ring-fill: #ffffff; --ring-line: #1d2b36; --ring-hover: #bfe3f5; --dot: #1d2b36;   /* capital circles */
+    --tip-bg: #1d2b36; --tip-text: #ffffff;                                               /* name label */
+    --backdrop: rgba(29,43,54,.55);                                                       /* behind pop-ups */
+    --bar-bg: rgba(220,235,242,.85);   /* world map: the see-through chips of the game bar laid over the map */
+    --water: #e8f2f7;    /* the colour of the sea on the map, for lakes */
+    --off: #cdccc2;      /* world map: regions that are not part of the game (grey) */
+    --pageW: 760px;      /* page width; wider for horizontal maps (body.wide) */
+  }
+  html[data-theme="dark"] {
+    color-scheme: dark;
+    --sea: #0f1b24; --land: #243645; --text: #e4ebf1; --line: #7f95a8;
+    --met-bg: #1f4d38; --met-line: #4fb883;
+    --good: #3f8f67; --bad: #c4564a; --retry: #b8a42b; --card: #17252f; --accent: #2f7f9f;
+    --header-bg: #081018; --header-text: #e4ebf1;
+    --frame-bg: rgba(255,255,255,.03); --box-bg: rgba(255,255,255,.05); --inbox-bg: #222d36;
+    --hover: #35506a; --hint-pulse: #7a3a34; --off: #17232d; --bar-bg: rgba(15,27,36,.85); --water: #131f28;
+    --ring-fill: #eef3f6; --ring-line: #0f1b24; --ring-hover: #8fd0ee; --dot: #0f1b24;
+    --tip-bg: #e4ebf1; --tip-text: #0f1b24; --backdrop: rgba(0,0,0,.65);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--sea); color: var(--text);
+         font: 16px/1.5 Georgia, "Times New Roman", serif; }
+  body.wide { --pageW: 1200px; }
+  .hidden { display: none; }
+  /* text is hidden for a moment while the language files load, so it never flashes in the wrong language */
+  body.loading #frame, body.loading #siteHeader div { visibility: hidden; }
+  h2 { font-size: 1.6rem; margin: .2em 0 .4em; }
+  button { font: inherit; cursor: pointer; border: 2px solid var(--line);
+           background: var(--card); color: var(--text); border-radius: 6px; padding: 6px 14px; }
+  button:hover, button:focus-visible { background: var(--accent); color: #fff; outline: none; }
+
+  /* ---------- Header (shown on every page) and outlined frame ---------- */
+  #siteHeader { background: var(--header-bg); color: var(--header-text); }
+  #siteHeader.hidden { display: none; }
+  #siteHeader div { max-width: var(--pageW); margin: 0 auto; padding: 8px 16px;
+                    display: flex; justify-content: flex-end; align-items: center; gap: 12px; }
+  /* Full Screen button at the end of the header */
+  #fsBtn { font-size: .85rem; font-weight: normal; padding: 2px 10px; background: transparent;
+           color: var(--header-text); border-color: var(--header-text); white-space: nowrap; }
+  #fsBtn:hover, #fsBtn:focus-visible { background: var(--accent); }
+  #fsBtn.hidden { display: none; }
+  #frame { max-width: var(--pageW); margin: 16px auto; padding: 16px; border: 2px solid var(--line);
+           border-radius: 8px; background: var(--frame-bg); }
+
+  /* ---------- Menu: one card per map, one button per game mode ---------- */
+  #menuList { display: grid; gap: 14px; margin-top: 16px; }
+  .mapCard { background: var(--card); border: 2px solid var(--line); border-radius: 8px; padding: 12px 16px 16px; }
+  .menuHead { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .menuHead h2 { margin-bottom: 0; }
+  /* optional picture on a map's card (set as "image" in the map's settings): floats to the right of the
+     name and description and is scaled down so it can never push the mode buttons around */
+  html[dir="rtl"] .mapCard .mapImg { float: left; margin: 0 12px 8px 0; }
+  .mapCard .mapImg { float: right; max-width: 110px; max-height: 70px; width: auto; height: auto;
+                     object-fit: contain; margin: 0 0 8px 12px; border: 1px solid var(--line); }
+  .mapCard h3 { margin: 0; font-size: 1.3rem; }
+  .mapCard .blurb { opacity: .75; margin-bottom: 10px; }
+  .modes { clear: both; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .modeBtn { text-align: start; padding: 10px 12px; }
+  .modeBtn b { display: block; }
+  .modeBtn small { display: block; opacity: .8; }
+  .modeBtn.goal { font-weight: bold; opacity: 1; }
+  /* a mode whose accuracy goal has been reached */
+  .modeBtn.met { background: var(--met-bg); border-color: var(--met-line); }
+  .modeBtn.met:hover, .modeBtn.met:focus-visible { background: var(--accent); border-color: var(--line); }
+  .credit { font-size: .8rem; opacity: .75; margin-top: 12px; }
+  /* shown on a map with no translation into the chosen language */
+  .langNote { display: inline-block; font-size: .8rem; opacity: .85; margin: 0 0 8px; padding: 0 8px;
+              border: 1px solid var(--line); border-radius: 10px; }
+
+  /* ---------- Game bar ----------
+     A grid of three columns; everything is aligned to the TOP of its row. The outer columns are
+     equal, so the zoom buttons stay centred. Normal layout:
+        row 1   the prompt (left, two columns wide)                       Back to menu (right)
+        row 2   skip + back arrows        zoom buttons (centred)          Time / Found (right)
+        row 3   feedback message (full width)
+     Flags mode: the flag sits in the middle and spans rows 1 and 2, and the zoom buttons move below it:
+        row 1   prompt                    flag (rows 1-2)                 Back to menu
+        row 2   skip + back arrows           "                            Time / Found
+        row 3                             zoom buttons
+        row 4   feedback message
+     The changing timer digits can never push anything around (fixed-width columns). */
+  /* World map: the bar is laid over the top of the map. Only the buttons and text themselves take clicks
+     (on a see-through chip); everywhere else the map underneath does. The frame and credit are made tighter too. */
+  body.overlay #frame { margin: 6px auto; padding: 6px; }
+  body.overlay #game { position: relative; }
+  body.overlay #bar { position: absolute; top: 4px; left: 4px; right: 4px; z-index: 4; pointer-events: none; row-gap: 4px; }
+  body.overlay #bar > * { pointer-events: auto; background: var(--bar-bg); border-radius: 6px; padding: 1px 8px; }
+  body.overlay #bar > #promptFlag { padding: 0; background: none; }
+  body.overlay #prompt { justify-self: start; }
+  body.overlay #feedback { min-height: 0; justify-self: start; grid-column: 1 / -1; }
+  body.overlay #feedback:empty { padding: 0; background: none; }
+  body.overlay #zoomBtns, body.overlay #skipBtns { padding: 2px 6px; }
+  body.overlay .credit { margin-top: 3px; font-size: .75rem; line-height: 1.25; }
+  #bar { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+         column-gap: 8px; row-gap: 8px; align-items: start; }
+  #bar.practice #prompt { grid-column: 1 / -1; }        /* Practice: the description may use the whole width... */
+  #bar.practice #backBtn { grid-row: 2; }               /* ...because Back to menu moves down to row 2 */
+  /* Practice: how many regions and capitals the map has, set out like Time / Found in the other modes */
+  #totals { grid-row: 2; grid-column: 1; justify-self: start; display: none; grid-template-columns: auto auto;
+            column-gap: 14px; line-height: 1.3; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  #totals .num { min-width: 3.2em; text-align: end; }
+  #bar.practice #totals { display: grid; }
+  #totals.noCaps .capRow { display: none; }
+  #prompt { grid-row: 1; grid-column: 1 / 3; min-width: 0; font-size: 1.5rem; font-weight: bold; }
+  #bar.flagMode #prompt { grid-column: 1; }            /* Flags: the middle of the top rows belongs to the flag */
+  #bar.practice #stats { display: none; }              /* Practice has no timer or score */
+  #promptFlag { grid-row: 1 / span 2; grid-column: 2; justify-self: center; display: block; max-height: 110px; max-width: 220px;
+                cursor: zoom-in; }          /* (no border: flags that are not rectangles, like Nepal's, would look odd) */
+  #promptFlag.hidden { display: none; }
+  #backBtn { grid-row: 1; grid-column: 3; justify-self: end; }
+  /* Time and Found: the labels line up on the left, the numbers line up on the right */
+  #stats { grid-row: 2; grid-column: 3; justify-self: end; display: grid; grid-template-columns: auto auto;
+           column-gap: 14px; line-height: 1.3; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  #stats .num { min-width: 3.2em; text-align: end; }
+  #skipBtns { grid-row: 2; grid-column: 1; justify-self: start; display: flex; gap: 6px; }
+  #skipBtns.hidden { display: none; }
+  #zoomBtns { grid-row: 2; grid-column: 2; display: flex; gap: 6px; }
+  #bar.flagMode #zoomBtns { grid-row: 3; }
+  #feedback { grid-row: 3; grid-column: 1 / -1; min-height: 1.5em; }
+  #bar.flagMode #feedback { grid-row: 4; }
+  #zoomBtns button, #skipBtns button { min-width: 2.4em; padding: 6px 10px; font-weight: bold; }
+  #skipBtns button:disabled { opacity: .35; cursor: default; background: var(--card); color: var(--text); }
+  @media (max-width: 600px) { #promptFlag { max-height: 70px; max-width: 34vw; } #prompt { font-size: 1.25rem; } }
+  @media (max-width: 480px) { #bar button { padding: 6px 8px; font-size: .85rem; min-width: 0; } #stats .num { min-width: 2.2em; } #stats { column-gap: 8px; } }
+
+  /* ---------- Map ---------- */
+  #mapBox { position: relative; }
+  #mapBox svg { width: 100%; max-height: 72vh; display: block;
+                touch-action: none; }   /* lets us handle pinch and drag ourselves */
+  .region { fill-rule: evenodd; fill: var(--land); stroke: var(--line); stroke-width: 1.2;
+            stroke-linejoin: round; cursor: pointer;
+            vector-effect: non-scaling-stroke; }   /* borders stay thin when zoomed */
+  /* regions that are drawn but not part of the game (e.g. D.C. when territories are off) */
+  .region.inactive { pointer-events: none; cursor: default; }
+  /* boxes drawn around regions that were moved to a new place (e.g. Alaska, Hawaii) */
+  .frame { fill: var(--box-bg); stroke: var(--line); stroke-width: 1.5; pointer-events: none;
+           vector-effect: non-scaling-stroke; }
+  .region:hover, .region.hover { fill: var(--hover); }
+  /* invisible wide outline that makes small regions easier to tap */
+  .halo { fill: none; stroke: rgba(0,0,0,0); stroke-width: 28px; pointer-events: stroke;
+          vector-effect: non-scaling-stroke; cursor: pointer; }
+  .region.done { fill: var(--good); cursor: default; }
+  .region.off, .region.off:hover, .capitals .region.off, .capitals .region.off:hover { fill: var(--off); cursor: default; }
+  .region.done.retry { fill: var(--retry); }
+  .region.notmain, .mk.notmain { fill: var(--retry); }   /* a part of the country was clicked, not its main area: flashes yellow */
+  .region.done.hinted { fill: var(--bad); }
+  .region.wrong { fill: var(--bad); }
+  .region.hint { fill: var(--bad); animation: pulse .8s ease-in-out infinite alternate; }   /* hint flashes red */
+  @keyframes pulse { to { fill: var(--hint-pulse); } }
+  @media (prefers-reduced-motion: reduce) { .region.hint { animation: none; } }
+
+  /* Capitals mode: regions stay plain green; capitals are circles on top */
+  .capitals .region, .capitals .region:hover { fill: var(--good); cursor: default; }
+  .cap .ring { fill: var(--ring-fill); stroke: var(--ring-line); stroke-width: 2; cursor: pointer;
+               vector-effect: non-scaling-stroke; }
+  .cap .hit { fill: transparent; cursor: pointer; pointer-events: all; }   /* big invisible tap area */
+  .cap.found .hit { cursor: default; }
+  .cap .dot { fill: var(--dot); display: none; pointer-events: none; }
+  .cap:not(.found):hover .ring, .cap.hover:not(.found) .ring { fill: var(--ring-hover); stroke-width: 3.5; }   /* hover highlight (.hover: the same circle in another place, see hoverHalo in game.js) */
+  .cap.wrong .ring { fill: var(--bad) !important; }   /* wrong guess: flashes red (beats hover colour) */
+  .cap.hint .ring { animation: pulseRed .8s ease-in-out infinite alternate; }
+  @keyframes pulseRed { to { fill: var(--bad); } }
+  .cap.found .ring { cursor: default; }
+  .practice .cap:hover .ring, .practice .cap.hover .ring { fill: var(--ring-hover); }
+  .cap.found .dot { display: block; }              /* black dot once correctly picked */
+  .cap.first .ring { fill: var(--good); }
+  .cap.retry .ring { fill: var(--retry); }
+  .cap.hinted .ring { fill: var(--bad); }
+  @media (prefers-reduced-motion: reduce) { .cap.hint .ring { animation: none; fill: var(--bad); } }
+
+  /* World map: markers of tiny countries and island chains (circles shown while the region is too small to click),
+     and the fixed boxes under the map */
+  .mk { fill: var(--ring-fill); stroke: var(--ring-line); stroke-width: 2; cursor: pointer; vector-effect: non-scaling-stroke; }
+  .mk:hover, .mk.hover { fill: var(--ring-hover); stroke-width: 3.5; }
+  .mk.done { fill: var(--good); cursor: default; }
+  .mk.done.retry { fill: var(--retry); }
+  .mk.done.hinted, .mk.wrong { fill: var(--bad); }
+  .mk.hint { animation: pulse .8s ease-in-out infinite alternate; }
+  @media (prefers-reduced-motion: reduce) { .mk.hint { animation: none; fill: var(--bad); } }
+  /* The boxes overlap the bottom of the map: the strip itself takes no clicks, only the shapes in it do */
+  #stripBox { position: relative; z-index: 2; pointer-events: none; }
+  #stripBox svg { width: 100%; display: block; pointer-events: none; }
+  #stripBox .region:not(.inactive), #stripBox .mk, #stripBox .cap { pointer-events: auto; }
+  #stripBox .inbox { pointer-events: all; }          /* inside a box nothing of the map underneath can be hovered or clicked; around the boxes it can */
+  /* straight-sided boxes around the island groups of the Pacific box, and big lakes drawn as water */
+  .chain { fill: none; stroke: var(--line); stroke-width: 1; stroke-dasharray: 5 3; opacity: .7; stroke-linejoin: round;
+           vector-effect: non-scaling-stroke; pointer-events: none; }
+  .lake { fill: var(--water); stroke: var(--line); stroke-width: 1; stroke-linejoin: round; pointer-events: none;
+          fill-rule: evenodd; vector-effect: non-scaling-stroke; }
+  .inbox { fill: var(--inbox-bg); stroke: var(--line); stroke-width: 1.5; pointer-events: none; vector-effect: non-scaling-stroke; }
+  .intitle { fill: var(--text); font-size: 64px; font-weight: bold; pointer-events: none; }
+  /* phones held upright while a wide map is on screen: ask for the device to be turned (the game still works) */
+  #rotateHint { display: none; position: fixed; inset: 0; z-index: 60; background: var(--backdrop); color: #fff;
+                align-items: center; justify-content: center; flex-direction: column; gap: 14px; text-align: center; padding: 24px; font-size: 1.2rem; }
+  #rotateHint .turn { font-size: 3rem; line-height: 1; }
+  body.needRotate #rotateHint { display: flex; }
+  /* a region whose outline is a separate path (see addRegion in js/game.js) */
+  .region.nostroke { stroke: none; }
+  .rstroke { fill: none; stroke: var(--line); stroke-width: 1.2; stroke-linejoin: round; pointer-events: none;
+             vector-effect: non-scaling-stroke; }
+
+  /* Name label shown when hovering a region that is already found */
+  #tip { position: fixed; z-index: 5; pointer-events: none; background: var(--tip-bg); color: var(--tip-text);
+         padding: 2px 8px; border-radius: 4px; font-size: .9rem; white-space: nowrap; }
+
+  /* ---------- Information panel ---------- */
+  #infoBack { position: fixed; inset: 0; z-index: 10; background: var(--backdrop);
+              display: flex; align-items: center; justify-content: center; padding: 16px; }
+  #infoBack.hidden { display: none; }
+  #infoCard { position: relative; background: var(--card); border: 2px solid var(--line); border-radius: 8px;
+              padding: 16px 20px; max-width: 440px; width: 100%; max-height: 85vh; overflow-y: auto; }
+  #infoCard h3 { margin: 0 32px 0 0; font-size: 1.4rem; }
+  #infoSub { opacity: .75; }
+  #infoFlag.hidden { display: none; }
+  #infoFlag { display: block; max-width: 220px; max-height: 150px; margin: 10px 0; }
+  #infoText { white-space: pre-line; margin: 10px 0 0; }
+  html[dir="rtl"] #infoClose { right: auto; left: 8px; }
+  html[dir="rtl"] #flagClose { right: auto; left: -14px; }
+  html[dir="rtl"] #infoCard h3 { margin: 0 0 0 32px; }
+  #infoClose { position: absolute; top: 8px; right: 8px; width: 2em; padding: 2px 0; font-size: 1.1rem; line-height: 1; }
+
+  /* ---------- Flag pop-up (click the flag in Flags mode to see it full size) ---------- */
+  #flagBack { position: fixed; inset: 0; z-index: 10; background: var(--backdrop); cursor: zoom-out;
+              display: flex; align-items: center; justify-content: center; padding: 16px; }
+  #flagBack.hidden { display: none; }
+  #flagCard { position: relative; background: var(--card); border: 2px solid var(--line); border-radius: 8px; padding: 12px; }
+  #flagBig { display: block; max-width: 88vw; max-height: 80vh; min-width: min(70vw, 420px); object-fit: contain; }
+  #flagClose { position: absolute; top: -14px; right: -14px; width: 2em; padding: 2px 0; font-size: 1.1rem; line-height: 1; }
+
+  /* ---------- Options page ---------- */
+  #options fieldset { border: 2px solid var(--line); border-radius: 8px; margin: 12px 0; padding: 8px 16px 12px; }
+  #options legend { padding: 0 6px; font-weight: bold; }
+  #options label { display: block; padding: 4px 0; cursor: pointer; }
+  #options small { opacity: .75; }
+  #options select { font: inherit; color: var(--text); background: var(--card); border: 2px solid var(--line);
+                    border-radius: 6px; padding: 6px 10px; }
+
+  /* ---------- Results page ---------- */
+  #results p { margin: .4em 0; font-size: 1.15rem; }
+  #results button { margin: 12px 8px 0 0; }
+</style>
+</head>
+<body class="loading">
+
+<!-- The site title is no longer shown here (it is the heading of the menu page). The header only holds the
+     Full Screen button, and is hidden unless config.js says fullscreen_button: true. -->
+<header id="siteHeader" class="hidden"><div><button id="fsBtn" type="button"></button></div></header>
+
+<main id="frame">
+
+  <!-- ======================= MENU PAGE ======================= -->
+  <div id="menu">
+    <div class="menuHead">
+      <h2 data-i18n="site.title"></h2>
+      <button id="optBtn" data-i18n="menu.options"></button>
+    </div>
+    <p data-i18n="menu.intro"></p>
+    <div id="menuList"></div>
+  </div>
+
+  <!-- ======================= GAME PAGE ======================= -->
+  <div id="game" class="hidden">
+    <div id="bar">
+      <div id="prompt"></div>
+      <img id="promptFlag" class="hidden" data-i18n-alt="flag.alt" data-i18n-title="flag.hint" tabindex="0" role="button">
+      <div id="stats">
+        <span data-i18n="game.time"></span><span id="time" class="num">0:00</span>
+        <span data-i18n="game.found"></span><span class="num"><span id="found">0</span>/<span id="total">0</span></span>
+      </div>
+      <div id="totals">
+        <span id="totRegLabel"></span><span id="totReg" class="num"></span>
+        <span id="totCapLabel" class="capRow"></span><span id="totCap" class="num capRow"></span>
+      </div>
+      <span id="skipBtns" class="hidden">
+        <button id="skipPrev" data-i18n="skip.prev_icon" data-i18n-title="skip.prev" data-i18n-aria="skip.prev"></button>
+        <button id="skipNext" data-i18n="skip.next_icon" data-i18n-title="skip.next" data-i18n-aria="skip.next"></button>
+      </span>
+      <span id="zoomBtns">
+        <button id="zoomOut" data-i18n-title="zoom.out" data-i18n-aria="zoom.out">&minus;</button>
+        <button id="zoomFull" data-i18n="zoom.full" data-i18n-title="zoom.full_hint" data-i18n-aria="zoom.full_hint"></button>
+        <button id="zoomIn" data-i18n-title="zoom.in" data-i18n-aria="zoom.in">+</button>
+      </span>
+      <button id="backBtn" data-i18n="game.back"></button>
+      <div id="feedback" aria-live="polite"></div>
+    </div>
+    <div id="mapBox"></div>
+    <div id="stripBox"></div>   <!-- world map: the fixed boxes under the map (Caribbean, Pacific) -->
+    <div id="gameCredit" class="credit"></div>
+  </div>
+
+  <div id="rotateHint" role="alertdialog">
+    <div class="turn" aria-hidden="true">&#x21BB;</div>
+    <div data-i18n="rotate.hint"></div>
+    <button id="rotateOk" data-i18n="rotate.continue"></button>
+  </div>
+
+  <!-- ======================= OPTIONS PAGE ======================= -->
+  <div id="options" class="hidden">
+    <h2 data-i18n="options.title"></h2>
+    <fieldset>
+      <legend data-i18n="options.appearance"></legend>
+      <label><input type="radio" name="theme" value="light"> <span data-i18n="options.theme_light"></span></label>
+      <label><input type="radio" name="theme" value="dark"> <span data-i18n="options.theme_dark"></span></label>
+      <label><input type="radio" name="theme" value="auto"> <span data-i18n="options.theme_auto"></span> <small data-i18n="options.theme_auto_hint"></small></label>
+    </fieldset>
+    <fieldset>
+      <legend data-i18n="options.language"></legend>
+      <!-- A drop-down when there is more than one language; otherwise just the name of the one language. -->
+      <select id="langSel" data-i18n-aria="options.language" class="hidden"></select>
+      <span id="langName"></span>
+    </fieldset>
+    <button id="optBack" data-i18n="options.back"></button>
+  </div>
+
+  <!-- ======================= RESULTS PAGE ======================= -->
+  <div id="results" class="hidden">
+    <h2 data-i18n="results.title"></h2>
+    <p id="resMap"></p>
+    <p><span data-i18n="results.accuracy"></span> <b id="resAcc"></b></p>
+    <p><span data-i18n="results.time"></span> <b id="resTime"></b></p>
+    <p id="resBest"></p>
+    <button id="againBtn" data-i18n="results.again"></button>
+    <button id="menuBtn" data-i18n="results.menu"></button>
+  </div>
+
+</main>
+<div id="tip" class="hidden"></div>
+
+<!-- Information panel (Practice mode): shown when a region or capital that has information is clicked -->
+<!-- Full-size flag (Flags mode): shown when the flag is clicked -->
+<div id="flagBack" class="hidden">
+  <div id="flagCard" role="dialog" aria-modal="true" data-i18n-aria="flag.full_alt">
+    <button id="flagClose" data-i18n-aria="common.close">&times;</button>
+    <img id="flagBig" data-i18n-alt="flag.full_alt">
+  </div>
+</div>
+
+<div id="infoBack" class="hidden">
+  <div id="infoCard" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+    <button id="infoClose" data-i18n-aria="common.close">&times;</button>
+    <h3 id="infoTitle"></h3>
+    <div id="infoSub"></div>
+    <img id="infoFlag" class="hidden" alt="">
+    <p id="infoText"></p>
+  </div>
+</div>
+
+<!-- Maps are NOT listed here: the names in the "maps" list in config.js are loaded automatically
+     (maps/<name>.js and map-settings/<name>.js). -->
+
+<!-- ======================= GAME CODE ======================= -->
+<script src="js/game.js"></script>
+</body>
+</html>

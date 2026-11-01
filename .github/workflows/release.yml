@@ -1,0 +1,46 @@
+# Builds the Kolibri zip (game files at the ROOT of the zip, not inside a folder)
+# and attaches it to a release when a tag such as v025 is pushed.
+name: Release zip
+
+on:
+  push:
+    tags: ['v*']
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  zip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Name the zip
+        id: name
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then v="${GITHUB_REF_NAME}"; else v="dev-${GITHUB_SHA::7}"; fi
+          echo "file=singe_${v}.zip" >> "$GITHUB_OUTPUT"
+
+      - name: Build zip with files at the root
+        run: |
+          zip -r -q "${{ steps.name.outputs.file }}" \
+            index.html config.js js lang maps map-settings flags LICENSE CREDITS.md \
+            -x '*.DS_Store'
+          unzip -l "${{ steps.name.outputs.file }}" | sed -n '1,8p;$p'
+          # Fail if anything is nested inside a folder at the top level other than the known ones
+          unzip -Z1 "${{ steps.name.outputs.file }}" | awk -F/ '{print $1}' | sort -u
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.name.outputs.file }}
+          path: ${{ steps.name.outputs.file }}
+
+      - name: Attach to release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.name.outputs.file }}
+          generate_release_notes: true

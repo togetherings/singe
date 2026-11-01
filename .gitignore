@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+
+# Release builds
+*.zip
+dist/
+
+# Raw source data used by tools/ (download separately, see docs/GUIDE.md)
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
+ne_10m_*.json
+ne_10m_*.geojson
+source-data/
+
+# Editors / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
