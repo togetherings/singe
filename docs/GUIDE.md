@@ -1,5 +1,7 @@
 # SINGE - Studies In Geography
 
+Version 0.2.0 (see ../CHANGELOG.md). Older notes below that say v023 or v024 refer to builds made before version numbers (now 0.1.0).
+
 Open `index.html` to play. Each map can offer four game modes: Practice, Regions, Capitals and Flags (turned on or off per map).
 
 ## Folder layout
@@ -111,3 +113,11 @@ Data licence: Natural Earth is in the public domain; borders are its de facto li
 - **World map halos** (wide invisible outlines for tiny regions) are no longer used: the circles do that job (Wallis and Futuna's halo covered its neighbours).
 - Lakes: Natural Earth `ne_10m_lakes` (public domain): lakes that cross borders plus the Great Lakes (`LAKE_FORCE`); `LAKE_SKIP` leaves out Lake Champlain and Lake Nasser.
 - Rebuild: `python3 tools/world.py <ne_10m_admin_0_countries.json> --lakes ne_10m_lakes.geojson --out maps/world.js`, then `python3 tools/world_settings.py maps/world.js ne_10m_populated_places_simple.shp --out map-settings/world.js` (needs numpy, scipy, opencv-python, matplotlib).
+
+## Sierra Leone notes (0.2.0)
+`maps/sierra_leone.js` has 18 districts. The shapes are built by `tools/sierra_leone.py` from the HDX chiefdom (ADM3) and section (ADM4) files:
+```
+cd tools
+python3 map_generation.py sle_admin3.geojson sle_admin4_em.geojson --id sierra_leone --out ../maps/sierra_leone.js --script sierra_leone.py
+```
+The rules for the unofficial changes (new districts Bandajuma and Kpanguima, the new Jahn Chiefdom, the Gbanti Kamaranka and Nieni splits, the Falaba spelling) are at the top of that file. The same rules make the GeoJSON package in `data/sierra_leone/` (`tools/make_sierra_leone_package.py`). Capitals and info are in `map-settings/sierra_leone.js`.

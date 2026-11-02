@@ -43,9 +43,9 @@
 (window.GeoMapSettings = window.GeoMapSettings || []).push({
   id: 'sierra_leone',
   name: 'Sierra Leone',
-  blurb: 'Find the 16 districts',
+  blurb: 'Find the 18 districts',
   image: 'flags/sierra_leone.svg',
-  credit: 'Boundaries: Sierra Leone - Subnational Administrative Boundaries (COD-AB), Government of Sierra Leone / OCHA / ITOS, via the Humanitarian Data Exchange (data.humdata.org/dataset/cod-ab-sle). License: CC BY-IGO. Modified: Karene, Bombali, Falaba and Koinadugu districts redrawn to reflect the split of Gbanti Kamarank and Nieni chiefdoms.',
+  credit: 'Boundaries: Sierra Leone - Subnational Administrative Boundaries (COD-AB), Government of Sierra Leone / OCHA / ITOS, via the Humanitarian Data Exchange (data.humdata.org/dataset/cod-ab-sle). License: CC BY-IGO. UNOFFICIAL, modified by SINGE from the best public data available: Karene, Bombali, Falaba and Koinadugu districts redrawn for the split of Gbanti Kamaranka and Nieni chiefdoms; new Bandajuma and Kpanguima districts (with the new Jahn Chiefdom) added.',
   orientation: 'vertical',
   zoom_levels: 4,
   pass_accuracy: { regions: 80, capitals: 0, flags: 0 },
@@ -69,6 +69,12 @@
       province: 'Eastern',
       capital: { name: 'Koidu', lat: 8.6439, lon: -10.9714, info: '' },
       info: '',
+      flag: ''
+    },
+    'Kpanguima': {
+      province: 'Eastern',
+      capital: { name: 'Panguma', lat: 8.186, lon: -11.135, info: 'Also spelled Kpanguma.' },
+      info: 'A new district, also spelled Kpanguma or Panguma. It is made from the Lower Bambara, Malegohun (Kenema), Yawei, Penguia, Kpeje West, Kpeje Bongre (Kailahun) chiefdoms and the new Jahn Chiefdom, which was cut out of Njaluahun Chiefdom. Kpeje Bongre is now two chiefdoms (Kpeje and Bongre), shown here as one. Its boundary here is unofficial and drawn from the best public data available.',
       flag: ''
     },
     'Bombali': {
@@ -135,6 +141,12 @@
       province: 'Southern',
       capital: { name: 'Pujehun', lat: 7.35, lon: -11.7167, info: '' },
       info: '',
+      flag: ''
+    },
+    'Bandajuma': {
+      province: 'Southern',
+      capital: { name: 'Bandajuma', lat: 7.572, lon: -11.651, info: '' },
+      info: 'A new district, made from the Wonde (Bo), Sowa, Pejeh (Futa Peje), Barri, Makpele and Soro Gbema (Pujehun), and Langrama, Niawa and Tunkia (Kenema) chiefdoms. Its boundary here is unofficial and drawn from the best public data available.',
       flag: ''
     },
     'Western Area Rural': {

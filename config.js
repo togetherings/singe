@@ -7,6 +7,9 @@
    ========================================================================== */
 window.SINGE_CONFIG = {
 
+  // Version of SINGE, as major.minor.patch (see CHANGELOG.md). Shown in the browser console for support.
+  version: '0.2.0',
+
   // The maps in the game, in the order they appear on the menu. Each name is the file name used in
   // both maps/<name>.js (shapes) and map-settings/<name>.js (settings); the files are loaded
   // automatically, so nothing needs adding to index.html. The name must equal the map's "id".
