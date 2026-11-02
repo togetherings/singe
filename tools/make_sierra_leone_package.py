@@ -16,7 +16,7 @@ sle_admincapitals. Features that were changed carry an extra field "unofficial_c
 How the files are made:
   - admin4 (sections): geometry is unchanged; names / codes of the chiefdom, district and province
     above each section are updated.
-  - admin3 (chiefdoms): untouched chiefdoms keep their original geometry; Jahn, Njaluahun, Gbanti Kamaranka
+  - admin3 (chiefdoms): untouched chiefdoms keep their original geometry; Jahn, Njaluahun, Gbanti Kamarank
     and Nieni are merged from sections; moved chiefdoms get their new district.
   - admin2 / admin1: merged from the chiefdoms (the district / province outlines are re-drawn). Unchanged
     ones are copied. area_sqkm of re-drawn features is the sum of their sections' area_sqkm.
@@ -47,10 +47,12 @@ CHANGES = {
                 'Njaluahun (now Jahn Chiefdom) to Kpanguima District.',
     'Bo': 'Lost Wonde Chiefdom to Bandajuma District.',
     'Pujehun': 'Lost the Sowa, Pejeh (Futa Peje), Barri, Makpele and Soro Gbema chiefdoms to Bandajuma District.',
-    'Falaba': 'Name spelling corrected from "Fabala". Includes the Barawa and Wollay sections of Nieni Chiefdom.',
-    'Koinadugu': 'Lost the Barawa and Wollay sections of Nieni Chiefdom to Falaba District.',
-    'Karene': 'Includes the sections of Gbanti Kamaranka Chiefdom that did not join Bombali.',
-    'Bombali': 'Includes some sections of Gbanti Kamaranka Chiefdom.',
+    'Falaba': 'Name spelling corrected from "Fabala". Includes Wollay Barawa Chiefdom (from the Barawa and Wollay sections '
+              'of Nieni). Its Mongo and Neya chiefdoms were divided into new chiefdoms (outline unchanged).',
+    'Koinadugu': 'Lost the Barawa and Wollay sections of Nieni Chiefdom to Falaba District. Nieni was divided into Kalian, '
+                 'Nieni (Yiffin and Sumbaria) and Wollay Barawa.',
+    'Karene': 'Includes Gbanti Chiefdom (the sections of the former Gbanti Kamarank Chiefdom that did not join Bombali).',
+    'Bombali': 'Includes Kamaranka Chiefdom (some sections of the former Gbanti Kamarank Chiefdom).',
 }
 
 

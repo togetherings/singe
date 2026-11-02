@@ -1,5 +1,6 @@
 # Builds the Kolibri zip (game files at the ROOT of the zip, not inside a folder)
-# and attaches it to a release when a tag such as v025 is pushed.
+# and attaches it to the release when a tag such as v0.2.1 is pushed, together with the
+# unofficial Sierra Leone boundary data zip from data/sierra_leone/.
 name: Release zip
 
 on:
@@ -22,6 +23,7 @@ jobs:
         id: name
         run: |
           if [ "${GITHUB_REF_TYPE}" = "tag" ]; then v="${GITHUB_REF_NAME}"; else v="dev-${GITHUB_SHA::7}"; fi
+          echo "version=${v}" >> "$GITHUB_OUTPUT"
           echo "file=singe_${v}.zip" >> "$GITHUB_OUTPUT"
 
       - name: Build zip with files at the root
@@ -33,14 +35,27 @@ jobs:
           # Fail if anything is nested inside a folder at the top level other than the known ones
           unzip -Z1 "${{ steps.name.outputs.file }}" | awk -F/ '{print $1}' | sort -u
 
+      - name: Name the Sierra Leone boundary data zip (unofficial GeoJSON package)
+        id: data
+        run: |
+          src=data/sierra_leone/sle_admin_boundaries_unofficial.geojson.zip
+          out="sle_admin_boundaries_unofficial_${{ steps.name.outputs.version }}.geojson.zip"
+          cp "$src" "$out"
+          unzip -l "$out" | tail -3
+          echo "file=$out" >> "$GITHUB_OUTPUT"
+
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.name.outputs.file }}
-          path: ${{ steps.name.outputs.file }}
+          name: singe-release-files
+          path: |
+            ${{ steps.name.outputs.file }}
+            ${{ steps.data.outputs.file }}
 
       - name: Attach to release
         if: github.ref_type == 'tag'
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ steps.name.outputs.file }}
+          files: |
+            ${{ steps.name.outputs.file }}
+            ${{ steps.data.outputs.file }}
           generate_release_notes: true

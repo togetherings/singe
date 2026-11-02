@@ -1,6 +1,6 @@
 # SINGE - Studies In Geography
 
-Version 0.2.0 (see ../CHANGELOG.md). Older notes below that say v023 or v024 refer to builds made before version numbers (now 0.1.0).
+Version 0.2.1 (see ../CHANGELOG.md). Older notes below that say v023 or v024 refer to builds made before version numbers (now 0.1.0).
 
 Open `index.html` to play. Each map can offer four game modes: Practice, Regions, Capitals and Flags (turned on or off per map).
 

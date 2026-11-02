@@ -5,6 +5,8 @@ __pycache__/
 # Release builds
 *.zip
 dist/
+# ...but keep the published data packages
+!data/**/*.zip
 
 # Raw source data used by tools/ (download separately, see docs/GUIDE.md)
 *.shp
