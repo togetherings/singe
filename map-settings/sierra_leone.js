@@ -7,8 +7,8 @@
    name to the "maps" list in config.js. Game-wide settings are in config.js.
 
    LANGUAGE: the text in this file (name, blurb, credit, region and capital names, info) is in the
-   DEFAULT language set in config.js. Translations go in lang/maps/<map id>/<language>.js
-   (see lang/maps/sierra_leone/french.js), so this file never needs duplicating.
+   DEFAULT language set in config.js. Translations go in languages/maps/<map id>/<language>.js
+   (see languages/maps/sierra_leone/french.js), so this file never needs duplicating.
 
    MAP-LEVEL SETTINGS
      id            must match the id in the shapes file

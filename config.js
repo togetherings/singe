@@ -8,12 +8,26 @@
 window.SINGE_CONFIG = {
 
   // Version of SINGE, as major.minor.patch (see CHANGELOG.md). Shown in the browser console for support.
-  version: '0.2.1',
+  version: '0.3.0',
 
-  // The maps in the game, in the order they appear on the menu. Each name is the file name used in
+  // The maps in the game, in the order they appear on the menu. Each is the file name used in
   // both maps/<name>.js (shapes) and map-settings/<name>.js (settings); the files are loaded
   // automatically, so nothing needs adding to index.html. The name must equal the map's "id".
-  maps: ['sierra_leone', 'us', 'world'],
+  //
+  // A map can be listed more than once, with different settings, by writing it as an object:
+  //   { id: 'world_all', file: 'world', scope: 'all', name: '...', blurb: '...' }
+  // "id" is this entry's own name (its scores are saved under it, so never change it once people have played),
+  // "file" is the map's files, and anything else (scope, name, blurb, pass_accuracy, modes...) replaces that
+  // setting from the map's settings file. The World map is listed twice: UN countries only, and everything.
+  // (The packages for Kolibri each list their own maps: see tools/packages.json and docs/GUIDE.md.)
+  maps: [
+    'sierra_leone',
+    'us',
+    { id: 'world', file: 'world', scope: 'un', name: 'World: UN countries',
+      blurb: 'Find the 193 UN member countries, plus Vatican City and Palestine' },
+    { id: 'world_all', file: 'world', scope: 'all', name: 'World: all countries, territories and islands',
+      blurb: 'Find every country, territory and island of the world, including the small ones' }
+  ],
 
   // Appearance a new user starts with: 'light', 'dark', or 'auto' (follow the device).
   // Each user can change it on the Options page.
@@ -22,11 +36,11 @@ window.SINGE_CONFIG = {
   // Wrong guesses allowed before the correct answer is highlighted.
   max_tries: 3,
 
-  // LANGUAGES. Each name is a file in lang/ (lang/english.js, lang/french.js...) holding every piece of
+  // LANGUAGES. Each name is a file in languages/ (languages/english.js, languages/french.js...) holding every piece of
   // text the game shows; the files are loaded automatically. Players choose one on the Options page
   // (with only one language listed, the Options page just shows its name).
   // The default language is used until a player chooses another. Map settings files (map-settings/)
-  // must be written in the default language, and maps can add translations in lang/maps/<map>/<language>.js.
+  // must be written in the default language, and maps can add translations in languages/maps/<map>/<language>.js.
   // Text for the game modes (Practice, Regions...) is in the language files too.
   default_language: 'english',
   languages: ['english', 'french'],

@@ -4,18 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SINGE: Studies In Geography</title>
-<meta name="version" content="0.2.1">
+<meta name="version" content="0.3.0">
 <script src="config.js"></script>
-<script src="lang/english.js"></script>   <!-- the default language is always loaded; others are listed in config.js -->
+<script src="edugame-config.js"></script>   <!-- made by the EduGame Kit build (see docs/GUIDE.md); absent when this page is opened straight from the repository -->
+<script src="edugame.js"></script>
+<script src="languages/english.js"></script>   <!-- the default language is always loaded; others are listed in config.js -->
 <script>
-  /* Apply the saved Light / Dark / Auto choice before the page is drawn, so there is no flash. */
+  /* Apply the Light / Dark / Auto default before the page is drawn, so there is no flash. (A learner's own choice is
+     saved with the save helper and applied as soon as it has loaded.) */
   (function () {
-    try {
-      var o = JSON.parse(localStorage.getItem('singe_options')) || {};
-      var t = o.theme || (window.SINGE_CONFIG && window.SINGE_CONFIG.default_theme) || 'light';
-      var dark = t === 'dark' || (t === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
-      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-    } catch (e) {}
+    var t = (window.SINGE_CONFIG && window.SINGE_CONFIG.default_theme) || 'light';
+    var dark = t === 'dark' || (t === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
   })();
 </script>
 <style>
@@ -109,14 +109,16 @@
 
   /* ---------- Game bar ----------
      A grid of three columns; everything is aligned to the TOP of its row. The outer columns are
-     equal, so the zoom buttons stay centred. Normal layout:
+     equal, so anything in the middle column stays centred. Normal layout:
         row 1   the prompt (left, two columns wide)                       Back to menu (right)
-        row 2   skip + back arrows        zoom buttons (centred)          Time / Found (right)
+        row 2   zoom buttons (left)       skip + back arrows (centre)     Time / Found (right)
         row 3   feedback message (full width)
-     Flags mode: the flag sits in the middle and spans rows 1 and 2, and the zoom buttons move below it:
+     Practice has no skip arrows, so the box with the number of regions and capitals takes their
+     place in the centre of row 2, and Back to menu moves down to the right of that row.
+     Flags mode: the flag sits in the middle and spans rows 1 and 2, and the skip arrows sit under it:
         row 1   prompt                    flag (rows 1-2)                 Back to menu
-        row 2   skip + back arrows           "                            Time / Found
-        row 3                             zoom buttons
+        row 2   zoom buttons                 "                            Time / Found
+        row 3                             skip + back arrows (centre)
         row 4   feedback message
      The changing timer digits can never push anything around (fixed-width columns). */
   /* World map: the bar is laid over the top of the map. Only the buttons and text themselves take clicks
@@ -136,7 +138,7 @@
   #bar.practice #prompt { grid-column: 1 / -1; }        /* Practice: the description may use the whole width... */
   #bar.practice #backBtn { grid-row: 2; }               /* ...because Back to menu moves down to row 2 */
   /* Practice: how many regions and capitals the map has, set out like Time / Found in the other modes */
-  #totals { grid-row: 2; grid-column: 1; justify-self: start; display: none; grid-template-columns: auto auto;
+  #totals { grid-row: 2; grid-column: 2; justify-self: center; display: none; grid-template-columns: auto auto;
             column-gap: 14px; line-height: 1.3; font-variant-numeric: tabular-nums; white-space: nowrap; }
   #totals .num { min-width: 3.2em; text-align: end; }
   #bar.practice #totals { display: grid; }
@@ -152,10 +154,10 @@
   #stats { grid-row: 2; grid-column: 3; justify-self: end; display: grid; grid-template-columns: auto auto;
            column-gap: 14px; line-height: 1.3; font-variant-numeric: tabular-nums; white-space: nowrap; }
   #stats .num { min-width: 3.2em; text-align: end; }
-  #skipBtns { grid-row: 2; grid-column: 1; justify-self: start; display: flex; gap: 6px; }
+  #skipBtns { grid-row: 2; grid-column: 2; justify-self: center; display: flex; gap: 6px; }
+  #bar.flagMode #skipBtns { grid-row: 3; }
   #skipBtns.hidden { display: none; }
-  #zoomBtns { grid-row: 2; grid-column: 2; display: flex; gap: 6px; }
-  #bar.flagMode #zoomBtns { grid-row: 3; }
+  #zoomBtns { grid-row: 2; grid-column: 1; justify-self: start; display: flex; gap: 6px; }
   #feedback { grid-row: 3; grid-column: 1 / -1; min-height: 1.5em; }
   #bar.flagMode #feedback { grid-row: 4; }
   #zoomBtns button, #skipBtns button { min-width: 2.4em; padding: 6px 10px; font-weight: bold; }

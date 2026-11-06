@@ -2,6 +2,19 @@
 
 SINGE uses `major.minor.patch` version numbers. Builds made before versioning (v001 to v024) are treated as 0.1.0.
 
+## 0.3.0: 2026-11-06
+### Now a Scored Game (EduGame Kit)
+- SINGE is built with EduGame Kit and works with the Kolibri Games plugin's scoreboards (one board per map and mode, plus an all-maps total). Existing learner saves carry over.
+- **Scoring change:** a round counts, and sets SCORM "passed", when it reaches the mode's accuracy goal (0 = every round counts). Before, "passed" needed every goal in every map.
+- The language and theme choices are saved through the kit.
+- `lang/` is now `languages/` (the kit uses `lang/`).
+### Packages
+- Releases now have separate zips: **Countries** (Sierra Leone, United States), **World** (UN countries, and all countries, territories and islands) and **Continents** (not built until it has maps, starting with Africa). Build them with `tools/build_packages.py`; edit `tools/packages.json` to change what each holds.
+- The World map can be listed twice with different settings (`id`, `file`, `scope` in `config.js`).
+### Map display
+- The zoom buttons are now at the left of the second row (swapping places with the totals box in Practice and with the skip arrows in games). The skip arrows are centred in the middle column in every mode, under the flag in Flags mode.
+- Fixed the page container and attribution overlapping the map after viewing several maps and returning to the menu.
+
 ## 0.2.1: 2026-11-02
 ### Sierra Leone data
 - **Releases now include the unofficial Sierra Leone boundary package** (`sle_admin_boundaries_unofficial_<version>.geojson.zip`) next to the game zip. (The zip was missing from the repository in 0.2.0 because of a `.gitignore` rule; fixed.)

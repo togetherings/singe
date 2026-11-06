@@ -7,7 +7,7 @@
 
    TO ADD A LANGUAGE FOR THIS MAP
      1. Copy this file to lang/maps/us/<language>.js (the file name is the
-        language's id, the same as in lang/<language>.js and the "languages"
+        language's id, the same as in languages/<language>.js and the "languages"
         list in config.js).
      2. Change "language" below and translate the text.
 

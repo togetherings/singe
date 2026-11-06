@@ -11,17 +11,22 @@
                (only offered when the map's regions have a "flag" image)
 
    Game-wide settings are in config.js; per-map settings are in map-settings/.
-   All text the player sees comes from lang/<language>.js (interface) and
-   lang/maps/<map>/<language>.js (map text) - see section 0a below.
+   All text the player sees comes from languages/<language>.js (interface) and
+   languages/maps/<map>/<language>.js (map text) - see section 0a below.
    ========================================================================== */
 (function () {
   'use strict';
 
   var CONFIG = loadConfig();           // game-wide settings from config.js (with defaults)
+  var ENTRIES = (CONFIG.maps || []).map(function (m) {      // config.js maps: a name, or { id, file, ...settings that differ } (see config.js)
+    var e = typeof m === 'string' ? { id: m } : m;
+    var o = { file: e.file || e.id };
+    Object.keys(e).forEach(function (k) { o[k] = e[k]; });
+    return o;
+  });
   var MAPS = [];                       // every map: shapes (maps/*.js) joined with settings (map-settings/*.js); filled in at start-up
   var loadErrors = [];                 // map files that could not be loaded
   var MAX_TRIES = CONFIG.max_tries;    // wrong guesses allowed before the answer is highlighted
-  var SAVE_KEY = 'singe_scores';       // browser localStorage key
   var SVG_NS = 'http://www.w3.org/2000/svg';
   var $ = function (id) { return document.getElementById(id); };
 
@@ -58,9 +63,9 @@
 
   /* =====================================================================
      0a. LANGUAGE
-     Interface text: lang/<language>.js registers itself in window.SINGE_LANGUAGES
+     Interface text: languages/<language>.js registers itself in window.SINGE_LANGUAGES
        ({ id, name, code, dir, text: { 'key': 'text' or { one:, other: } } }).
-     Map text: lang/maps/<map>/<language>.js registers itself in window.GeoMapText
+     Map text: languages/maps/<map>/<language>.js registers itself in window.GeoMapText
        ({ map, language, name, blurb, credit, regions: { '<region>': { name, capital, info, capital_info } } }).
      English is always loaded, and anything missing in the chosen language falls back to it
      (interface) or to the text in the map's settings file (map text).
@@ -109,7 +114,7 @@
     if (L !== LANGS.english && !warnedKeys['@' + lang]) {          // tell translators what is still missing
       warnedKeys['@' + lang] = true;
       var missing = Object.keys(LANGS.english.text).filter(function (k) { return L.text[k] === undefined; });
-      if (missing.length) console.warn('SINGE: lang/' + lang + '.js has no text for: ' + missing.join(', ') + ' (English is used).');
+      if (missing.length) console.warn('SINGE: languages/' + lang + '.js has no text for: ' + missing.join(', ') + ' (English is used).');
     }
     document.documentElement.lang = L.code || 'en';
     document.documentElement.dir = L.dir === 'rtl' ? 'rtl' : 'ltr';
@@ -137,10 +142,10 @@
       var m = all[mapTextSeen];
       if (!m || !m.map || !m.language) continue;
       MAPTEXT[m.map + '|' + m.language] = m;
-      var map = MAPS.filter(function (x) { return x.id === m.map; })[0];
+      var map = MAPS.filter(function (x) { return x.file === m.map; })[0];
       if (map && m.regions) Object.keys(m.regions).forEach(function (n) {
         if (!map.regions.some(function (r) { return r.name === n; })) {
-          console.warn('SINGE: lang/maps/' + m.map + '/' + m.language + '.js mentions "' + n + '", which is not a region of that map.');
+          console.warn('SINGE: languages/maps/' + m.map + '/' + m.language + '.js mentions "' + n + '", which is not a region of that map.');
         }
       });
     }
@@ -149,26 +154,27 @@
   // needs none: its text is in the settings files). A missing file just means "not translated".
   function ensureMapText(done) {
     var L = lang;
-    var todo = L === CONFIG.default_language ? [] : MAPS.filter(function (m) { return !mapTextState[m.id + '|' + L]; });
+    var seen = {};
+    var todo = L === CONFIG.default_language ? [] : MAPS.filter(function (m) { if (seen[m.file]) return false; seen[m.file] = true; return !mapTextState[m.file + '|' + L]; });
     if (!todo.length) { done(); return; }
     var pending = todo.length;
     todo.forEach(function (m) {
       var s = document.createElement('script');
       function fin(ok) {
-        mapTextState[m.id + '|' + L] = ok ? 'ok' : 'none';
+        mapTextState[m.file + '|' + L] = ok ? 'ok' : 'none';
         if (--pending === 0) { indexMapText(); done(); }
       }
-      s.src = 'lang/maps/' + m.id + '/' + L + '.js';
+      s.src = 'languages/maps/' + m.file + '/' + L + '.js';
       s.onload = function () { fin(true); };
       s.onerror = function () { fin(false); };
       document.head.appendChild(s);
     });
   }
-  function mapTextFor(map) { return MAPTEXT[map.id + '|' + lang] || null; }
+  function mapTextFor(map) { return MAPTEXT[map.file + '|' + lang] || null; }
   // Map-level text (field: 'name', 'blurb' or 'credit'): translated if available, else the settings file's.
   function mapStr(map, field) {
-    var m = mapTextFor(map);
-    return (m && m[field]) || map[field];
+    var m = mapTextFor(map), v = m && m.variants && m.variants[map.id];      // a map used twice (the two World maps) can be translated apart
+    return (v && v[field]) || (m && m[field]) || map[field];
   }
   // Region-level text (field: 'name', 'capital', 'info' or 'capital_info').
   function regionStr(map, r, field) {
@@ -221,10 +227,16 @@
 
   function buildMaps() {
     var settings = {}, maps = [];
+    var shapes = {};
     (window.GeoMapSettings || []).forEach(function (s) { settings[s.id] = s; });
-    (window.GeoMapShapes || []).forEach(function (shape) {
-      var s = settings[shape.id];
-      if (!s) { console.warn('SINGE: no settings file for map "' + shape.id + '" - using defaults.'); s = {}; }
+    (window.GeoMapShapes || []).forEach(function (sh) { shapes[sh.id] = sh; });
+    ENTRIES.forEach(function (entry) {
+      var shape = shapes[entry.file];
+      if (!shape) return;                                   // its file did not load (reported on the menu)
+      var s = {}, base = settings[entry.file];
+      if (!base) console.warn('SINGE: no settings file for map "' + entry.file + '" - using defaults.');
+      Object.keys(base || {}).forEach(function (k) { s[k] = base[k]; });
+      Object.keys(entry).forEach(function (k) { if (k !== 'id' && k !== 'file') s[k] = entry[k]; });   // what the config.js entry changes (scope, name...)
       var byName = s.regions || {}, known = {}, kindOf = {}, regions = [];
       // World-type maps (shape.wrap) list every country AND territory; "scope" decides which are in the game
       // ('un': UN members + Vatican + Palestine, parts merged into their country; 'all': everything, parts separate).
@@ -263,10 +275,10 @@
         (h.members = h.members || [r.host]).push(i);
       });
       Object.keys(byName).forEach(function (n) {      // catch typos in region names
-        if (!known[n]) console.warn('SINGE: settings for "' + shape.id + '" mention "' + n + '", which is not a region in the map shapes.');
+        if (!known[n]) console.warn('SINGE: settings for "' + entry.file + '" mention "' + n + '", which is not a region in the map shapes.');
       });
       var frames = (shape.frames || []).filter(function (f) { return !(noTerritories && kindOf[f.region] === 'territory'); });
-      maps.push({ id: shape.id, name: s.name || shape.id, blurb: s.blurb || '', credit: s.credit || '', image: s.image,
+      maps.push({ id: entry.id, file: entry.file, name: s.name || entry.id, blurb: s.blurb || '', credit: s.credit || '', image: s.image,
                   bounds: shape.bounds, scale: shape.scale, projection: shape.projection,
                   origin: shape.origin, size: shape.size, frames: frames,
                   zoom_levels: s.zoom_levels, zoom_step: s.zoom_step, orientation: s.orientation,
@@ -276,101 +288,71 @@
                   infinite_scroll: s.infinite_scroll, page_width: s.page_width, fit_all_min_height: s.fit_all_min_height,
                   circle_ratio: s.circle_ratio, marker_px: s.marker_px, nudge_zoom_levels: s.nudge_zoom_levels });
     });
-    maps.sort(function (a, b) { return CONFIG.maps.indexOf(a.id) - CONFIG.maps.indexOf(b.id); });   // menu order = config.js order
     Object.keys(settings).forEach(function (id) {
-      if (!maps.some(function (m) { return m.id === id; })) console.warn('SINGE: settings for "' + id + '" have no matching map shapes file.');
+      if (!ENTRIES.some(function (e) { return e.file === id; })) console.warn('SINGE: settings for "' + id + '" have no matching map shapes file.');
     });
     return maps;
   }
 
   /* =====================================================================
-     1. SAVING: browser localStorage + SCORM 1.2 suspend_data
-        Format (kept tiny: SCORM 1.2 suspend_data is limited to ~4096 chars):
-        { "<saveId>": [bestAccuracy, bestTimeSeconds, timesPlayed], ... }
-        saveId is the map id for the Regions game (kept as the plain map id so older saves still work) ("sierra_leone") and
-        "<map id>_capitals" / "<map id>_flags" for the other scored modes, so saves never overlap.
-        The third number is the count of COMPLETED games of that mode (kept in suspend_data too).
+     1. SAVING AND SCORES: the EduGame Kit's save helper (edugame.js)
+        SINGE is a "Scored Game" made with the EduGame Kit (github.com/togetherings/edugame-kit). The helper
+        finds out where the game runs (Kolibri, Moodle and other SCORM systems, RACHEL, Kiwix, a web page...) and saves
+        there. This file only does three things with it:
+          EduGame.ready()    -> what was saved before (each board's best result, and the learner's options)
+          EduGame.start()    -> a round begins (the helper times it)
+          EduGame.finish()   -> a round ends: {acc: accuracy %}, on the board of that map and mode
+        A "board" is one scored thing: a map in one mode. Its id is the map's id for the Regions game ("sierra_leone"),
+        and "<map id>_capitals" / "<map id>_flags" for the other scored modes. Each board keeps the learner's BEST round:
+        the highest accuracy, and for equal accuracy the shortest time (edugame.json: rank_by acc, then time).
+        The helper saves each board as [accuracy, seconds, times played] in SCORM suspend_data (the same list SINGE has
+        always saved, so earlier saves still work), and Kolibri Games builds its scoreboards from it.
+        A round that does not reach the mode's pass mark (see goalFor) is played but not kept as a result.
+        Learning systems get "incomplete" when the game opens and "passed" after a round that counts; Kolibri itself
+        never gets a score (the helper takes care of that).
      ===================================================================== */
-  var scorm = null;     // the SCORM API object we have connected to (null until found)
-  var scores = {};      // all saved results
+  var scores = {};      // board id -> [accuracy, seconds, times played] (the learner's kept results)
+  var EG = window.EduGame || fallbackHelper();   // the kit's helper; a tiny stand-in when this page is opened straight from the repository
+  var helperInfo = null;                          // what EduGame.ready() told us
 
-  // (a world map played with scope 'all' is a different game, so it is saved under "<map>_all")
-  function saveId(map, mode) {
-    var base = map.id + (map.scope === 'all' ? '_all' : '');
-    return mode === 'regions' ? base : base + '_' + mode;
-  }
+  // The board of one map in one mode (the map's id is unique: the two World variants are "world" and "world_all").
+  function saveId(map, mode) { return mode === 'regions' ? map.id : map.id + '_' + mode; }
 
-  // Look up the window tree for the SCORM 1.2 "API" object.
-  function findScormApi() {
-    var w = window;
-    for (var i = 0; i < 10 && w; i++) {
-      try { if (w.API) return w.API; } catch (e) { /* cross-origin: ignore */ }
-      if (w.parent && w.parent !== w) w = w.parent;
-      else if (w.opener) w = w.opener;
-      else break;
+  // Used only when edugame.js was not loaded (opening index.html from the repository, with no build): saves in this browser,
+  // keeping the best round of each board like the real helper does. It is NOT used in any package made with the kit.
+  function fallbackHelper() {
+    var KEY = 'edugame:org.togetherings.singe', rec = {}, round = null;
+    try { rec = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { rec = {}; }
+    function write() { try { localStorage.setItem(KEY, JSON.stringify(rec)); } catch (e) {} return Promise.resolve(); }
+    function results() {
+      var out = {};
+      Object.keys(rec).forEach(function (k) { if (k.charAt(0) !== '_' && Array.isArray(rec[k])) out[k] = { acc: rec[k][0], time: rec[k][1], plays: rec[k][2] }; });
+      return out;
     }
-    return null;
-  }
-
-  // Combine two save tables, keeping the best accuracy and fastest time.
-  function mergeScores(a, b) {
-    var out = {};
-    [a, b].forEach(function (src) {
-      for (var id in src) {
-        var s = src[id], o = out[id];
-        if (!o) { out[id] = s.slice(); continue; }
-        o[0] = Math.max(o[0], s[0]);
-        o[1] = (o[1] && s[1]) ? Math.min(o[1], s[1]) : (o[1] || s[1]);
-        o[2] = Math.max(o[2], s[2]);
-      }
-    });
-    return out;
-  }
-
-  /* ---- SCORM connection ----
-     IMPORTANT: Kolibri can add its SCORM object a moment AFTER our page has
-     loaded. So we never look just once: connectScorm() is called every time
-     we save, and also a few times a second for the first 10 seconds. */
-  function connectScorm() {
-    var api = findScormApi();
-    if (!api) return null;
-    if (api !== scorm) {                 // first time we see this particular API object
-      scorm = api;
-      try {
-        api.LMSInitialize('');
-        // bring in anything the LMS saved earlier
-        scores = mergeScores(scores, JSON.parse(api.LMSGetValue('cmi.suspend_data')) || {});
-        saveLocal();
-        if (!$('menu').classList.contains('hidden')) buildMenu();
-      } catch (e) {}
-    }
-    return api;
+    return {
+      ready: function () { return Promise.resolve({ save: rec._save || null, results: results(), language: null, platform: 'local' }); },
+      save: function (data) { rec._save = data; return write(); },
+      start: function () { round = Date.now(); return Promise.resolve(); },
+      finish: function (v, o) {
+        var secs = Math.round((Date.now() - (round || Date.now())) / 100) / 10, id = o.board, old = rec[id];
+        var plays = ((old && old[2]) || 0) + 1, kept = old ? { acc: old[0], time: old[1], plays: plays } : null, better = false;
+        if (o.passed !== false) {
+          better = !old || v.acc > old[0] || (v.acc === old[0] && secs < old[1]);
+          if (better) kept = { acc: v.acc, time: secs, plays: plays }; else kept.plays = plays;
+        }
+        if (kept) rec[id] = [kept.acc, kept.time, kept.plays];
+        return write().then(function () { return { values: { acc: v.acc, time: secs }, seconds: secs, kept: kept, newBest: better && !!old, passed: o.passed !== false }; });
+      },
+      complete: function () {}
+    };
   }
 
   // The accuracy goal (%) for one mode of a map: the map's own setting if it has one, otherwise the
-  // default in config.js. 0 means "no goal" (not required, not shown on the menu).
+  // default in config.js. 0 means "no goal": every finished round counts as a result.
   function goalFor(map, mode) {
     var own = map.pass_accuracy && map.pass_accuracy[mode];
     var v = (own !== undefined && own !== null) ? own : (CONFIG.pass_accuracy && CONFIG.pass_accuracy[mode]);
     return +v > 0 ? +v : 0;
-  }
-
-  // The course is "passed" when EVERY goal is met: each mode that a map offers and that has a goal
-  // above 0 needs its best accuracy to reach that goal. If there are no goals at all, nothing can
-  // be "passed" (the status stays incomplete).
-  function allMapsPassed() {
-    var any = false;
-    for (var i = 0; i < MAPS.length; i++) {
-      var modes = modesFor(MAPS[i]);
-      for (var k = 0; k < CONFIG.scored_modes.length; k++) {
-        var mode = CONFIG.scored_modes[k], goal = goalFor(MAPS[i], mode);
-        if (!goal || modes.indexOf(mode) < 0) continue;
-        any = true;
-        var s = scores[saveId(MAPS[i], mode)];
-        if (!s || s[0] < goal) return false;
-      }
-    }
-    return any;
   }
 
   // Is the skip feature on for this mode of this map? config.js "skip_enabled" (true / false) overrides
@@ -383,51 +365,41 @@
     return s !== false;
   }
 
-  // Send suspend_data and lesson_status to the LMS (does nothing if there is no LMS yet).
-  // We only ever use "incomplete" and "passed" - never "completed" (Kolibri mishandles it).
-  function syncScorm() {
-    var api = connectScorm();
-    if (!api) return;
-    try {
-      var status = api.LMSGetValue('cmi.core.lesson_status');
-      var want = null;
-      if (allMapsPassed()) want = 'passed';
-      else if (!status || status === 'not attempted') want = 'incomplete';   // first visit
-      if (want && status !== want) api.LMSSetValue('cmi.core.lesson_status', want);
-      api.LMSSetValue('cmi.suspend_data', JSON.stringify(scores));
-      api.LMSCommit('');
-    } catch (e) {}
+  // Read what the helper has: every board's kept result. (done: called with nothing, once everything is read)
+  function loadScores(done) {
+    EG.ready().then(function (info) {
+      helperInfo = info || {};
+      scores = {};
+      var res = helperInfo.results || {};
+      Object.keys(res).forEach(function (id) {
+        var r = res[id];
+        if (r && typeof r.acc === 'number') scores[id] = [r.acc, r.time || 0, r.plays || 0];
+      });
+      var o = (helperInfo.save && helperInfo.save.options) || {};      // the learner's own choices (Options page)
+      if (o.theme === 'light' || o.theme === 'dark' || o.theme === 'auto') options.theme = o.theme;
+      if (typeof o.language === 'string') options.language = o.language;
+      done();
+    }, function () { helperInfo = {}; done(); });
   }
 
-  function saveLocal() {
-    try { localStorage.setItem(SAVE_KEY, JSON.stringify(scores)); } catch (e) {}
-  }
-  function saveScores() { saveLocal(); syncScorm(); }
-
-  function loadScores() {
-    try { scores = JSON.parse(localStorage.getItem(SAVE_KEY)) || {}; } catch (e) { scores = {}; }
-    syncScorm();                                   // sets "incomplete" on the very first load
-    var attempts = 0, timer = setInterval(function () {   // keep looking for a late SCORM object
-      if (scorm || ++attempts > 40) { clearInterval(timer); return; }
-      syncScorm();
-    }, 250);
-  }
-
-  // Record one finished game and return the updated entry.
-  function recordResult(id, acc, secs) {
-    var s = scores[id] || [0, 0, 0];
-    s[0] = Math.max(s[0], acc);
-    s[1] = s[1] ? Math.min(s[1], secs) : secs;
-    s[2] += 1;
-    scores[id] = s;
-    saveScores();
-    return s;
+  // One finished round: the helper keeps it if it counts, and the board's kept result comes back.
+  // Resolves with { kept: [acc, secs, plays] or null, counted: bool, newBest: bool }; never rejects (a failed save is only logged).
+  function recordResult(id, acc, secs, counts) {
+    return EG.finish({ acc: acc }, { board: id, passed: counts }).then(function (r) {
+      var k = r.kept;
+      if (k && typeof k.acc === 'number') scores[id] = [k.acc, k.time || 0, k.plays || 0];
+      return { kept: scores[id] || null, counted: !!r.passed, newBest: !!r.newBest };
+    }, function (err) {
+      console.warn('SINGE: the result could not be saved: ' + (err && err.message));
+      return { kept: scores[id] || null, counted: counts, newBest: false };
+    });
   }
 
   /* =====================================================================
      2. SMALL HELPERS
      ===================================================================== */
   function fmtTime(secs) {
+    secs = Math.round(secs);
     var m = Math.floor(secs / 60), s = secs % 60;
     return m + ':' + (s < 10 ? '0' : '') + s;
   }
@@ -907,6 +879,9 @@
           infinite: wrap && (map.infinite_scroll !== undefined ? !!map.infinite_scroll : !!CONFIG.infinite_scroll) };
     $('mapBox').innerHTML = '';
     $('stripBox').innerHTML = '';
+    // The boxes under a world map are pulled up over the map with a negative margin (see fitWorld). That margin must go when the
+    // next map has no boxes, or it would pull the frame's bottom edge and the credit up over the map.
+    $('stripBox').style.marginTop = '';
     var svg = wrap ? buildWorld(map) : buildSvg(map);
     var cls = mode === 'capitals' ? 'capitals' : practice ? 'practice' : '';   // capitals: regions turn plain green
     if (cls) svg.setAttribute('class', cls);
@@ -985,6 +960,7 @@
       nextTarget();
       tick();
       g.timer = setInterval(tick, 500);    // the count-up timer
+      EG.start({ board: saveId(map, mode) });    // the helper times the round
     }
   }
 
@@ -1189,16 +1165,25 @@
     var total = g.order.length;
     // Accuracy = correct clicks / all clicks (100% means no wrong clicks).
     var acc = Math.round(100 * total / g.clicks);
-    var best = recordResult(saveId(g.map, g.mode), acc, secs);
-    $('resMap').textContent = tr('results.map', { map: mapStr(g.map, 'name'), mode: modeLabel(g.mode) });
-    $('resAcc').textContent = tr('results.pct', { pct: acc });
-    $('resTime').textContent = fmtTime(secs);
-    $('resBest').textContent = tr('results.best', { acc: best[0], time: fmtTime(best[1]), n: best[2] });
-    show('results');
+    var goal = goalFor(g.map, g.mode), counts = !goal || acc >= goal;      // below the pass mark: played, but not kept as a result
+    var shown = g;                                                          // (the player may leave before the helper answers)
+    recordResult(saveId(g.map, g.mode), acc, secs, counts).then(function (r) {
+      if (g !== shown) return;
+      var best = r.kept;
+      $('resMap').textContent = tr('results.map', { map: mapStr(g.map, 'name'), mode: modeLabel(g.mode) });
+      $('resAcc').textContent = tr('results.pct', { pct: acc });
+      $('resTime').textContent = fmtTime(secs);
+      var line = best ? tr('results.best', { acc: best[0], time: fmtTime(best[1]), n: best[2] }) : '';
+      if (!r.counted) line = tr('results.not_counted', { pct: goal }) + (line ? ' ' + line : '');
+      else if (r.newBest) line = tr('results.new_best') + ' ' + line;
+      $('resBest').textContent = line;
+      show('results');
+    });
   }
 
   function leaveGame() {
     if (g.timer) clearInterval(g.timer);
+    $('stripBox').style.marginTop = '';
     hideTip();
     closeInfo();
     buildMenu();
@@ -1375,10 +1360,6 @@
   $('backBtn').onclick = leaveGame;
   $('menuBtn').onclick = leaveGame;
   $('againBtn').onclick = function () { startGame(g.map, g.mode); };
-  // Tell the LMS we are done when the page closes.
-  window.addEventListener('beforeunload', function () {
-    if (scorm) { try { scorm.LMSFinish(''); } catch (e) {} }
-  });
 
   // ---- Full-size flag pop-up (Flags mode) ----
   function openFlag() {
@@ -1395,19 +1376,12 @@
   $('flagClose').onclick = closeFlag;
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeFlag(); });
 
-  // ---- Options (saved in this browser) ----
-  var OPT_KEY = 'singe_options';
+  // ---- Options (saved with the learner's other saves) ----
   var options = { theme: CONFIG.default_theme, language: null };
   var darkQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
 
-  function loadOptions() {
-    try {
-      var o = JSON.parse(localStorage.getItem(OPT_KEY)) || {};
-      if (o.theme === 'light' || o.theme === 'dark' || o.theme === 'auto') options.theme = o.theme;
-      if (typeof o.language === 'string') options.language = o.language;   // checked against the available languages later
-    } catch (e) {}
-  }
-  function saveOptions() { try { localStorage.setItem(OPT_KEY, JSON.stringify(options)); } catch (e) {} }
+  // The learner's choices are read from the helper's save in loadScores() and saved with it.
+  function saveOptions() { EG.save({ options: { theme: options.theme, language: options.language } }); }
 
   // Light or dark: "auto" follows the device's own setting (and changes with it).
   function applyTheme() {
@@ -1466,7 +1440,7 @@
 
   // ---- Load the languages and maps named in config.js, then start ----
   // Each name in config.maps has a shapes file (required) and a settings file (optional).
-  // Each name in config.languages has a language file (lang/<name>.js).
+  // Each name in config.languages has a language file (languages/<name>.js).
   function loadFiles(files, done) {
     var pending = files.length;
     if (!pending) { done(); return; }
@@ -1484,27 +1458,36 @@
     });
   }
 
-  loadOptions();
-  applyTheme();
   indexLanguages();                                  // english.js is already loaded by index.html
-  var files = [];
-  (CONFIG.languages || []).forEach(function (n) { if (!LANGS[n]) files.push({ src: 'lang/' + n + '.js', kind: 'lang' }); });
-  (CONFIG.maps || []).forEach(function (n) {
-    files.push({ src: 'maps/' + n + '.js', kind: 'shapes' });
-    files.push({ src: 'map-settings/' + n + '.js', kind: 'settings' });
+  var files = [], loaded = {};
+  (CONFIG.languages || []).forEach(function (n) { if (!LANGS[n]) files.push({ src: 'languages/' + n + '.js', kind: 'lang' }); });
+  ENTRIES.forEach(function (e) {
+    if (loaded[e.file]) return;                      // the same map can be listed twice (the World map in two scopes)
+    loaded[e.file] = true;
+    files.push({ src: 'maps/' + e.file + '.js', kind: 'shapes' });
+    files.push({ src: 'map-settings/' + e.file + '.js', kind: 'settings' });
   });
-  loadFiles(files, function () {
+  // First what was saved (the learner's options and results), at the same time as the files load; then start.
+  var pendingStart = 2;
+  function start() {
+    if (--pendingStart) return;
     indexLanguages();
     var ids = availableLanguages();
     if (ids.indexOf(CONFIG.default_language) < 0) CONFIG.default_language = ids[0];
+    if (!options.language && helperInfo && helperInfo.language) {          // the language the learning system or Kolibri uses
+      var want = String(helperInfo.language).toLowerCase().split(/[-_]/)[0];
+      ids.forEach(function (id) { if (!options.language && String((LANGS[id].code || '')).toLowerCase().split(/[-_]/)[0] === want) options.language = id; });
+    }
     lang = ids.indexOf(options.language) >= 0 ? options.language : CONFIG.default_language;
+    applyTheme();
     MAPS = buildMaps();
     indexMapText();
     applyLanguage();
     ensureMapText(function () {
-      loadScores();
       buildMenu();
       document.body.classList.remove('loading');
     });
-  });
+  }
+  loadScores(start);
+  loadFiles(files, start);
 })();

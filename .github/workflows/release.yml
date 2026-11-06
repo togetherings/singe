@@ -1,4 +1,4 @@
-# Builds the Kolibri zip (game files at the ROOT of the zip, not inside a folder)
+# Builds the Kolibri zips with EduGame Kit, one per package of maps (files at the ROOT of each zip)
 # and attaches it to the release when a tag such as v0.2.1 is pushed, together with the
 # unofficial Sierra Leone boundary data zip from data/sierra_leone/.
 name: Release zip
@@ -19,21 +19,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Name the zip
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Name the release
         id: name
         run: |
           if [ "${GITHUB_REF_TYPE}" = "tag" ]; then v="${GITHUB_REF_NAME}"; else v="dev-${GITHUB_SHA::7}"; fi
           echo "version=${v}" >> "$GITHUB_OUTPUT"
-          echo "file=singe_${v}.zip" >> "$GITHUB_OUTPUT"
 
-      - name: Build zip with files at the root
+      - name: Install EduGame Kit
+        run: pip install "git+https://github.com/togetherings/edugame-kit.git"
+
+      - name: Build the packages (Countries, World; Continents once it has maps)
         run: |
-          zip -r -q "${{ steps.name.outputs.file }}" \
-            index.html config.js js lang maps map-settings flags LICENSE CREDITS.md \
-            -x '*.DS_Store'
-          unzip -l "${{ steps.name.outputs.file }}" | sed -n '1,8p;$p'
-          # Fail if anything is nested inside a folder at the top level other than the known ones
-          unzip -Z1 "${{ steps.name.outputs.file }}" | awk -F/ '{print $1}' | sort -u
+          python tools/build_packages.py --out dist
+          for z in dist/*.zip; do
+            echo "== $z"; unzip -l "$z" | tail -1
+            # kolibri-game.json must sit at the root of each zip, not inside a folder
+            unzip -Z1 "$z" | grep -qx 'kolibri-game.json'
+          done
 
       - name: Name the Sierra Leone boundary data zip (unofficial GeoJSON package)
         id: data
@@ -48,7 +54,7 @@ jobs:
         with:
           name: singe-release-files
           path: |
-            ${{ steps.name.outputs.file }}
+            dist/*.zip
             ${{ steps.data.outputs.file }}
 
       - name: Attach to release
@@ -56,6 +62,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            ${{ steps.name.outputs.file }}
+            dist/*.zip
             ${{ steps.data.outputs.file }}
           generate_release_notes: true

@@ -1,7 +1,7 @@
 /* ==========================================================================
    SINGE: Studies In Geography - INTERFACE TEXT: French (Français)
    --------------------------------------------------------------------------
-   A complete translation of lang/english.js. It also serves as an example of a
+   A complete translation of languages/english.js. It also serves as an example of a
    language file; see the explanation at the top of english.js.
    ========================================================================== */
 (window.SINGE_LANGUAGES = window.SINGE_LANGUAGES || []).push({
@@ -70,6 +70,8 @@
     'results.time': 'Temps :',
     'results.best': { one: 'Meilleur : {acc} % de précision, le plus rapide {time} (joué {n} fois)',
                       other: 'Meilleur : {acc} % de précision, le plus rapide {time} (joué {n} fois)' },
+    'results.not_counted': 'Sous le seuil de réussite de {pct} %, cette partie n’a pas été enregistrée comme résultat.',
+    'results.new_best': 'Nouveau record !',
     'results.again': 'Rejouer',
     'results.menu': 'Retour au menu',
 

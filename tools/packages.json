@@ -1,0 +1,31 @@
+{
+  "_comment": "The zipped packages of maps. Each package is one zip with the game plus its own maps. 'maps' are config.js entries (a file name, or {id, file, scope, name, blurb}). 'title' replaces the game's title in lang/en.json for this package. A package with no maps is skipped until it has some.",
+  "packages": [
+    {
+      "slug": "countries",
+      "title": "Studies In Geography: Countries",
+      "title_fr": "Études de géographie : pays",
+      "maps": [
+        "sierra_leone",
+        "us"
+      ]
+    },
+    {
+      "slug": "continents",
+      "title": "Studies In Geography: Continents",
+      "title_fr": "Études de géographie : continents",
+      "maps": []
+    },
+    {
+      "slug": "world",
+      "title": "Studies In Geography: World",
+      "title_fr": "Études de géographie : monde",
+      "maps": [
+        {"id": "world", "file": "world", "scope": "un", "name": "World: UN countries",
+         "blurb": "Find the 193 UN member countries, plus Vatican City and Palestine"},
+        {"id": "world_all", "file": "world", "scope": "all", "name": "World: all countries, territories and islands",
+         "blurb": "Find every country, territory and island of the world, including the small ones"}
+      ]
+    }
+  ]
+}

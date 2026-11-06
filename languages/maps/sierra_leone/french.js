@@ -6,8 +6,8 @@
    is shown the way the settings file has it (the default language).
 
    TO ADD A LANGUAGE FOR THIS MAP
-     1. Copy this file to lang/maps/sierra_leone/<language>.js (the file name is the
-        language's id, the same as in lang/<language>.js and the "languages"
+     1. Copy this file to languages/maps/sierra_leone/<language>.js (the file name is the
+        language's id, the same as in languages/<language>.js and the "languages"
         list in config.js).
      2. Change "language" below and translate the text.
 
@@ -20,7 +20,7 @@
    ========================================================================== */
 (window.GeoMapText = window.GeoMapText || []).push({
   map: 'sierra_leone',          // the map's id
-  language: 'french',           // the language's id (file name in lang/)
+  language: 'french',           // the language's id (file name in languages/)
 
   blurb: 'Trouvez les 18 districts',
   credit: 'Limites : Sierra Leone - Subnational Administrative Boundaries (COD-AB), Gouvernement de la Sierra Leone / OCHA / ITOS, via la Humanitarian Data Exchange (data.humdata.org/dataset/cod-ab-sle). Licence : CC BY-IGO. NON OFFICIEL, modifié par SINGE à partir des meilleures données publiques disponibles : les districts de Karene, Bombali, Falaba et Koinadugu ont été redessinés pour refléter la division des chefferies de Gbanti Kamaranka et de Nieni ; les nouveaux districts de Bandajuma et de Kpanguima (avec la nouvelle chefferie de Jahn) ont été ajoutés.',

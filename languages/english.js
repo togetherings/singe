@@ -6,7 +6,7 @@
    change the file name (french.js, spanish.js...), and translate the text.
 
    TO ADD A LANGUAGE
-     1. Copy this file to lang/<language>.js (use the same name for "id" below).
+     1. Copy this file to languages/<language>.js (use the same name for "id" below).
      2. Change id, name, code and dir, then translate every line under "text".
         Leave the {words in braces} exactly as they are: the game fills them in
         (for example {name} becomes the name of a region). You may move them.
@@ -20,7 +20,7 @@
    "other" is always required).
 
    Text about a particular MAP (its title, region names, capitals) is not here:
-   see lang/maps/<map>/<language>.js.
+   see languages/maps/<map>/<language>.js.
    ========================================================================== */
 (window.SINGE_LANGUAGES = window.SINGE_LANGUAGES || []).push({
   id: 'english',          // must equal this file's name (without .js)
@@ -96,6 +96,8 @@
     'results.time': 'Time:',
     'results.best': { one: 'Best: {acc}% accuracy, fastest {time} (played {n} time)',
                       other: 'Best: {acc}% accuracy, fastest {time} (played {n} times)' },
+    'results.not_counted': 'Below the {pct}% pass mark, so this round was not saved as a result.',
+    'results.new_best': 'New best!',
     'results.again': 'Play again',
     'results.menu': 'Back to menu',
 
