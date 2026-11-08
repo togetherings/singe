@@ -65,5 +65,5 @@ features). The files are the same as the original in every other way (WGS84 long
 
 ```
 python3 tools/make_sierra_leone_package.py <folder with the original sle_*.geojson> \
-        --settings map-settings/sierra_leone.js --out <output folder>
+        --settings maps/sierra_leone/settings.js --out <output folder>
 ```

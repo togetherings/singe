@@ -1,0 +1,18 @@
+{
+  "blurb": "Trouvez les 18 districts",
+  "credit": "Limites : Sierra Leone - Subnational Administrative Boundaries (COD-AB), Gouvernement de la Sierra Leone / OCHA / ITOS, via la Humanitarian Data Exchange (data.humdata.org/dataset/cod-ab-sle). Licence : CC BY-IGO. NON OFFICIEL, modifié par SINGE à partir des meilleures données publiques disponibles : les districts de Karene, Bombali, Falaba et Koinadugu ont été redessinés pour refléter la division des chefferies de Gbanti Kamaranka et de Nieni ; les nouveaux districts de Bandajuma et de Kpanguima (avec la nouvelle chefferie de Jahn) ont été ajoutés.",
+  "regions": {
+    "Kpanguima": {
+      "info": "Nouveau district, aussi orthographié Kpanguma ou Panguma. Il est formé des chefferies de Lower Bambara, Malegohun (Kenema), Yawei, Penguia, Kpeje West, Kpeje Bongre (Kailahun) et de la nouvelle chefferie de Jahn, détachée de la chefferie de Njaluahun. Kpeje Bongre forme désormais deux chefferies (Kpeje et Bongre), montrées ici comme une seule. Ses limites ici sont non officielles et tirées des meilleures données publiques disponibles."
+    },
+    "Bandajuma": {
+      "info": "Nouveau district, formé des chefferies de Wonde (Bo), Sowa, Pejeh (Futa Peje), Barri, Makpele et Soro Gbema (Pujehun), et de Langrama, Niawa et Tunkia (Kenema). Ses limites ici sont non officielles et tirées des meilleures données publiques disponibles."
+    },
+    "Western Area Rural": {
+      "name": "Zone rurale de l'Ouest"
+    },
+    "Western Area Urban": {
+      "name": "Zone urbaine de l'Ouest"
+    }
+  }
+}

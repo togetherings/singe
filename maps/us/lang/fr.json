@@ -1,0 +1,61 @@
+{
+  "name": "États-Unis",
+  "blurb": "Trouvez les 50 états, D.C. et 5 territoires",
+  "credit": "Limites : U.S. Census Bureau (domaine public). L'Alaska, Hawaï et les territoires sont rapprochés et redimensionnés, et Washington D.C. est agrandi.",
+  "regions": {
+    "American Samoa": {
+      "name": "Samoa américaines"
+    },
+    "California": {
+      "name": "Californie"
+    },
+    "District of Columbia": {
+      "name": "District de Columbia"
+    },
+    "Florida": {
+      "name": "Floride"
+    },
+    "Georgia": {
+      "name": "Géorgie"
+    },
+    "Hawaii": {
+      "name": "Hawaï"
+    },
+    "Louisiana": {
+      "name": "Louisiane"
+    },
+    "New Mexico": {
+      "name": "Nouveau-Mexique"
+    },
+    "North Carolina": {
+      "name": "Caroline du Nord"
+    },
+    "North Dakota": {
+      "name": "Dakota du Nord"
+    },
+    "Northern Mariana Islands": {
+      "name": "Îles Mariannes du Nord"
+    },
+    "Pennsylvania": {
+      "name": "Pennsylvanie"
+    },
+    "Puerto Rico": {
+      "name": "Porto Rico"
+    },
+    "South Carolina": {
+      "name": "Caroline du Sud"
+    },
+    "South Dakota": {
+      "name": "Dakota du Sud"
+    },
+    "U.S. Virgin Islands": {
+      "name": "Îles Vierges des États-Unis"
+    },
+    "Virginia": {
+      "name": "Virginie"
+    },
+    "West Virginia": {
+      "name": "Virginie-Occidentale"
+    }
+  }
+}

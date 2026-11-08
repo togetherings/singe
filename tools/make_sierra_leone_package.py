@@ -4,7 +4,7 @@ Make the UNOFFICIAL, updated Sierra Leone boundary package (same files as the HD
 Built on the best publicly available data at the time. NOT an official boundary.
 
   python3 make_sierra_leone_package.py <folder with the original sle_*.geojson files> \\
-          --settings ../map-settings/sierra_leone.js --out <output folder>
+          --settings ../maps/sierra_leone/settings.js --out <output folder>
 
 The original is "Sierra Leone - Subnational Administrative Boundaries" (COD-AB SLE, version v02),
 Humanitarian Data Exchange: https://data.humdata.org/dataset/cod-ab-sle   Licence CC BY-IGO.

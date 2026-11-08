@@ -2,13 +2,28 @@
   "format": 1,
   "type": "scored",
   "id": "org.togetherings.singe",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "languages": [
     "en",
     "fr"
   ],
   "icon": "icon.svg",
   "color": "#2d5d8a",
+  "options": {
+    "theme": "light"
+  },
+  "content": [
+    "maps"
+  ],
+  "exclude": [
+    "tools/*",
+    "docs/*",
+    "data/*",
+    "tests/*",
+    "build/*",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "scoring": {
     "fields": [
       {
@@ -40,7 +55,20 @@
     "counts": "best",
     "boards": {
       "label": "map_label",
-      "names": {},
+      "names": {
+        "sierra_leone": "board.sierra_leone",
+        "sierra_leone_capitals": "board.sierra_leone_capitals",
+        "sierra_leone_flags": "board.sierra_leone_flags",
+        "us": "board.us",
+        "us_capitals": "board.us_capitals",
+        "us_flags": "board.us_flags",
+        "world": "board.world",
+        "world_capitals": "board.world_capitals",
+        "world_flags": "board.world_flags",
+        "world_all": "board.world_all",
+        "world_all_capitals": "board.world_all_capitals",
+        "world_all_flags": "board.world_all_flags"
+      },
       "total": {
         "label": "all_maps",
         "count_label": "maps_played"
@@ -50,5 +78,47 @@
   "authors": [
     "Togetherings"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "package_files": [
+    "maps/*"
+  ],
+  "packages": [
+    {
+      "id": "countries",
+      "title": "package.countries",
+      "description": "package.countries_about",
+      "files": [
+        "maps/sierra_leone/*",
+        "maps/us/*"
+      ],
+      "config": {
+        "maps": [
+          "sierra_leone",
+          "us"
+        ]
+      }
+    },
+    {
+      "id": "world",
+      "title": "package.world",
+      "description": "package.world_about",
+      "files": [
+        "maps/world/*"
+      ],
+      "config": {
+        "maps": [
+          {
+            "id": "world",
+            "file": "world",
+            "scope": "un"
+          },
+          {
+            "id": "world_all",
+            "file": "world",
+            "scope": "all"
+          }
+        ]
+      }
+    }
+  ]
 }

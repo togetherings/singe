@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-World map: first version of map-settings/world.js
+World map: first version of maps/world/settings.js
 =================================================
 Writes the hand-editable settings file of the world map, with a capital for every region that is a
 sovereign state in someone's view. Run it ONCE to create the file (running it again overwrites your edits):
 
-  python3 world_settings.py ../maps/world.js ne_10m_populated_places_simple.shp --out ../map-settings/world.js
+  python3 world_settings.py ../maps/world/shapes.js ne_10m_populated_places_simple.shp --out ../maps/world/settings.js
 
 Capitals come from Natural Earth's populated places (public domain). Rules:
   - Only UN members, the two UN observers (Vatican City, Palestine) and the places other states recognise as
@@ -63,7 +63,7 @@ def main():
     ap.add_argument('shapes')
     ap.add_argument('places')
     ap.add_argument('--out', required=True)
-    ap.add_argument('--flags', help='folder with the flag files (<2-letter code>.svg): they are copied to flags/world/ next to the maps')
+    ap.add_argument('--flags', help='folder with the flag files (<2-letter code>.svg): they are copied to maps/world/flags/ next to the maps')
     args = ap.parse_args()
 
     text = open(args.shapes, encoding='utf-8').read()
@@ -116,7 +116,7 @@ def main():
                 continue
             iso = FLAG_FILE.get(r['name'], (r.get('iso2') or '').lower())
             if iso and iso in have:
-                flags[r['name']] = 'flags/world/%s.svg' % iso
+                flags[r['name']] = 'maps/world/flags/%s.svg' % iso
                 used.add(iso)
             elif r['d'] or r['name'] in caps:
                 missing.append(r)
@@ -124,9 +124,9 @@ def main():
             for r in shapes['regions'] if r['name'] in caps or r['name'] in flags]
 
     out = ["""/* ==========================================================================
-   MAP SETTINGS: World   (hand-edited - the map SHAPES are in maps/world.js)
+   MAP SETTINGS: World   (hand-edited - the map SHAPES are in maps/world/shapes.js)
    --------------------------------------------------------------------------
-   See map-settings/sierra_leone.js for an explanation of the settings every map has.
+   See maps/sierra_leone/settings.js for an explanation of the settings every map has.
    Settings that are specific to this map:
      scope             'un'  the 193 UN member states, plus Vatican City and Palestine, are the regions of the
                              game. Everything else is drawn in grey and is not asked about, and parts of a
@@ -199,7 +199,7 @@ def main():
     print('wrote %s with %d capitals and %d flags' % (args.out, len([r for r in rows if r[1]]), len(flags)))
     if args.flags:
         import shutil
-        dest = os.path.join(os.path.dirname(os.path.abspath(args.out)), '..', 'flags', 'world')
+        dest = os.path.join(os.path.dirname(os.path.abspath(args.out)), 'flags')   # maps/world/flags/, next to settings.js
         os.makedirs(dest, exist_ok=True)
         for iso in sorted(used):
             shutil.copy(os.path.join(args.flags, iso + '.svg'), os.path.join(dest, iso + '.svg'))

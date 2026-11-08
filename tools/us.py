@@ -1,7 +1,7 @@
 """
 United States: map-specific code for map_generation.py
 ======================================================
-  python3 map_generation.py us-states.geojson --id us --out ../maps/us.js --script us.py
+  python3 map_generation.py us-states.geojson --id us --out ../maps/us/shapes.js --script us.py
 
 Data: U.S. Census Bureau state and territory boundaries (public domain). The map is drawn with
 an Albers equal-area conic projection. Alaska, Hawaii and the territories are moved closer,

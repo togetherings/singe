@@ -4,20 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SINGE: Studies In Geography</title>
-<meta name="version" content="0.3.0">
 <script src="config.js"></script>
-<script src="edugame-config.js"></script>   <!-- made by the EduGame Kit build (see docs/GUIDE.md); absent when this page is opened straight from the repository -->
+<!-- Made by the EduGame Kit ("edugame preview" or "edugame build"; see docs/GUIDE.md): the game's words and settings,
+     and the helper that saves, picks the language and theme, and adds the header with the Options button. -->
+<script src="edugame-config.js"></script>
 <script src="edugame.js"></script>
-<script src="languages/english.js"></script>   <!-- the default language is always loaded; others are listed in config.js -->
-<script>
-  /* Apply the Light / Dark / Auto default before the page is drawn, so there is no flash. (A learner's own choice is
-     saved with the save helper and applied as soon as it has loaded.) */
-  (function () {
-    var t = (window.SINGE_CONFIG && window.SINGE_CONFIG.default_theme) || 'light';
-    var dark = t === 'dark' || (t === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
-    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-  })();
-</script>
 <style>
   /* ---------- Colours (change here to re-theme the whole game) ----------
      Light is the default. The dark theme (further down) overrides the same names. */
@@ -85,8 +76,6 @@
   /* ---------- Menu: one card per map, one button per game mode ---------- */
   #menuList { display: grid; gap: 14px; margin-top: 16px; }
   .mapCard { background: var(--card); border: 2px solid var(--line); border-radius: 8px; padding: 12px 16px 16px; }
-  .menuHead { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-  .menuHead h2 { margin-bottom: 0; }
   /* optional picture on a map's card (set as "image" in the map's settings): floats to the right of the
      name and description and is scaled down so it can never push the mode buttons around */
   html[dir="rtl"] .mapCard .mapImg { float: left; margin: 0 12px 8px 0; }
@@ -270,12 +259,6 @@
   #flagClose { position: absolute; top: -14px; right: -14px; width: 2em; padding: 2px 0; font-size: 1.1rem; line-height: 1; }
 
   /* ---------- Options page ---------- */
-  #options fieldset { border: 2px solid var(--line); border-radius: 8px; margin: 12px 0; padding: 8px 16px 12px; }
-  #options legend { padding: 0 6px; font-weight: bold; }
-  #options label { display: block; padding: 4px 0; cursor: pointer; }
-  #options small { opacity: .75; }
-  #options select { font: inherit; color: var(--text); background: var(--card); border: 2px solid var(--line);
-                    border-radius: 6px; padding: 6px 10px; }
 
   /* ---------- Results page ---------- */
   #results p { margin: .4em 0; font-size: 1.15rem; }
@@ -284,7 +267,7 @@
 </head>
 <body class="loading">
 
-<!-- The site title is no longer shown here (it is the heading of the menu page). The header only holds the
+<!-- The kit adds its own header above everything: the title and the Options button. This one only holds the
      Full Screen button, and is hidden unless config.js says fullscreen_button: true. -->
 <header id="siteHeader" class="hidden"><div><button id="fsBtn" type="button"></button></div></header>
 
@@ -292,11 +275,8 @@
 
   <!-- ======================= MENU PAGE ======================= -->
   <div id="menu">
-    <div class="menuHead">
-      <h2 data-i18n="site.title"></h2>
-      <button id="optBtn" data-i18n="menu.options"></button>
-    </div>
-    <p data-i18n="menu.intro"></p>
+    <h2 data-t="menu.title"></h2>
+    <p data-t="menu.intro"></p>
     <div id="menuList"></div>
   </div>
 
@@ -304,25 +284,25 @@
   <div id="game" class="hidden">
     <div id="bar">
       <div id="prompt"></div>
-      <img id="promptFlag" class="hidden" data-i18n-alt="flag.alt" data-i18n-title="flag.hint" tabindex="0" role="button">
+      <img id="promptFlag" class="hidden" tabindex="0" role="button" data-t-attr="alt:flag.alt,title:flag.hint">
       <div id="stats">
-        <span data-i18n="game.time"></span><span id="time" class="num">0:00</span>
-        <span data-i18n="game.found"></span><span class="num"><span id="found">0</span>/<span id="total">0</span></span>
+        <span data-t="game.time"></span><span id="time" class="num">0:00</span>
+        <span data-t="game.found"></span><span class="num"><span id="found">0</span>/<span id="total">0</span></span>
       </div>
       <div id="totals">
         <span id="totRegLabel"></span><span id="totReg" class="num"></span>
         <span id="totCapLabel" class="capRow"></span><span id="totCap" class="num capRow"></span>
       </div>
       <span id="skipBtns" class="hidden">
-        <button id="skipPrev" data-i18n="skip.prev_icon" data-i18n-title="skip.prev" data-i18n-aria="skip.prev"></button>
-        <button id="skipNext" data-i18n="skip.next_icon" data-i18n-title="skip.next" data-i18n-aria="skip.next"></button>
+        <button id="skipPrev" data-t="skip.prev_icon" data-t-attr="title:skip.prev,aria-label:skip.prev"></button>
+        <button id="skipNext" data-t="skip.next_icon" data-t-attr="title:skip.next,aria-label:skip.next"></button>
       </span>
       <span id="zoomBtns">
-        <button id="zoomOut" data-i18n-title="zoom.out" data-i18n-aria="zoom.out">&minus;</button>
-        <button id="zoomFull" data-i18n="zoom.full" data-i18n-title="zoom.full_hint" data-i18n-aria="zoom.full_hint"></button>
-        <button id="zoomIn" data-i18n-title="zoom.in" data-i18n-aria="zoom.in">+</button>
+        <button id="zoomOut" data-t-attr="title:zoom.out,aria-label:zoom.out">&minus;</button>
+        <button id="zoomFull" data-t="zoom.full" data-t-attr="title:zoom.full_hint,aria-label:zoom.full_hint"></button>
+        <button id="zoomIn" data-t-attr="title:zoom.in,aria-label:zoom.in">+</button>
       </span>
-      <button id="backBtn" data-i18n="game.back"></button>
+      <button id="backBtn" data-t="game.back"></button>
       <div id="feedback" aria-live="polite"></div>
     </div>
     <div id="mapBox"></div>
@@ -332,37 +312,19 @@
 
   <div id="rotateHint" role="alertdialog">
     <div class="turn" aria-hidden="true">&#x21BB;</div>
-    <div data-i18n="rotate.hint"></div>
-    <button id="rotateOk" data-i18n="rotate.continue"></button>
-  </div>
-
-  <!-- ======================= OPTIONS PAGE ======================= -->
-  <div id="options" class="hidden">
-    <h2 data-i18n="options.title"></h2>
-    <fieldset>
-      <legend data-i18n="options.appearance"></legend>
-      <label><input type="radio" name="theme" value="light"> <span data-i18n="options.theme_light"></span></label>
-      <label><input type="radio" name="theme" value="dark"> <span data-i18n="options.theme_dark"></span></label>
-      <label><input type="radio" name="theme" value="auto"> <span data-i18n="options.theme_auto"></span> <small data-i18n="options.theme_auto_hint"></small></label>
-    </fieldset>
-    <fieldset>
-      <legend data-i18n="options.language"></legend>
-      <!-- A drop-down when there is more than one language; otherwise just the name of the one language. -->
-      <select id="langSel" data-i18n-aria="options.language" class="hidden"></select>
-      <span id="langName"></span>
-    </fieldset>
-    <button id="optBack" data-i18n="options.back"></button>
+    <div data-t="rotate.hint"></div>
+    <button id="rotateOk" data-t="rotate.continue"></button>
   </div>
 
   <!-- ======================= RESULTS PAGE ======================= -->
   <div id="results" class="hidden">
-    <h2 data-i18n="results.title"></h2>
+    <h2 data-t="results.title"></h2>
     <p id="resMap"></p>
-    <p><span data-i18n="results.accuracy"></span> <b id="resAcc"></b></p>
-    <p><span data-i18n="results.time"></span> <b id="resTime"></b></p>
+    <p><span data-t="results.accuracy"></span> <b id="resAcc"></b></p>
+    <p><span data-t="results.time"></span> <b id="resTime"></b></p>
     <p id="resBest"></p>
-    <button id="againBtn" data-i18n="results.again"></button>
-    <button id="menuBtn" data-i18n="results.menu"></button>
+    <button id="againBtn" data-t="results.again"></button>
+    <button id="menuBtn" data-t="results.menu"></button>
   </div>
 
 </main>
@@ -371,15 +333,15 @@
 <!-- Information panel (Practice mode): shown when a region or capital that has information is clicked -->
 <!-- Full-size flag (Flags mode): shown when the flag is clicked -->
 <div id="flagBack" class="hidden">
-  <div id="flagCard" role="dialog" aria-modal="true" data-i18n-aria="flag.full_alt">
-    <button id="flagClose" data-i18n-aria="common.close">&times;</button>
-    <img id="flagBig" data-i18n-alt="flag.full_alt">
+  <div id="flagCard" role="dialog" aria-modal="true" data-t-attr="aria-label:flag.full_alt">
+    <button id="flagClose" data-t-attr="aria-label:common.close">&times;</button>
+    <img id="flagBig" data-t-attr="alt:flag.full_alt">
   </div>
 </div>
 
 <div id="infoBack" class="hidden">
   <div id="infoCard" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
-    <button id="infoClose" data-i18n-aria="common.close">&times;</button>
+    <button id="infoClose" data-t-attr="aria-label:common.close">&times;</button>
     <h3 id="infoTitle"></h3>
     <div id="infoSub"></div>
     <img id="infoFlag" class="hidden" alt="">
@@ -387,8 +349,8 @@
   </div>
 </div>
 
-<!-- Maps are NOT listed here: the names in the "maps" list in config.js are loaded automatically
-     (maps/<name>.js and map-settings/<name>.js). -->
+<!-- Maps are NOT listed here: the maps of the package (edugame.json) are loaded automatically
+     (maps/<name>/shapes.js and maps/<name>/settings.js). -->
 
 <!-- ======================= GAME CODE ======================= -->
 <script src="js/game.js"></script>

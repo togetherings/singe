@@ -5,17 +5,17 @@ A map game where you click the correct location of countries, capitals and flags
 **Maps:** Sierra Leone (18 districts, including the new Bandajuma and Kpanguima), United States, World (two versions: UN members only, or every country, territory and island).
 **Modes:** Practice, Regions, Capitals, Flags (each can be turned on or off per map).
 
-**Current version: 0.3.0** (see [CHANGELOG.md](CHANGELOG.md)).
+**Current version: 0.4.0** (see [CHANGELOG.md](CHANGELOG.md)).
 
 ## Live preview
 **[▶ Play SINGE in your browser: togetherings.github.io/singe](https://togetherings.github.io/singe/)**
 
-The live preview is the current `main` branch served by GitHub Pages. It is the full game, running offline-capable in any modern browser, so you can try every map and mode, check changes, or share a link, without importing anything into Kolibri. It is only a preview: SCORM reporting needs Kolibri, so on the preview your scores are saved in your own browser (`localStorage`) only. Updates to `main` appear on the page within a minute or two.
+The site is built from the current `main` branch by EduGame Kit (`edugame pages`), with each package of maps to play in the browser. Scores there are saved in your own browser only. Updates to `main` appear within a few minutes.
 
-*(Maintainers: if the link shows a 404, turn on Pages once under Settings → Pages → "Deploy from a branch" → `main` / root.)*
+*(Maintainers: under Settings → Pages, set Source to "GitHub Actions"; the `GitHub Pages` workflow publishes the site.)*
 
 ## Play locally
-Open `index.html` in a browser.
+Install [EduGame Kit](https://github.com/togetherings/edugame-kit) (`pip install git+https://github.com/togetherings/edugame-kit.git`), then run `edugame preview .` in this folder (`--package world` for the World maps). The kit makes the files the page needs.
 
 ## Use in Kolibri
 SINGE comes in separate zipped packages of maps. Download the ones you want from the [Releases](../../releases) page and upload them to a channel in Kolibri Studio as HTML5 apps (see the Kolibri Games plugin's docs):
@@ -24,15 +24,15 @@ SINGE comes in separate zipped packages of maps. Download the ones you want from
 |---|---|
 | `singe-countries-<version>.zip` | Sierra Leone, United States |
 | `singe-world-<version>.zip` | World (UN countries) and World (all countries, territories and islands) |
-| `singe-continents-<version>.zip` | Coming next, starting with Africa |
+| Continents | Coming next, starting with Africa |
 
-All packages are the same game (same id), so a learner's scores from every package appear together on the scoreboards. Each zip has its files at the root. To make your own package, edit `tools/packages.json` and run `python tools/build_packages.py` (needs EduGame Kit: `pip install git+https://github.com/togetherings/edugame-kit.git`).
+All packages are the same game (same id), so a learner's scores from every package appear together on the scoreboards. Each zip has every language (English and French); learners choose theirs with the Options button, and get Kolibri's language until they do. To make your own package, add it to `packages` in `edugame.json` and run `edugame build . -o dist` (see [docs/GUIDE.md](docs/GUIDE.md)).
 
 ## Make a release
-Versions are numbered `major.minor.patch` (for example `0.3.0`); the version is set in `config.js` and `index.html` and described in `CHANGELOG.md`.
+Versions are numbered `major.minor.patch` (for example `0.4.0`); the version is set in `edugame.json` and described in `CHANGELOG.md`.
 
 1. Merge your changes into `main` and update the version and `CHANGELOG.md`.
-2. Publish a release on GitHub with a new tag such as `v0.3.0`.
+2. Publish a release on GitHub with a new tag such as `v0.4.0`.
 3. The `Release zip` workflow builds the package zips with EduGame Kit (game files at the root) and attaches them, and the Sierra Leone data zip, to the release.
 
 You can also run the workflow by hand from the Actions tab to get the zips as a build artifact.
