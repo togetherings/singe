@@ -1,7 +1,7 @@
 /* ==========================================================================
-   MAP SETTINGS: United States   (hand-edited - the map SHAPES are in maps/us.js)
+   MAP SETTINGS: United States   (hand-edited - the map SHAPES are in maps/us/shapes.js)
    --------------------------------------------------------------------------
-   See map-settings/sierra_leone.js for an explanation of every setting.
+   See maps/sierra_leone/settings.js for an explanation of every setting.
    Settings that are specific to this map:
      include_territories  true: Guam, Puerto Rico, the U.S. Virgin Islands, American Samoa
                           and the Northern Mariana Islands are on the map and in every game mode.
@@ -16,7 +16,7 @@
   id: 'us',
   name: 'United States',
   blurb: 'Find the 50 states, D.C. and 5 territories',
-  image: 'flags/united_states.svg',
+  image: 'maps/us/flag.svg',
   credit: 'Boundaries: U.S. Census Bureau (public domain). Alaska, Hawaii and the territories are moved closer and resized, and Washington D.C. is enlarged.',
   orientation: 'horizontal',
   zoom_levels: 5,

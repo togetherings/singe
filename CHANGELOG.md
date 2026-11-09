@@ -2,6 +2,17 @@
 
 SINGE uses `major.minor.patch` version numbers. Builds made before versioning (v001 to v024) are treated as 0.1.0.
 
+## 0.4.0
+### Options, languages and maps, the EduGame Kit way
+- **Options** is now the kit's: a header at the top with the title and an Options button, which opens a panel over the game (Appearance and Language) instead of a separate page. The appearance shows straight away; the language changes on Apply. On the Kolibri Games games page, the header has only the button.
+- **Language:** a learner who hasn't chosen one gets Kolibri's language (on the Kolibri Games games page), then the browser's. The choice is kept in the learner's save. Saves from earlier versions keep their scores but not the theme or language choice.
+- **One file per language:** `languages/english.js` and `french.js` are now `lang/en.json` and `lang/fr.json`, with the kit's words, notes for translators (`_notes`) and the scoreboard and package names.
+- **One folder per map:** `maps/<map>/shapes.js`, `settings.js`, its pictures, and `lang/<code>.json` for its translations (was `maps/`, `map-settings/`, `flags/` and `languages/maps/`).
+- **Packages** are in `edugame.json` and built with `edugame build` (was `tools/packages.json` and `tools/build_packages.py`). Scoreboard names come in English and French.
+- The World map's two variants (UN countries, everything) have their names in `maps/world/settings.js` (`variants`), so they can be translated.
+- GitHub Pages is built by the kit (`edugame pages`), with each package to play.
+- New `tests/e2e_browser.py` plays each package in a browser.
+
 ## 0.3.0: 2026-11-06
 ### Now a Scored Game (EduGame Kit)
 - SINGE is built with EduGame Kit and works with the Kolibri Games plugin's scoreboards (one board per map and mode, plus an all-maps total). Existing learner saves carry over.

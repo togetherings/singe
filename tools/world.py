@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-World map: shapes generator (maps/world.js)
+World map: shapes generator (maps/world/shapes.js)
 ===========================================
 Reads Natural Earth "Admin 0 - Countries" (10 m, public domain) and writes the SHAPES file of the
-world map. Names, capitals and options live in map-settings/world.js (see world_settings.py,
+world map. Names, capitals and options live in maps/world/settings.js (see world_settings.py,
 which writes the first version of that file).
 
-  python3 world.py ne_10m_admin_0_countries.json --out ../maps/world.js
+  python3 world.py ne_10m_admin_0_countries.json --out ../maps/world/shapes.js
 
 What it does
   1. Drops Antarctica and the uninhabited / contested oddities (Spratly Is., Bajo Nuevo, Serranilla Bank,
@@ -130,7 +130,7 @@ BREAKAWAY = [
     ('RUS', 'Crimea', box(32.4, 36.7, 44.3, 46.3), 'Europe', 'Eastern Europe'),
 ]
 
-# COMBINE: two places drawn as ONE region on the map (the game keeps a separate entry for each, see map-settings):
+# COMBINE: two places drawn as ONE region on the map (the game keeps a separate entry for each, see maps/world/settings.js):
 # (host, twin). The host's shape holds both; the twin has no shape of its own ("twin" field in the shapes file).
 COMBINE = [('Saint Martin', 'Sint Maarten'), ('Sint Eustatius', 'Saba')]
 
@@ -928,7 +928,7 @@ def main():
               '     cont / sub (continent and sub-region, for future continent maps), d (SVG path), sz (size of the\n'
               '     biggest piece in units), mk ([x, y] of that piece), small (1 = needs a wide click area),\n'
               '     ins ({inset id: {d: path, mk: [x, y], sz: size} in the fixed strip under the map}).\n'
-              '   Names, capitals and options are in map-settings/world.js. */\n') % (K, W)
+              '   Names, capitals and options are in maps/world/settings.js. */\n') % (K, W)
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
     open(args.out, 'w', encoding='utf-8').write(header + '(window.GeoMapShapes = window.GeoMapShapes || []).push(' + text + ');\n')
     print('wrote %s (%d KB), %d regions, map %dx%d units' % (args.out, len(text) // 1024, len(out_regions), W, H))

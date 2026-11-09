@@ -4,7 +4,7 @@ Sierra Leone: map-specific code for map_generation.py
 Run from the tools folder with the chiefdom (ADM3) and section (ADM4) files:
 
   python3 map_generation.py sle_admin3.geojson sle_admin4_em.geojson \\
-          --id sierra_leone --out ../maps/sierra_leone.js --script sierra_leone.py
+          --id sierra_leone --out ../maps/sierra_leone/shapes.js --script sierra_leone.py
 
 The 18 district outlines are built by merging chiefdom polygons, because the
 published district data does not show the changes made since it was drawn.

@@ -1,21 +1,22 @@
 /* ==========================================================================
-   MAP SETTINGS: Sierra Leone   (hand-edited - the map SHAPES are in maps/sierra_leone.js)
+   MAP SETTINGS: Sierra Leone   (hand-edited - the map SHAPES are in maps/sierra_leone/shapes.js)
    --------------------------------------------------------------------------
    This file can be edited freely; nothing needs to be regenerated.
-   Each map has one shapes file in maps/ and one settings file in map-settings/
-   with the SAME NAME. To add a map, copy this file, change it, and add its
-   name to the "maps" list in config.js. Game-wide settings are in config.js.
+   Each map has its own folder, maps/<map id>/, with shapes.js (made by the tools), this
+   settings.js, its pictures, and lang/<code>.json for its translations. To add a map, make
+   its folder, copy this file there and change it, then add the map to config.js and to a
+   package in edugame.json (see docs/GUIDE.md). Game-wide settings are in config.js.
 
    LANGUAGE: the text in this file (name, blurb, credit, region and capital names, info) is in the
-   DEFAULT language set in config.js. Translations go in languages/maps/<map id>/<language>.js
-   (see languages/maps/sierra_leone/french.js), so this file never needs duplicating.
+   game's default language (the first in edugame.json). Translations go in maps/<map id>/lang/<code>.json
+   (see maps/sierra_leone/lang/fr.json), so this file never needs duplicating.
 
    MAP-LEVEL SETTINGS
      id            must match the id in the shapes file
      name, blurb   title and one-line description on the menu
      credit        data credit shown under the map (leave '' for none)
      image         optional picture shown at the right of this map's menu card (e.g. a flag),
-                   as a path from index.html such as 'flags/sierra_leone.svg'. It is scaled down
+                   as a path from index.html such as 'maps/sierra_leone/flag.svg'. It is scaled down
                    automatically to fit, so any size works. Leave out for no picture.
      orientation   'vertical' (default) or 'horizontal' (gives the map a wider page)
      zoom_levels   number of + presses from Full view to maximum zoom (default: config.js)
@@ -36,7 +37,7 @@
      capital       { name, lat, lon, info } - lat/lon as shown on Google Maps.
                    Optional hide_in_practice: true keeps it out of Practice mode.
      info          text shown in the Practice-mode information panel (optional)
-     flag          path to a flag image, e.g. 'flags/bo.png' (optional)
+     flag          path to a flag image, e.g. 'maps/sierra_leone/bo.png' (optional)
    Anything left empty ('') is simply not shown. Region names must match the
    shapes file exactly; the game logs a warning in the browser console if not.
    ========================================================================== */
@@ -44,7 +45,7 @@
   id: 'sierra_leone',
   name: 'Sierra Leone',
   blurb: 'Find the 18 districts',
-  image: 'flags/sierra_leone.svg',
+  image: 'maps/sierra_leone/flag.svg',
   credit: 'Boundaries: Sierra Leone - Subnational Administrative Boundaries (COD-AB), Government of Sierra Leone / OCHA / ITOS, via the Humanitarian Data Exchange (data.humdata.org/dataset/cod-ab-sle). License: CC BY-IGO. UNOFFICIAL, modified by SINGE from the best public data available: Karene, Bombali, Falaba and Koinadugu districts redrawn for the split of Gbanti Kamaranka and Nieni chiefdoms; new Bandajuma and Kpanguima districts (with the new Jahn Chiefdom) added.',
   orientation: 'vertical',
   zoom_levels: 4,
