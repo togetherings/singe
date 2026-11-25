@@ -2,6 +2,10 @@
 
 SINGE uses `major.minor.patch` version numbers. Builds made before versioning (v001 to v024) are treated as 0.1.0.
 
+## Unreleased
+- **Kit updates come as pull requests.** The checks, the zips and GitHub Pages use EduGame Kit's own workflows at a kit release, and Dependabot opens a pull request for each new kit release (and for the GitHub actions). `ci.yml` and `release.yml` are replaced by `build.yml`; releases are made when a release is published (its tag must match `version` in `edugame.json`), with the package zips and the Sierra Leone data zip.
+- **Played in a real Kolibri:** each package's zip (`tests/kolibri_play.py`: a Capitals round of the package's first map).
+
 ## 0.4.0
 ### Options, languages and maps, the EduGame Kit way
 - **Options** is now the kit's: a header at the top with the title and an Options button, which opens a panel over the game (Appearance and Language) instead of a separate page. The appearance shows straight away; the language changes on Apply. On the Kolibri Games games page, the header has only the button.

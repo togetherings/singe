@@ -32,10 +32,15 @@ All packages are the same game (same id), so a learner's scores from every packa
 Versions are numbered `major.minor.patch` (for example `0.4.0`); the version is set in `edugame.json` and described in `CHANGELOG.md`.
 
 1. Merge your changes into `main` and update the version and `CHANGELOG.md`.
-2. Publish a release on GitHub with a new tag such as `v0.4.0`.
-3. The `Release zip` workflow builds the package zips with EduGame Kit (game files at the root) and attaches them, and the Sierra Leone data zip, to the release.
+2. Publish a release on GitHub with a new tag such as `v0.4.0` (it must match `version` in `edugame.json`).
+3. The `Build` workflow builds the package zips with EduGame Kit (game files at the root) and attaches them, and the Sierra Leone data zip, to the release.
 
-You can also run the workflow by hand from the Actions tab to get the zips as a build artifact.
+Every push builds the zips too: they're in the run's Artifacts (Actions tab > the run > game-zips).
+
+## Checks and kit updates
+The `Build` workflow calls EduGame Kit's own (`game.yml`, at a kit release like `@v0.3.2`) on every push: `edugame check`, a zip per package, `tests/e2e_browser.py` (each package in a browser, in English and French) and **Real Kolibri**: each package's zip in a throwaway Kolibri, played with `tests/kolibri_play.py` (a Capitals round of the package's first map), checking that the result is saved, comes back, and that a damaged save isn't written over. When the kit has a new release, Dependabot opens a pull request moving it on; merge it when **Checks passed** passes, after reading the release's **What games need to do** (the kit's `docs/UPDATING.md`).
+
+To play the packages in Kolibri on your own computer: `pip install kolibri playwright && python -m playwright install chromium`, then `edugame kolibri-test .` (`--packages 1` for the first package only).
 
 ## Documentation
 - [data/sierra_leone/](data/sierra_leone/README.md): an **unofficial** updated set of Sierra Leone boundary GeoJSON files (new districts, district capitals), free to reuse with attribution.

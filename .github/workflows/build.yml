@@ -1,0 +1,66 @@
+# Checks SINGE, builds a zip for each package of maps, plays them, every time something is pushed. The steps are
+# EduGame Kit's (its game.yml workflow), at the kit release named after "@": Dependabot (.github/dependabot.yml) opens
+# a pull request here when a new kit release comes out, and these checks run on it.
+#
+#   * Kit / Build: edugame check and a zip per package (countries, world), in the run's Artifacts (game-zips).
+#   * Kit / Browser: tests/e2e_browser.py plays each package on the kit's test page, in English and French.
+#   * Kit / Real Kolibri: each package's zip in a real Kolibri, played with tests/kolibri_play.py (all packages:
+#     the maps differ a lot from one package to the next).
+#   * Publish a release (Releases > Draft a new release, with a tag like v0.5.0 that matches "version" in
+#     edugame.json): the package zips, and the Sierra Leone boundary data zip, are attached to it.
+name: Build
+
+on:
+  push:
+  pull_request:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write      # only used to attach the zips to a release
+
+jobs:
+  kit:
+    name: Kit
+    uses: togetherings/edugame-kit/.github/workflows/game.yml@v0.3.2
+    with:
+      browser-tests: python -m tests.e2e_browser --screenshots screenshots
+      kolibri-packages: all
+
+  # The unofficial Sierra Leone boundary data (data/sierra_leone/), attached to releases next to the game's zips.
+  boundary-data:
+    name: Boundary data zip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Name the zip after the release
+        id: data
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then v="$GITHUB_REF_NAME"; else v="dev-${GITHUB_SHA::7}"; fi
+          out="sle_admin_boundaries_unofficial_${v}.geojson.zip"
+          cp data/sierra_leone/sle_admin_boundaries_unofficial.geojson.zip "$out"
+          unzip -l "$out" | tail -3
+          echo "file=$out" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: boundary-data
+          path: ${{ steps.data.outputs.file }}
+      - name: Attach it to the release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$GITHUB_REF_NAME" "${{ steps.data.outputs.file }}" --clobber
+
+  # The name the "Protect main" ruleset asks for (see docs/platforms/GITHUB_PAGES.md in the kit): it passes only
+  # when every job above passed. Add new jobs to "needs".
+  checks-passed:
+    name: Checks passed
+    if: always()
+    needs: [kit, boundary-data]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every check passed
+        run: |
+          echo '${{ toJSON(needs) }}'
+          test "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}" = "false"
