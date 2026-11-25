@@ -23,11 +23,10 @@ permissions:
 jobs:
   kit:
     name: Kit
-    uses: togetherings/edugame-kit/.github/workflows/game.yml@kolibri-packages
+    uses: togetherings/edugame-kit/.github/workflows/game.yml@v0.3.2
     with:
       browser-tests: python -m tests.e2e_browser --screenshots screenshots
       kolibri-packages: all
-      kit: "edugame-kit @ git+https://github.com/togetherings/edugame-kit@kolibri-packages"
 
   # The unofficial Sierra Leone boundary data (data/sierra_leone/), attached to releases next to the game's zips.
   boundary-data:
