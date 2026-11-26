@@ -366,7 +366,7 @@
     'Somaliland': {
       capital: { name: 'Hargeisa', lat: 9.56, lon: 44.065, info: '' },
       info: 'Declared itself independent of Somalia in 1991 and governs itself, but most countries count it as part of Somalia. On the maps of UN countries it is part of Somalia.',
-      flag: 'maps/world/flags/somaliland.svg'
+      flag: ''
     },
     'South Africa': {
       capital: { name: 'Johannesburg', lat: -26.1681, lon: 28.0281, info: '' },
