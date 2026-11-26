@@ -145,6 +145,7 @@ Data licence: Natural Earth is in the public domain; borders are its de facto li
 - **Linked hover**: pointing at a circle (region or capital) in a box also highlights it on the main map (both copies of the world), and the other way round.
 - **World map halos** (wide invisible outlines for tiny regions) are no longer used: the circles do that job (Wallis and Futuna's halo covered its neighbours).
 - Lakes: Natural Earth `ne_10m_lakes` (public domain): lakes that cross borders plus the Great Lakes (`LAKE_FORCE`); `LAKE_SKIP` leaves out Lake Champlain and Lake Nasser.
+- Data: `data/natural_earth/` has the Natural Earth 5.1.2 countries, lakes and populated places files (unzip them first; see its README).
 - Rebuild: `python3 tools/world.py <ne_10m_admin_0_countries.json> --lakes ne_10m_lakes.geojson --out maps/world/shapes.js`, then `python3 tools/world_settings.py maps/world/shapes.js ne_10m_populated_places_simple.shp --out maps/world/settings.js` (needs numpy, scipy, opencv-python, matplotlib).
 
 ## Sierra Leone notes (0.2.0)

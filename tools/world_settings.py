@@ -24,6 +24,9 @@ MANUAL = {                                 # capitals missing from the cities fi
     'NRU': ('Yaren', -0.5477, 166.9209),
     'CYN': ('North Nicosia', 35.1856, 33.3823),
 }
+OVERRIDE = {                               # capitals chosen by hand where the "most populated" rule picks wrong: code -> (name, lat, lon)
+    'NGA': ('Abuja', 9.0833, 7.5333),      # the cities file also marks Lagos (bigger), which hasn't been the capital since 1991
+}
 
 
 NO_CAPITAL = {'VAT'}                        # Vatican City is a region only: no capital circle in the Capitals mode
@@ -90,7 +93,10 @@ def main():
         lst = cands.get(ALIAS.get(code, code), []) or cands.get(code, [])
         main_caps = [c for c in lst if c[0] != 'Admin-0 region capital']
         pool = main_caps or lst
-        if pool:
+        if code in OVERRIDE:
+            cap = OVERRIDE[code]
+            report.append('%-26s %-18s (chosen by hand)' % (r['name'], cap[0]))
+        elif pool:
             best = max(pool, key=lambda c: c[2])
             cap = (best[1], round(best[3], 4), round(best[4], 4))
             if len(pool) > 1:
