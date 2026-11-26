@@ -90,5 +90,8 @@
   "package.countries": "Études de géographie : pays",
   "package.countries_about": "La Sierra Leone et les États-Unis.",
   "package.world": "Études de géographie : monde",
-  "package.world_about": "Tous les pays du monde, et tous les territoires et îles."
+  "package.world_about": "Tous les pays du monde, et tous les territoires et îles.",
+  "kit.menu": "Séries de cartes",
+  "kit.menu_heading": "Séries de cartes",
+  "kit.get_download": "Téléchargez les séries de cartes depuis la {link}. Chaque série est un zip, et le même zip fonctionne dans :"
 }

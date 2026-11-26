@@ -5,6 +5,10 @@ SINGE uses `major.minor.patch` version numbers. Builds made before versioning (v
 ## Unreleased
 - **Kit updates come as pull requests.** The checks, the zips and GitHub Pages use EduGame Kit's own workflows at a kit release, and Dependabot opens a pull request for each new kit release (and for the GitHub actions). `ci.yml` and `release.yml` are replaced by `build.yml`; releases are made when a release is published (its tag must match `version` in `edugame.json`), with the package zips and the Sierra Leone data zip.
 - **Played in a real Kolibri:** each package's zip (`tests/kolibri_play.py`: a Capitals round of the package's first map).
+- **EduGame Kit 0.3.7.** The workflows call the kit at `@v0.3.7` (was `@v0.3.2`).
+- **A menu on the website:** the site opens on the kit's menu of the sets of maps (`menu.html` and `menu/`, made by `edugame menu`), in English and French, with "Use it in your school". Each set has its own address (`/en/countries/`), with a "Sets of maps" link back in the header. A set gets a tick once a round in it counts: SINGE now calls `EduGame.complete()` then, which in Kolibri and other learning systems is the same "passed" as before. The menu and its files are never in the zips.
+- **Releases get bundles** (`release-bundles`): one zip with every package's zip, one per language, and `singe-all-maps-<version>.zip`, the website to use offline. The Sierra Leone data zip is attached as before.
+- `tests/e2e_browser.py` also plays the website: the menu, a counted round that ticks its set, and the menu in French.
 
 ## 0.4.0
 ### Options, languages and maps, the EduGame Kit way

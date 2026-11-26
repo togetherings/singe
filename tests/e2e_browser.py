@@ -1,20 +1,29 @@
 """
 Plays SINGE in Chromium on the EduGame Kit's test page, for each package:
 the menu lists the package's maps, Options switches to French (map names too),
-and a game starts. Fails on any error in the browser's console.
+and a game starts. Then the website (edugame pages): the kit's menu lists the
+sets of maps, a counted round ticks its set, and the menu is in French too.
+Fails on any error in the browser's console.
 
     python -m tests.e2e_browser [--screenshots DIR]
 
 Needs EduGame Kit (pip install git+https://github.com/togetherings/edugame-kit) and Playwright.
 """
 import argparse
+import functools
+import http.server
 import os
+import shutil
+import subprocess
 import sys
+import tempfile
 import threading
 
 from playwright.sync_api import sync_playwright
 
 from edugame import cli
+
+from tests.kolibri_play import PLAY_ROUND
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PACKAGES = {
@@ -57,6 +66,59 @@ def check(browser, package, shots):
         server.shutdown()
 
 
+def check_site(browser, shots):
+    """The website, as GitHub Pages gets it: the kit's menu page and a page for each set of maps."""
+    out = tempfile.mkdtemp()
+    site = os.path.join(out, "site")
+    subprocess.run([sys.executable, "-m", "edugame", "pages", ROOT, "-o", site, "--repo", "togetherings/singe"],
+                   check=True)
+    class Quiet(http.server.SimpleHTTPRequestHandler):
+        def log_message(self, *args):
+            pass
+    handler = functools.partial(Quiet, directory=site)
+    server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    base = "http://127.0.0.1:%d/" % server.server_address[1]
+    try:
+        page = browser.new_page()
+        page.goto(base + "en/")
+        page.locator(".eg-menu-item").first.wait_for()
+        names = [t.strip() for t in page.locator(".eg-menu-name").all_inner_texts()]
+        assert names[0].startswith("Studies In Geography: Countries") and "Next" in names[0], names
+        assert names[1] == "Studies In Geography: World", names
+        assert page.locator(".eg-menu-top h2").inner_text() == "Sets of maps"
+        assert page.locator("#egMenuDone").inner_text() == "0 of 2 done"
+        assert page.locator(".eg-menu-get").is_visible()                 # "Use it in your school"
+        assert "singe-all-maps-" in page.locator(".eg-menu-get").inner_text()
+        assert page.locator(".eg-menu-link").count() == 0                # no link to the menu on the menu
+        if shots:
+            page.screenshot(path=os.path.join(shots, "site-menu.png"), full_page=True)
+
+        page.locator(".eg-menu-item").first.click()                       # Countries: SINGE's own map menu
+        page.locator("#menu .mapCard").first.wait_for()
+        assert page.locator(".eg-menu-link").inner_text().endswith("Sets of maps")
+        page.locator("#menu .mapCard").first.locator(".modeBtn").nth(2).click()   # Capitals: every round counts
+        page.wait_for_function("document.querySelectorAll('#game [data-c]').length > 0")
+        assert page.evaluate(PLAY_ROUND) > 0, "the round didn't finish"
+        page.locator("#results:not(.hidden)").wait_for()
+        page.wait_for_timeout(500)                                        # the save is written
+
+        page.locator(".eg-menu-link").click()                             # back to the sets of maps
+        page.locator("#egMenuDone:has-text('1 of 2 done')").wait_for()
+        assert "done" in page.locator(".eg-menu-item").first.get_attribute("class")
+        assert "next" in page.locator(".eg-menu-item").nth(1).get_attribute("class")
+        if shots:
+            page.screenshot(path=os.path.join(shots, "site-menu-done.png"), full_page=True)
+
+        page.goto(base + "fr/")                                           # the same save, in French
+        page.locator("#egMenuDone:has-text('1 sur 2 terminées')").wait_for()
+        assert page.locator(".eg-menu-top h2").inner_text() == "Séries de cartes"
+        page.close()
+    finally:
+        server.shutdown()
+        shutil.rmtree(out, ignore_errors=True)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--screenshots")
@@ -71,6 +133,7 @@ def main():
                                        pg.on("console", lambda m: m.type == "error" and errors.append(m.text))))
         for package in PACKAGES:
             check(context, package, args.screenshots)
+        check_site(context, args.screenshots)
         browser.close()
     if errors:
         print("\n".join(errors))

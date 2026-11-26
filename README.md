@@ -10,7 +10,7 @@ A map game where you click the correct location of countries, capitals and flags
 ## Live preview
 **[▶ Play SINGE in your browser: togetherings.github.io/singe](https://togetherings.github.io/singe/)**
 
-The site is built from the current `main` branch by EduGame Kit (`edugame pages`), with each package of maps to play in the browser. Scores there are saved in your own browser only. Updates to `main` appear within a few minutes.
+The site is built from the current `main` branch by EduGame Kit (`edugame pages`). It opens on a menu of the sets of maps (the kit's menu page: `menu.html` and `menu/`), in English or French, and each set has its own address (`/en/countries/`, `/fr/world/`). A set gets a tick on the menu once a round in it counts. Scores there are saved in your own browser only, shared by every page of the site. Updates to `main` appear within a few minutes.
 
 *(Maintainers: under Settings → Pages, set Source to "GitHub Actions"; the `GitHub Pages` workflow publishes the site.)*
 
@@ -18,7 +18,7 @@ The site is built from the current `main` branch by EduGame Kit (`edugame pages`
 Install [EduGame Kit](https://github.com/togetherings/edugame-kit) (`pip install git+https://github.com/togetherings/edugame-kit.git`), then run `edugame preview .` in this folder (`--package world` for the World maps). The kit makes the files the page needs.
 
 ## Use in Kolibri
-SINGE comes in separate zipped packages of maps. Download the ones you want from the [Releases](../../releases) page and upload them to a channel in Kolibri Studio as HTML5 apps (see the Kolibri Games plugin's docs):
+SINGE comes in separate zipped packages of maps. Download them from the [Releases](../../releases) page and upload the ones you want to a channel in Kolibri Studio as HTML5 apps (see the Kolibri Games plugin's docs). A release has `singe-all-languages-<version>.zip` with every package's zip, `singe-en-<version>.zip` and `singe-fr-<version>.zip` with each package in one language only, and `singe-all-maps-<version>.zip`, the website to use on a computer without the internet (unzip it and open `index.html`). The package zips are:
 
 | Package | Maps |
 |---|---|
@@ -33,12 +33,12 @@ Versions are numbered `major.minor.patch` (for example `0.4.0`); the version is 
 
 1. Merge your changes into `main` and update the version and `CHANGELOG.md`.
 2. Publish a release on GitHub with a new tag such as `v0.4.0` (it must match `version` in `edugame.json`).
-3. The `Build` workflow builds the package zips with EduGame Kit (game files at the root) and attaches them, and the Sierra Leone data zip, to the release.
+3. The `Build` workflow builds the package zips with EduGame Kit (game files at the root) and attaches the bundles of them (`release-bundles`), the offline copy of the website and the Sierra Leone data zip to the release.
 
 Every push builds the zips too: they're in the run's Artifacts (Actions tab > the run > game-zips).
 
 ## Checks and kit updates
-The `Build` workflow calls EduGame Kit's own (`game.yml`, at a kit release like `@v0.3.2`) on every push: `edugame check`, a zip per package, `tests/e2e_browser.py` (each package in a browser, in English and French) and **Real Kolibri**: each package's zip in a throwaway Kolibri, played with `tests/kolibri_play.py` (a Capitals round of the package's first map), checking that the result is saved, comes back, and that a damaged save isn't written over. When the kit has a new release, Dependabot opens a pull request moving it on; merge it when **Checks passed** passes, after reading the release's **What games need to do** (the kit's `docs/UPDATING.md`).
+The `Build` workflow calls EduGame Kit's own (`game.yml`, at a kit release like `@v0.3.7`) on every push: `edugame check`, a zip per package, `tests/e2e_browser.py` (each package in a browser, in English and French, then the website: its menu, a counted round ticking its set, and the menu in French) and **Real Kolibri**: each package's zip in a throwaway Kolibri, played with `tests/kolibri_play.py` (a Capitals round of the package's first map), checking that the result is saved, comes back, and that a damaged save isn't written over. When the kit has a new release, Dependabot opens a pull request moving it on; merge it when **Checks passed** passes, after reading the release's **What games need to do** (the kit's `docs/UPDATING.md`).
 
 To play the packages in Kolibri on your own computer: `pip install kolibri playwright && python -m playwright install chromium`, then `edugame kolibri-test .` (`--packages 1` for the first package only).
 
