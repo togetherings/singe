@@ -153,6 +153,7 @@
       }
       if (scope === 'all' && !o.mk) return;               // empty container
       if (scope === 'un') o.off = !o.un && !o.decor;      // not in the game: drawn grey (a "decor" piece, like Annobón, is drawn plain)
+      if (r.kind === 'none') o.off = true;                // held by nobody, or disputed with no line (Bir Tawil): grey in every scope
       out.push(o);
     });
     return out.filter(function (o) { return o.d || o.mk; });

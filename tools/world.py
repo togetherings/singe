@@ -6,7 +6,8 @@ Reads Natural Earth "Admin 0 - Countries" (10 m, public domain) and writes the S
 world map. Names, capitals and options live in maps/world/settings.js (see world_settings.py,
 which writes the first version of that file).
 
-  python3 world.py ne_10m_admin_0_countries.json --out ../maps/world/shapes.js
+  python3 world.py ne_10m_admin_0_countries.geojson --lakes ne_10m_lakes.geojson --out ../maps/world/shapes.js
+  (Natural Earth 5.1.2: data/natural_earth/, unzipped)
 
 What it does
   1. Drops Antarctica and the uninhabited / contested oddities (Spratly Is., Bajo Nuevo, Serranilla Bank,
@@ -88,6 +89,7 @@ RENAMES = {
     'Swaziland': 'Eswatini', 'Turkey': 'Türkiye', 'Turks and Caicos Is.': 'Turks and Caicos Islands', 'U.S. Minor Outlying Is.': 'U.S. Minor Outlying Islands',
     'U.S. Virgin Is.': 'U.S. Virgin Islands', 'United States of America': 'United States', 'W. Sahara': 'Western Sahara',
     'Wallis and Futuna Is.': 'Wallis and Futuna', 'São Tomé and Principe': 'São Tomé and Príncipe', 'Micronesia': 'Micronesia',
+    'eSwatini': 'Eswatini', 'Brazilian I.': 'Brazilian Island',
     'Bahamas': 'The Bahamas', 'Gambia': 'The Gambia', 'Vatican': 'Vatican City', 'Macao': 'Macau',
 }
 
@@ -99,6 +101,12 @@ LTU LUX MDG MWI MYS MDV MLI MLT MHL MRT MUS MEX FSM MDA MCO MNG MNE MAR MOZ MMR 
 PRY PER PHL POL PRT QAT ROU RUS RWA KNA LCA VCT WSM SMR STP SAU SEN SRB SYC SLE SGP SVK SVN SLB SOM ZAF SDS ESP LKA SDN SUR SWE CHE SYR TJK
 TZA THA TLS TGO TON TTO TUN TUR TKM TUV UGA UKR ARE GBR USA URY UZB VUT VEN VNM YEM ZMB ZWE""".split())
 UN_OBSERVERS = {'VAT', 'PSX'}                # Vatican City and Palestine
+# Areas that no country holds or that two countries dispute without a line between them (Natural Earth 5.1.2): drawn grey
+# on every map and never asked about (kind 'none'): Bir Tawil (claimed by neither Egypt nor Sudan), Brazilian Island
+# (Brazil / Uruguay) and the Southern Patagonian Ice Field (Chile / Argentina).
+NOBODY = {'BRT', 'BRI', 'SPI'}
+INDETERMINATE = {'SOL'}
+FILL_HOLES = {'EGY'}                          # holes that are only slivers (Natural Earth 5.1 cuts two along the Halaib Triangle's old line)                      # Somaliland: 'partial' as in Natural Earth 4.0 (5.1 calls it a territory)
 # Not UN members, but recognised as sovereign states by some other states (they get capitals, see world_settings.py)
 PARTLY_RECOGNISED = {'TWN', 'KOS', 'SAH', 'CYN'}
 
@@ -135,7 +143,7 @@ BREAKAWAY = [
 COMBINE = [('Saint Martin', 'Sint Maarten'), ('Sint Eustatius', 'Saba')]
 
 # ISO 2-letter codes (for the flag files) of countries that Natural Earth's ISO_A2 leaves empty
-ISO2_FIX = {'FRA': 'FR', 'NOR': 'NO', 'SXM': 'SX', 'SHN': 'SH'}
+ISO2_FIX = {'FRA': 'FR', 'NOR': 'NO', 'SXM': 'SX', 'SHN': 'SH', 'KOS': 'XK', 'TWN': 'TW'}
 
 # JOINED: regions made of pieces that were cut and glued back together: the cut edges are not drawn
 JOINED = {'Western Sahara', 'Morocco', 'Bosnia and Herzegovina'}
@@ -365,7 +373,7 @@ def main():
 
     def new_region(name, code, props, kind, part_of=None, cont=None, sub=None):
         regions[name] = {'name': name, 'code': code, 'kind': kind, 'part_of': part_of, 'pieces': [],
-                         'iso2': ((props.get('ISO_A2') if props.get('ISO_A2') not in (None, '-99') else ISO2_FIX.get(code)) if props else None),
+                         'iso2': ((ISO2_FIX.get(code) or (props.get('ISO_A2') if props.get('ISO_A2') not in (None, '-99') else None)) if props else None),
                          'cont': cont or props.get('CONTINENT'), 'sub': sub or props.get('SUBREGION'),
                          'un': (code in UN_MEMBERS or code in UN_OBSERVERS)}
 
@@ -379,7 +387,9 @@ def main():
             kind = 'un'
         elif code in UN_OBSERVERS:
             kind = 'observer'
-        elif code in PARTLY_RECOGNISED or p['TYPE'] == 'Indeterminate':
+        elif code in NOBODY:
+            kind = 'none'
+        elif code in PARTLY_RECOGNISED or code in INDETERMINATE or p['TYPE'] == 'Indeterminate':
             kind = 'partial'
         else:
             kind = 'territory'
@@ -434,10 +444,14 @@ def main():
     mpc = max(mar['pieces'], key=lambda pc: len(pc['poly'][0]))
     mring = closed(mpc['poly'][0])[:-1]
     i_e, i_w = nearest_index(mring, (-8.682385, 27.661439)), nearest_index(mring, (-13.178254, 27.662491))
-    if not i_e < i_w:
-        sys.exit('border fix: Morocco ring is not in the expected order')
-    north = mring[i_w:] + mring[:i_e] + [mring[i_e]]                  # Morocco without the south
-    south = mring[i_e:i_w] + [mring[i_w]]                              # the part Morocco administers in Western Sahara
+    n_ = len(mring)
+
+    def arc(i, j):                                                     # the ring from vertex i forward to vertex j
+        return [mring[k % n_] for k in range(i, j + (n_ if j < i else 0) + 1)]
+    a1, a2 = arc(i_e, i_w), arc(i_w, i_e)
+    # the two arcs between the border's ends: the one further south is the part Morocco administers in Western Sahara
+    # (this works whichever way round the ring is drawn: Natural Earth 5.1 draws them the other way from 4.0)
+    south, north = (a1, a2) if sum(p[1] for p in a1) / len(a1) < sum(p[1] for p in a2) / len(a2) else (a2, a1)
     mar['pieces'].remove(mpc)
     mar['pieces'].append({'poly': [closed(north)] + mpc['poly'][1:], 'src': 'MAR'})
     sah['pieces'].append({'poly': [closed(south)], 'src': 'MAR'})
@@ -574,7 +588,7 @@ def main():
             for k, ring in enumerate(pc['poly']):
                 bx = bbox(ring)
                 ext = max(bx[2] - bx[0], bx[3] - bx[1])
-                if k > 0 and ext < 0.15:                  # tiny lakes are dropped
+                if k > 0 and (ext < 0.15 or pc['src'] in FILL_HOLES):   # tiny lakes are dropped (and slivers: FILL_HOLES)
                     continue
                 s = simp.simplify(ring)
                 if len(s) < 3:
@@ -923,9 +937,9 @@ def main():
             'regions': out_regions}
     text = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
     header = ('/* Map SHAPES file for the world map, generated by tools/world.py - do not edit by hand.\n'
-              '   Source: Natural Earth 10m Admin 0 - Countries (public domain, naturalearthdata.com).\n'
+              '   Source: Natural Earth 5.1.2 10m Admin 0 - Countries (public domain, naturalearthdata.com).\n'
               '   Drawn with the Miller projection (%d units per degree; one world = %d units wide).\n'
-              '   Region fields: name, code (source ISO code), kind (un / observer / partial / territory / part),\n'
+              '   Region fields: name, code (source ISO code), kind (un / observer / partial / territory / part / none),\n'
               '     un (1 = UN member or observer), part_of (parent name, for parts split out of a country),\n'
               '     cont / sub (continent and sub-region, for future continent maps), d (SVG path), sz (size of the\n'
               '     biggest piece in units), mk ([x, y] of that piece), small (1 = needs a wide click area),\n'
