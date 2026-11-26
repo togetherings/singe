@@ -1,0 +1,174 @@
+{
+  "name": "Afrique",
+  "blurb": "Trouvez les pays d'Afrique",
+  "credit": "Limites et capitales : Natural Earth (domaine public, naturalearthdata.com), comme sur la carte du monde. Les frontières suivent les lignes de fait de Natural Earth. Régions : celles de l'Union africaine. Les petits pays et les îles sont marqués par des cercles.",
+  "variants": {
+    "africa_north": {
+      "name": "Afrique du Nord",
+      "blurb": "Trouvez les 6 pays d'Afrique du Nord"
+    },
+    "africa_west": {
+      "name": "Afrique de l'Ouest",
+      "blurb": "Trouvez les 15 pays d'Afrique de l'Ouest"
+    },
+    "africa_central": {
+      "name": "Afrique centrale",
+      "blurb": "Trouvez les 9 pays d'Afrique centrale"
+    },
+    "africa_east": {
+      "name": "Afrique de l'Est",
+      "blurb": "Trouvez les 14 pays d'Afrique de l'Est"
+    },
+    "africa_southern": {
+      "name": "Afrique australe",
+      "blurb": "Trouvez les 10 pays d'Afrique australe"
+    },
+    "africa": {
+      "name": "Afrique : pays de l'ONU",
+      "blurb": "Trouvez les 54 pays d'Afrique"
+    },
+    "africa_all": {
+      "name": "Afrique : tous les pays et territoires",
+      "blurb": "Trouvez chaque pays et territoire d'Afrique, même les plus petits"
+    }
+  },
+  "regions": {
+    "Algeria": {
+      "name": "Algérie",
+      "capital": "Alger"
+    },
+    "Benin": {
+      "name": "Bénin"
+    },
+    "Cabo Verde": {
+      "name": "Cap-Vert"
+    },
+    "Cameroon": {
+      "name": "Cameroun"
+    },
+    "Canary Islands": {
+      "name": "Îles Canaries",
+      "info": "Une communauté autonome de l'Espagne.",
+      "capital_info": "Les îles Canaries ont deux capitales, Las Palmas de Gran Canaria et Santa Cruz de Tenerife ; la plus grande est utilisée ici."
+    },
+    "Central African Republic": {
+      "name": "République centrafricaine"
+    },
+    "Ceuta": {
+      "info": "Une ville autonome de l'Espagne sur la côte nord de l'Afrique. Le Maroc la revendique."
+    },
+    "Chad": {
+      "name": "Tchad",
+      "capital": "N'Djaména"
+    },
+    "Comoros": {
+      "name": "Comores"
+    },
+    "Democratic Republic of the Congo": {
+      "name": "République démocratique du Congo"
+    },
+    "Egypt": {
+      "name": "Égypte",
+      "capital": "Le Caire"
+    },
+    "Equatorial Guinea": {
+      "name": "Guinée équatoriale"
+    },
+    "Eritrea": {
+      "name": "Érythrée"
+    },
+    "Ethiopia": {
+      "name": "Éthiopie",
+      "capital": "Addis-Abeba"
+    },
+    "Guinea": {
+      "name": "Guinée"
+    },
+    "Guinea-Bissau": {
+      "name": "Guinée-Bissau"
+    },
+    "Libya": {
+      "name": "Libye"
+    },
+    "Madeira": {
+      "name": "Madère",
+      "info": "Une région autonome du Portugal."
+    },
+    "Mauritania": {
+      "name": "Mauritanie"
+    },
+    "Mauritius": {
+      "name": "Maurice",
+      "capital": "Port-Louis"
+    },
+    "Mayotte": {
+      "info": "Un département et région d'outre-mer de la France."
+    },
+    "Melilla": {
+      "info": "Une ville autonome de l'Espagne sur la côte nord de l'Afrique. Le Maroc la revendique."
+    },
+    "Morocco": {
+      "name": "Maroc"
+    },
+    "Namibia": {
+      "name": "Namibie"
+    },
+    "Republic of the Congo": {
+      "name": "République du Congo"
+    },
+    "Réunion": {
+      "name": "La Réunion",
+      "info": "Un département et région d'outre-mer de la France."
+    },
+    "Saint Helena": {
+      "name": "Sainte-Hélène",
+      "info": "Fait partie du territoire britannique d'outre-mer de Sainte-Hélène, Ascension et Tristan da Cunha."
+    },
+    "Senegal": {
+      "name": "Sénégal"
+    },
+    "Somalia": {
+      "name": "Somalie",
+      "capital": "Mogadiscio"
+    },
+    "Somaliland": {
+      "info": "S'est déclaré indépendant de la Somalie en 1991 et se gouverne lui-même, mais la plupart des pays le considèrent comme une partie de la Somalie. Sur les cartes des pays de l'ONU, il fait partie de la Somalie."
+    },
+    "South Africa": {
+      "name": "Afrique du Sud"
+    },
+    "South Sudan": {
+      "name": "Soudan du Sud"
+    },
+    "Sudan": {
+      "name": "Soudan"
+    },
+    "São Tomé and Príncipe": {
+      "name": "Sao Tomé-et-Principe",
+      "capital": "Sao Tomé"
+    },
+    "Tanzania": {
+      "name": "Tanzanie",
+      "capital": "Dar es Salam"
+    },
+    "The Gambia": {
+      "name": "Gambie"
+    },
+    "Tristan da Cunha": {
+      "info": "Fait partie du territoire britannique d'outre-mer de Sainte-Hélène, Ascension et Tristan da Cunha : l'île habitée la plus isolée du monde."
+    },
+    "Tunisia": {
+      "name": "Tunisie"
+    },
+    "Uganda": {
+      "name": "Ouganda"
+    },
+    "Western Sahara": {
+      "name": "Sahara occidental",
+      "info": "Un territoire disputé. Le Maroc en contrôle la plus grande partie. La République arabe sahraouie démocratique, membre de l'Union africaine, le revendique tout entier et contrôle une bande à l'est. Sur les cartes des pays de l'ONU, il est en gris."
+    },
+    "Zambia": {
+      "name": "Zambie"
+    }
+  }
+}

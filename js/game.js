@@ -27,10 +27,12 @@
   var CONFIG = loadConfig();           // game-wide settings from config.js (with defaults)
   // The maps of this zip: its package's "maps" in edugame.json. Each is a map's folder name, or
   // { id, file, scope } for a map listed more than once (the World map: UN countries, and everything).
+  // "shapes": another map's shapes file to draw (the Africa maps draw the World map's: maps/world/shapes.js).
   var PACKAGE_MAPS = (EG.config.package && EG.config.package.config && EG.config.package.config.maps) || CONFIG.maps || [];
   var ENTRIES = PACKAGE_MAPS.map(function (m) {
     var e = typeof m === 'string' ? { id: m } : m;
     var o = { file: e.file || e.id };
+    o.shapes = e.shapes || o.file;
     Object.keys(e).forEach(function (k) { o[k] = e[k]; });
     return o;
   });
@@ -131,15 +133,17 @@
   // file is never changed). In 'un' scope a part (Alaska...) is merged into its country and everything that is
   // not a UN member / observer is drawn grey ("off"); in 'all' scope parts stay separate and "containers"
   // (countries whose every piece was split off, which have no marker position) are dropped.
-  function worldScope(src, scope) {
+  // merge: { part: country } puts more parts into a country in 'un' scope (the Africa maps: Somaliland into Somalia).
+  function worldScope(src, scope, merge) {
     var by = {}, out = [];
+    merge = merge || {};
     src.forEach(function (r) {
       var o = { name: r.name, kind: r.kind, d: r.d || '', s: r.s || '', mk: r.mk, sz: r.sz || 0, small: r.small, cont: r.cont, sub: r.sub, un: !!r.un, ins: {}, twin: r.twin, decor: !!r.decor, part_of: r.part_of, mkn: r.mkn };
       Object.keys(r.ins || {}).forEach(function (k) { o.ins[k] = [r.ins[k]]; });
       by[r.name] = o;
     });
     src.forEach(function (r) {
-      var o = by[r.name], p = r.part_of && by[r.part_of];
+      var o = by[r.name], into = r.part_of || (scope === 'un' && merge[r.name]), p = into && by[into];
       if (scope === 'un' && p) {                          // merge into the country
         if (p.s || o.s) p.s = (p.s || p.d) + (o.s || o.d);       // outlines (see tools/world.py) follow the shapes
         p.d += o.d;
@@ -169,7 +173,7 @@
     (window.GeoMapSettings || []).forEach(function (s) { settings[s.id] = s; });
     (window.GeoMapShapes || []).forEach(function (sh) { shapes[sh.id] = sh; });
     ENTRIES.forEach(function (entry) {
-      var shape = shapes[entry.file];
+      var shape = shapes[entry.shapes];
       if (!shape) return;                                   // its file did not load (reported on the menu)
       var s = {}, base = settings[entry.file];
       if (!base) console.warn('SINGE: no settings file for map "' + entry.file + '" - using defaults.');
@@ -181,7 +185,19 @@
       // World-type maps (shape.wrap) list every country AND territory; "scope" decides which are in the game
       // ('un': UN members + Vatican + Palestine, parts merged into their country; 'all': everything, parts separate).
       var scope = shape.wrap ? (s.scope === 'all' ? 'all' : 'un') : undefined;
-      var list = shape.wrap ? worldScope(shape.regions, scope) : shape.regions;
+      var list = shape.wrap ? worldScope(shape.regions, scope, s.merge) : shape.regions;
+      // A WINDOW on a world map (the Africa maps): only the regions named in "in_game" are asked about; the others
+      // are drawn grey, like the countries outside the UN in 'un' scope. The view fits the regions in the game.
+      var inGame = null;
+      if (s.in_game) {
+        inGame = {};
+        s.in_game.forEach(function (n) { inGame[n] = true; });
+        list.forEach(function (r) { if (!inGame[r.name] && !r.decor) r.off = true; });
+        s.in_game.forEach(function (n) {
+          if (!list.some(function (r) { return r.name === n && !r.off; })) console.warn('SINGE: "' + n + '" in in_game of ' + entry.id + ' is not a region of this map in this scope.');
+        });
+      }
+      var insets = s.insets === false ? [] : mergeInsets(shape.insets, s.insets);
       shape.regions.forEach(function (r) { known[r.name] = true; });
       // include_territories: false hides every region the shapes file calls a "territory"
       // (and boxes drawn for them). "district" regions (Washington D.C.) stay drawn but are not asked about.
@@ -223,8 +239,9 @@
                   origin: shape.origin, size: shape.size, frames: frames,
                   zoom_levels: s.zoom_levels, zoom_step: s.zoom_step, orientation: s.orientation,
                   pass_accuracy: s.pass_accuracy, skip: s.skip, modes: s.modes, regions: regions,
-                  wrap: shape.wrap, strip: shape.strip, strip_y: shape.strip_y, total: shape.total, lakes: shape.lakes,
-                  insets: mergeInsets(shape.insets, s.insets), scope: scope, max_map_height: s.max_map_height,
+                  wrap: shape.wrap, strip: insets.length ? shape.strip : null, strip_y: insets.length ? shape.strip_y : null,
+                  total: insets.length ? shape.total : null, lakes: shape.lakes, window: !!inGame, view_pad: s.view_pad,
+                  insets: insets, scope: scope, max_map_height: s.max_map_height,
                   infinite_scroll: s.infinite_scroll, page_width: s.page_width, fit_all_min_height: s.fit_all_min_height,
                   circle_ratio: s.circle_ratio, marker_px: s.marker_px, nudge_zoom_levels: s.nudge_zoom_levels });
     });
@@ -326,7 +343,7 @@
     var inGame = screenId === 'game' && !!g.map;
     document.body.classList.toggle('wide', inGame && g.map.orientation === 'horizontal');
     // a world map: the game bar is laid over the top of the map (nothing much is up there) to save height
-    document.body.classList.toggle('overlay', inGame && !!g.map.wrap);
+    document.body.classList.toggle('overlay', inGame && !!g.map.wrap && !g.map.window);   // (a window's top edge has land: the bar stays above it)
     checkRotate();
     if (inGame && g.map.page_width) document.body.style.setProperty('--pageW', g.map.page_width + 'px');
     else document.body.style.removeProperty('--pageW');
@@ -774,6 +791,21 @@
     svg.setAttribute('viewBox', [x0 - pad, y0 - pad, x1 - x0 + 2 * pad, y1 - y0 + 2 * pad].join(' '));
   }
 
+  // A WINDOW on a world map (settings "in_game", the Africa maps): the view is the box around the regions in the game,
+  // with some room around it ("view_pad", a share of the box's longer side) so the grey neighbours show. The map
+  // can't be zoomed out or dragged beyond it. Needs the map to be visible, because it measures the shapes.
+  function fitWindow(svg) {
+    var x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, items = svg.querySelectorAll('.region:not(.inactive)');
+    for (var i = 0; i < items.length; i++) {
+      var b = items[i].getBBox();
+      x0 = Math.min(x0, b.x); y0 = Math.min(y0, b.y);
+      x1 = Math.max(x1, b.x + b.width); y1 = Math.max(y1, b.y + b.height);
+    }
+    var pad = Math.max(x1 - x0, y1 - y0) * (g.map.view_pad === undefined ? 0.05 : g.map.view_pad);
+    g.view = { x: x0 - pad, y: y0 - pad, w: x1 - x0 + 2 * pad, h: y1 - y0 + 2 * pad };
+    svg.setAttribute('viewBox', [g.view.x, g.view.y, g.view.w, g.view.h].join(' '));
+  }
+
   function startGame(map, mode) {
     if (g.timer) clearInterval(g.timer);
     var practice = mode === 'practice';
@@ -798,8 +830,8 @@
     g.svg = svg;
     if (wrap) {
       svg.style.maxHeight = 'none';                                 // the size is set by fitWorld() from the window height
-      g.strip = buildStrip(map);
-      if (cls) g.strip.setAttribute('class', cls);
+      g.strip = map.insets.length ? buildStrip(map) : null;          // (a window on the world has no boxes)
+      if (g.strip && cls) g.strip.setAttribute('class', cls);
     }
     // hovering a halo highlights its region (the halo is a separate shape)
     // (also for the region itself: a region drawn in two places, like Russia across the seam of a world map,
@@ -841,6 +873,7 @@
     try {                                            // ask for landscape where the browser allows it (usually only in full screen)
       if (map.orientation === 'horizontal' && screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(function () {});
     } catch (e) {}
+    if (wrap && map.window) fitWindow(svg);         // (before fitWorld: the view decides the map's shape)
     if (!wrap) fitView(svg); else fitWorld();
     if (mode === 'capitals' || practice || wrap) addCapitals(svg, map);   // practice shows capitals too; world maps add markers
     if (mode !== 'capitals' && !wrap) addHalos(svg, map);
@@ -1238,15 +1271,19 @@
     var map = g.map, vh = window.innerHeight, vw = document.documentElement.clientWidth;
     var fr = $('frame'), cs = getComputedStyle(fr);
     var sideX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + parseFloat(cs.borderLeftWidth) + parseFloat(cs.borderRightWidth);
-    var W = map.size[0], H = map.size[1], SH = map.strip ? map.strip[1] : 0;
+    var W = g.view ? g.view.w : map.size[0], H = g.view ? g.view.h : map.size[1], SH = map.strip ? map.strip[1] : 0;   // (g.view: a window)
     var TOT = map.total || (H + SH), overlap = map.strip_y ? H - map.strip_y : 0;   // map units
     var maxW = Math.min(map.page_width || 2000, vw, (map.max_map_height || 100000) * W / H + sideX) - sideX;
     var both = vh >= (map.fit_all_min_height || 800);
     function setW(w) {
-      document.body.style.setProperty('--pageW', Math.round(w + sideX) + 'px');
+      // A tall window (East Africa) can be narrower than the bar above it needs: the page keeps room for the bar and
+      // the map is centred in it at its own width.
+      if (g.view) { g.svg.style.width = Math.round(w) + 'px'; g.svg.style.margin = '0 auto'; }
+      document.body.style.setProperty('--pageW', Math.round((g.view ? Math.max(w, 620) : w) + sideX) + 'px');
       $('stripBox').style.marginTop = (-overlap * w / W).toFixed(1) + 'px';          // the boxes overlap the map's empty bottom
     }
-    var w = Math.max(500, Math.min(1400, maxW));
+    var minW = g.view ? 320 : 500;                              // (a window on the world can be tall and narrow: East Africa)
+    var w = Math.max(minW, Math.min(1400, maxW));
     for (var pass = 0; pass < 3; pass++) {                      // measure the space around the map, size, measure again
       setW(w);
       var mapBox = $('mapBox').getBoundingClientRect(), strip = $('stripBox').getBoundingClientRect(), fRect = fr.getBoundingClientRect();
@@ -1254,7 +1291,7 @@
       var chrome = fRect.height + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom) - (strip.bottom - mapBox.top) +
                    (head ? head.getBoundingClientRect().height : 0);
       var topSpace = mapBox.top + (window.pageYOffset || 0);
-      w = Math.max(500, Math.min(both ? (vh - chrome - 1) * W / TOT : (vh - topSpace - 4) * W / H, maxW));
+      w = Math.max(minW, Math.min(both ? (vh - chrome - 1) * W / TOT : (vh - topSpace - 4) * W / H, maxW));
     }
     setW(w);
     sizeCircles();
@@ -1342,11 +1379,10 @@
   }
 
   var files = [], loaded = {};
-  ENTRIES.forEach(function (e) {
-    if (loaded[e.file]) return;                      // the same map can be listed twice (the World map in two scopes)
-    loaded[e.file] = true;
-    files.push({ src: 'maps/' + e.file + '/shapes.js', kind: 'shapes' });
-    files.push({ src: 'maps/' + e.file + '/settings.js', kind: 'settings' });
+  ENTRIES.forEach(function (e) {                     // the same map can be listed twice (the World map in two scopes)
+    if (!loaded['s|' + e.shapes]) files.push({ src: 'maps/' + e.shapes + '/shapes.js', kind: 'shapes' });
+    if (!loaded['m|' + e.file]) files.push({ src: 'maps/' + e.file + '/settings.js', kind: 'settings' });
+    loaded['s|' + e.shapes] = loaded['m|' + e.file] = true;
   });
   // First what was saved (the results, and the language), at the same time as the files load; then start.
   var pendingStart = 2;
