@@ -64,6 +64,8 @@ Saved per board in SCORM `suspend_data` by EduGame Kit's helper: `{"_v":1,"sierr
 ## Packages and the kit
 `packages` in `edugame.json` lists the zips: each has an `id`, a `title` and `description` (words in `lang/`, like `package.countries`), its `files` (its map folders), and `config.maps`, the maps on its menu. A map is its folder's name, or `{"id": ..., "file": ..., "scope": ...}` to list one map more than once: the World map is listed twice, once for UN countries (`world`) and once for everything (`world_all`). `package_files: ["maps/*"]` keeps each map only in the packages that list it.
 
+On the website, the kit's menu page (`menu.html`, with `menu/menu.js` and `menu/menu.css`; `pages.menu` in `edugame.json`) lists the packages as sets of maps, in `packages`' order, with their `title` and `description`. A package can change how it shows there with `config.menu` (`{"wide": true}`, `{"count": false}`, `{"mark": "★"}`: the kit's docs/platforms/GITHUB_PAGES.md, "A site with a menu"). Its words are the kit's, with SINGE's own `kit.menu`, `kit.menu_heading` and `kit.get_download` in `lang/`. The menu page is never in a zip.
+
 ```bash
 edugame build . -o dist                  # dist/singe-countries-<version>.zip, dist/singe-world-<version>.zip
 edugame build . --package world --lang fr

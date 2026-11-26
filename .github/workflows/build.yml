@@ -7,7 +7,9 @@
 #   * Kit / Real Kolibri: each package's zip in a real Kolibri, played with tests/kolibri_play.py (all packages:
 #     the maps differ a lot from one package to the next).
 #   * Publish a release (Releases > Draft a new release, with a tag like v0.5.0 that matches "version" in
-#     edugame.json): the package zips, and the Sierra Leone boundary data zip, are attached to it.
+#     edugame.json): bundles of the package zips (release-bundles: every language, and one per language), the
+#     offline copy of the website (singe-all-maps-<version>.zip) and the Sierra Leone boundary data zip are
+#     attached to it.
 name: Build
 
 on:
@@ -23,10 +25,11 @@ permissions:
 jobs:
   kit:
     name: Kit
-    uses: togetherings/edugame-kit/.github/workflows/game.yml@v0.3.2
+    uses: togetherings/edugame-kit/.github/workflows/game.yml@v0.3.7
     with:
       browser-tests: python -m tests.e2e_browser --screenshots screenshots
       kolibri-packages: all
+      release-bundles: true
 
   # The unofficial Sierra Leone boundary data (data/sierra_leone/), attached to releases next to the game's zips.
   boundary-data:

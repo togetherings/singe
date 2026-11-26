@@ -120,5 +120,14 @@
         ]
       }
     }
-  ]
+  ],
+  "pages": {
+    "menu": {
+      "page": "menu.html",
+      "files": [
+        "menu/*"
+      ],
+      "offline": "all-maps"
+    }
+  }
 }

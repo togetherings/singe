@@ -293,6 +293,9 @@
   // Resolves with { kept: [acc, secs, plays] or null, counted: bool, newBest: bool }; never rejects (a failed save is only logged).
   function recordResult(id, acc, secs, counts) {
     return EG.finish({ acc: acc }, { board: id, passed: counts }).then(function (r) {
+      // A round that counts is when learning systems get "passed"; on the website it also ticks this set of maps
+      // on the kit's menu page (menu.html), which shows a set as done once its page called complete().
+      if (r.passed) EG.complete();
       var k = r.kept;
       if (k && typeof k.acc === 'number') scores[id] = [k.acc, k.time || 0, k.plays || 0];
       return { kept: scores[id] || null, counted: !!r.passed, newBest: !!r.newBest };

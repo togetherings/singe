@@ -24,7 +24,10 @@
     "menu.default_only": "On a map that isn't translated into the chosen language. {default} is the default language, named in itself.",
     "menu.default_only_hint": "Hover text of that note. {language} is the chosen language.",
     "board.us_capitals": "Scoreboard names: a map, then a game mode.",
-    "package.countries": "The names of the zips of maps, shown in Kolibri."
+    "package.countries": "The names of the zips of maps, shown in Kolibri.",
+    "kit.menu": "On the website only: the link at the start of the header back to the page listing the sets of maps (the kit's word, \"Menu\" by default). Not the game's own map menu.",
+    "kit.menu_heading": "On the website only: the heading of that page.",
+    "kit.get_download": "On the website only, under \"Use it in your school\". {link} is the words \"latest release\" (the kit's), linked."
   },
   "title": "SINGE: Studies In Geography",
   "description": "Find regions, capitals and flags on maps.",
@@ -113,5 +116,8 @@
   "package.countries": "Studies In Geography: Countries",
   "package.countries_about": "Sierra Leone and the United States.",
   "package.world": "Studies In Geography: World",
-  "package.world_about": "Every country of the world, and every territory and island."
+  "package.world_about": "Every country of the world, and every territory and island.",
+  "kit.menu": "Sets of maps",
+  "kit.menu_heading": "Sets of maps",
+  "kit.get_download": "Download the sets of maps from the {link}. Each set is its own zip, and the same zip works in:"
 }
