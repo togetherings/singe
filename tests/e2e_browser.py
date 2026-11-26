@@ -28,8 +28,12 @@ from tests.kolibri_play import PLAY_ROUND
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PACKAGES = {
     "countries": (["Sierra Leone", "United States"], ["Sierra Leone", "États-Unis"]),
+    "africa": (["North Africa", "West Africa", "Central Africa", "East Africa", "Southern Africa", "Africa: UN countries",
+                "Africa: all countries and territories"], ["Afrique du Nord", "Afrique de l'Ouest"]),
     "world": (["World: UN countries", "World: all countries, territories and islands"], None),
 }
+# The Africa maps (windows on the World map): how many places each asks about.
+AFRICA_TOTALS = [6, 15, 9, 14, 10, 54, 62]
 
 
 def check(browser, package, shots):
@@ -51,7 +55,7 @@ def check(browser, package, shots):
         game.locator(".eg-card .eg-primary").click()
         game.locator("#menu h2:has-text('Choisissez une carte')").wait_for()
         if french:
-            game.locator(".mapCard h3:has-text('%s')" % french[1]).wait_for()
+            game.locator(".mapCard h3", has_text=french[1]).first.wait_for()
         else:
             assert game.locator(".langNote").count() == len(english)   # not translated yet: it says so
         if shots:
@@ -61,9 +65,28 @@ def check(browser, package, shots):
         if shots:
             page.screenshot(path=os.path.join(shots, package + "-game.png"))
         game.locator("#backBtn").click()
+        if package == "africa":
+            check_africa(game)
         page.close()
     finally:
         server.shutdown()
+
+
+def check_africa(game):
+    """Each Africa map asks about the right number of places, and Somaliland is part of Somalia except on the last."""
+    for i, total in enumerate(AFRICA_TOTALS):
+        game.locator("#menu .mapCard").nth(i).locator(".modeBtn").nth(1).click()
+        game.locator("#prompt:has-text('Trouvez')").wait_for()
+        assert game.locator("#total").inner_text() == str(total), (i, game.locator("#total").inner_text())
+        somaliland = game.locator('.region[data-name="Somaliland"]')
+        if i == 6:
+            assert somaliland.count() == 1 and "inactive" not in somaliland.get_attribute("class")
+        else:
+            assert somaliland.count() == 0                                # merged into Somalia
+        north = i == 0 and game.locator('.region[data-name="Western Sahara"]').get_attribute("class")
+        assert not north or "off" in north                               # grey on North Africa
+        game.locator("#backBtn").click()
+        game.locator("#menu .mapCard").first.wait_for()
 
 
 def check_site(browser, shots):
@@ -85,9 +108,9 @@ def check_site(browser, shots):
         page.locator(".eg-menu-item").first.wait_for()
         names = [t.strip() for t in page.locator(".eg-menu-name").all_inner_texts()]
         assert names[0].startswith("Studies In Geography: Countries") and "Next" in names[0], names
-        assert names[1] == "Studies In Geography: World", names
+        assert names[1:] == ["Studies In Geography: Africa", "Studies In Geography: World"], names
         assert page.locator(".eg-menu-top h2").inner_text() == "Sets of maps"
-        assert page.locator("#egMenuDone").inner_text() == "0 of 2 done"
+        assert page.locator("#egMenuDone").inner_text() == "0 of 3 done"
         assert page.locator(".eg-menu-get").is_visible()                 # "Use it in your school"
         assert "singe-all-maps-" in page.locator(".eg-menu-get").inner_text()
         assert page.locator(".eg-menu-link").count() == 0                # no link to the menu on the menu
@@ -104,14 +127,14 @@ def check_site(browser, shots):
         page.wait_for_timeout(500)                                        # the save is written
 
         page.locator(".eg-menu-link").click()                             # back to the sets of maps
-        page.locator("#egMenuDone:has-text('1 of 2 done')").wait_for()
+        page.locator("#egMenuDone:has-text('1 of 3 done')").wait_for()
         assert "done" in page.locator(".eg-menu-item").first.get_attribute("class")
         assert "next" in page.locator(".eg-menu-item").nth(1).get_attribute("class")
         if shots:
             page.screenshot(path=os.path.join(shots, "site-menu-done.png"), full_page=True)
 
         page.goto(base + "fr/")                                           # the same save, in French
-        page.locator("#egMenuDone:has-text('1 sur 2 terminées')").wait_for()
+        page.locator("#egMenuDone:has-text('1 sur 3 terminées')").wait_for()
         assert page.locator(".eg-menu-top h2").inner_text() == "Séries de cartes"
         page.close()
     finally:

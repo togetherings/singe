@@ -3,6 +3,10 @@
 SINGE uses `major.minor.patch` version numbers. Builds made before versioning (v001 to v024) are treated as 0.1.0.
 
 ## Unreleased
+- **Africa:** a new package, *Studies In Geography: Africa*, with seven maps: North, West, Central, East and Southern Africa (the African Union's regions, UN countries only), Africa (the 54 UN countries) and Africa (all countries and territories: also Western Sahara, Somaliland, the Canary Islands, Madeira, Réunion, Mayotte, Saint Helena and Tristan da Cunha). Every mode (Practice, Regions, Capitals, Flags), in English and French, with neighbouring countries in grey. Western Sahara is grey and Somaliland is part of Somalia except on the last map. 21 new scoreboards.
+- **Windows on the World map:** the Africa maps draw the World map's shapes (borders, circles of small places, lakes), so they look and work like it. A map's settings can name the regions asked about (`in_game`: the rest are grey), put more parts into a country in UN scope (`merge`), and leave out the boxes under the map (`insets: false`); the map opens on the regions in the game (`view_pad`). A package's map can draw another map's shapes (`"shapes": "world"`).
+- **New flags** in `maps/world/flags/`: Somaliland, Tristan da Cunha, the Canary Islands and Madeira (used by the Africa maps).
+- **Fixed:** Nigeria's capital is Abuja, not Lagos, on the World map too.
 - **Kit updates come as pull requests.** The checks, the zips and GitHub Pages use EduGame Kit's own workflows at a kit release, and Dependabot opens a pull request for each new kit release (and for the GitHub actions). `ci.yml` and `release.yml` are replaced by `build.yml`; releases are made when a release is published (its tag must match `version` in `edugame.json`), with the package zips and the Sierra Leone data zip.
 - **Played in a real Kolibri:** each package's zip (`tests/kolibri_play.py`: a Capitals round of the package's first map).
 - **EduGame Kit 0.3.7.** The workflows call the kit at `@v0.3.7` (was `@v0.3.2`).

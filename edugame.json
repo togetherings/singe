@@ -67,7 +67,28 @@
         "world_flags": "board.world_flags",
         "world_all": "board.world_all",
         "world_all_capitals": "board.world_all_capitals",
-        "world_all_flags": "board.world_all_flags"
+        "world_all_flags": "board.world_all_flags",
+        "africa_north": "board.africa_north",
+        "africa_north_capitals": "board.africa_north_capitals",
+        "africa_north_flags": "board.africa_north_flags",
+        "africa_west": "board.africa_west",
+        "africa_west_capitals": "board.africa_west_capitals",
+        "africa_west_flags": "board.africa_west_flags",
+        "africa_central": "board.africa_central",
+        "africa_central_capitals": "board.africa_central_capitals",
+        "africa_central_flags": "board.africa_central_flags",
+        "africa_east": "board.africa_east",
+        "africa_east_capitals": "board.africa_east_capitals",
+        "africa_east_flags": "board.africa_east_flags",
+        "africa_southern": "board.africa_southern",
+        "africa_southern_capitals": "board.africa_southern_capitals",
+        "africa_southern_flags": "board.africa_southern_flags",
+        "africa": "board.africa",
+        "africa_capitals": "board.africa_capitals",
+        "africa_flags": "board.africa_flags",
+        "africa_all": "board.africa_all",
+        "africa_all_capitals": "board.africa_all_capitals",
+        "africa_all_flags": "board.africa_all_flags"
       },
       "total": {
         "label": "all_maps",
@@ -95,6 +116,123 @@
         "maps": [
           "sierra_leone",
           "us"
+        ]
+      }
+    },
+    {
+      "id": "africa",
+      "title": "package.africa",
+      "description": "package.africa_about",
+      "files": [
+        "maps/africa/*",
+        "maps/world/shapes.js",
+        "maps/world/flags/ao.svg",
+        "maps/world/flags/bf.svg",
+        "maps/world/flags/bi.svg",
+        "maps/world/flags/bj.svg",
+        "maps/world/flags/bw.svg",
+        "maps/world/flags/cd.svg",
+        "maps/world/flags/cf.svg",
+        "maps/world/flags/cg.svg",
+        "maps/world/flags/ci.svg",
+        "maps/world/flags/cm.svg",
+        "maps/world/flags/cv.svg",
+        "maps/world/flags/dj.svg",
+        "maps/world/flags/dz.svg",
+        "maps/world/flags/eg.svg",
+        "maps/world/flags/eh.svg",
+        "maps/world/flags/er.svg",
+        "maps/world/flags/es-cn.svg",
+        "maps/world/flags/et.svg",
+        "maps/world/flags/ga.svg",
+        "maps/world/flags/gh.svg",
+        "maps/world/flags/gm.svg",
+        "maps/world/flags/gn.svg",
+        "maps/world/flags/gq.svg",
+        "maps/world/flags/gw.svg",
+        "maps/world/flags/ke.svg",
+        "maps/world/flags/km.svg",
+        "maps/world/flags/lr.svg",
+        "maps/world/flags/ls.svg",
+        "maps/world/flags/ly.svg",
+        "maps/world/flags/ma.svg",
+        "maps/world/flags/mg.svg",
+        "maps/world/flags/ml.svg",
+        "maps/world/flags/mr.svg",
+        "maps/world/flags/mu.svg",
+        "maps/world/flags/mw.svg",
+        "maps/world/flags/mz.svg",
+        "maps/world/flags/na.svg",
+        "maps/world/flags/ne.svg",
+        "maps/world/flags/ng.svg",
+        "maps/world/flags/pt-30.svg",
+        "maps/world/flags/re.svg",
+        "maps/world/flags/rw.svg",
+        "maps/world/flags/sc.svg",
+        "maps/world/flags/sd.svg",
+        "maps/world/flags/sh-ta.svg",
+        "maps/world/flags/sh.svg",
+        "maps/world/flags/sl.svg",
+        "maps/world/flags/sn.svg",
+        "maps/world/flags/so.svg",
+        "maps/world/flags/somaliland.svg",
+        "maps/world/flags/ss.svg",
+        "maps/world/flags/st.svg",
+        "maps/world/flags/sz.svg",
+        "maps/world/flags/td.svg",
+        "maps/world/flags/tg.svg",
+        "maps/world/flags/tn.svg",
+        "maps/world/flags/tz.svg",
+        "maps/world/flags/ug.svg",
+        "maps/world/flags/yt.svg",
+        "maps/world/flags/za.svg",
+        "maps/world/flags/zm.svg",
+        "maps/world/flags/zw.svg"
+      ],
+      "config": {
+        "maps": [
+          {
+            "id": "africa_north",
+            "file": "africa",
+            "shapes": "world",
+            "scope": "un"
+          },
+          {
+            "id": "africa_west",
+            "file": "africa",
+            "shapes": "world",
+            "scope": "un"
+          },
+          {
+            "id": "africa_central",
+            "file": "africa",
+            "shapes": "world",
+            "scope": "un"
+          },
+          {
+            "id": "africa_east",
+            "file": "africa",
+            "shapes": "world",
+            "scope": "un"
+          },
+          {
+            "id": "africa_southern",
+            "file": "africa",
+            "shapes": "world",
+            "scope": "un"
+          },
+          {
+            "id": "africa",
+            "file": "africa",
+            "shapes": "world",
+            "scope": "un"
+          },
+          {
+            "id": "africa_all",
+            "file": "africa",
+            "shapes": "world",
+            "scope": "all"
+          }
         ]
       }
     },

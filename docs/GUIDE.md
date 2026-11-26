@@ -84,6 +84,16 @@ or for every map with `skip_enabled: true / false` in `config.js` (`null` lets e
 Put an image path in a region's `flag` setting (e.g. `flag: 'maps/my_country/bo.png'`), add the image to the
 package, and set `flags: true` in the map's `modes`. The game shows a flag and the player clicks its region.
 
+## Africa maps: windows on the World map
+The seven Africa maps (`maps/africa/settings.js`, and `maps/africa/lang/fr.json` for French) have no shapes of their own:
+their entries in edugame.json say `"shapes": "world"`, so they draw `maps/world/shapes.js`, and the Africa package lists
+that file and each flag it uses from `maps/world/flags/`. Each map is a `variant` with its own `in_game` list: the
+regions asked about, by their names in the World map's shapes. Everything else is grey. The map opens on the box around
+those regions (plus `view_pad`) and can't be zoomed out or dragged beyond it; there are no boxes under it
+(`insets: false`) and no endless scrolling. `scope` works as on the World map ('un' or 'all'), and `merge` puts
+Somaliland into Somalia in 'un' scope. Capitals, info and flags are the map's own, in `regions`. Another continent
+can be made the same way (a folder with a settings file and its package in edugame.json).
+
 ## World map (and later continent maps)
 `maps/world.js` is generated from Natural Earth data (public domain: ne_10m_admin_0_countries) by `tools/world.py`;
 `maps/world/settings.js` (capitals and options) was first written by `tools/world_settings.py` from Natural Earth's

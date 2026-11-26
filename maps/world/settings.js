@@ -803,7 +803,7 @@
       flag: 'maps/world/flags/nf.svg'
     },
     'Nigeria': {
-      capital: { name: 'Lagos', lat: 6.4452, lon: 3.3896, info: '' },
+      capital: { name: 'Abuja', lat: 9.0833, lon: 7.5333, info: '' },
       info: '',
       flag: 'maps/world/flags/ng.svg'
     },
