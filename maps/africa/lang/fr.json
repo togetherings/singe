@@ -54,6 +54,9 @@
     "Central African Republic": {
       "name": "République centrafricaine"
     },
+    "Ceuta": {
+      "info": "Une ville autonome de l'Espagne sur la côte nord de l'Afrique. Le Maroc la revendique."
+    },
     "Chad": {
       "name": "Tchad",
       "capital": "N'Djaména"
@@ -100,6 +103,9 @@
     },
     "Mayotte": {
       "info": "Un département et région d'outre-mer de la France."
+    },
+    "Melilla": {
+      "info": "Une ville autonome de l'Espagne sur la côte nord de l'Afrique. Le Maroc la revendique."
     },
     "Morocco": {
       "name": "Maroc"

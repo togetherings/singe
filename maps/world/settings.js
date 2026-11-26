@@ -1237,6 +1237,30 @@
       info: '',
       flag: 'maps/world/flags/tk.svg'
     },
+    'Ceuta': {
+      info: 'An autonomous city of Spain on the north coast of Africa. Morocco claims it.',
+      flag: 'maps/world/flags/es-ce.svg'
+    },
+    'Melilla': {
+      info: 'An autonomous city of Spain on the north coast of Africa. Morocco claims it.',
+      flag: 'maps/world/flags/es-ml.svg'
+    },
+    'Canary Islands': {
+      info: '',
+      flag: 'maps/world/flags/es-cn.svg'
+    },
+    'Madeira': {
+      info: '',
+      flag: 'maps/world/flags/pt-30.svg'
+    },
+    'Tristan da Cunha': {
+      info: '',
+      flag: 'maps/world/flags/sh-ta.svg'
+    },
+    'Somaliland': {
+      info: '',
+      flag: 'maps/world/flags/somaliland.svg'
+    },
     'Saint Helena': {
       info: '',
       flag: 'maps/world/flags/sh.svg'

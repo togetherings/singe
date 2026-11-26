@@ -106,7 +106,7 @@ populated places, and is hand-edited from then on. Antarctica is left out.
   Alaska, French Guiana or Svalbard belong to their country; everything else is drawn grey and is not asked about).
   `'all'` = every country and territory, with far-away parts as regions of their own (Alaska, Hawaii, French Guiana,
   Guadeloupe, Martinique, Réunion, Mayotte, Svalbard, Jan Mayen, Bonaire, Saba, Sint Eustatius, Christmas Island,
-  Cocos (Keeling), Tokelau, Kaliningrad). The two scopes save their scores separately (`world` and `world_all`).
+  Cocos (Keeling), Tokelau, Kaliningrad, Ceuta, Melilla...). The two scopes save their scores separately (`world` and `world_all`).
 - **Capitals** only exist for UN members, Vatican City, Palestine, and places other states recognise (Taiwan, Kosovo,
   Western Sahara, Northern Cyprus). Where there are several capitals the most populated city was used for now
   (see the list printed by `world_settings.py`); change it by editing the capital in the settings file.

@@ -179,6 +179,8 @@ SPLITS = [
     ('ESP', 'Balearic Islands',        box(1.0, 4.5, 38.5, 40.3),      'Europe', 'Southern Europe'),
     ('PRT', 'Azores',                  box(-31.5, -24.8, 36.8, 39.9),  'Europe', 'Southern Europe'),
     ('PRT', 'Madeira',                 box(-17.4, -15.8, 29.9, 33.3),  'Africa', 'Northern Africa'),
+    ('ESP', 'Ceuta',                   box(-5.45, -5.25, 35.84, 35.93), 'Africa', 'Northern Africa'),
+    ('ESP', 'Melilla',                 box(-3.0, -2.9, 35.25, 35.33),  'Africa', 'Northern Africa'),
     ('RUS', 'Sakhalin',                box(141.5, 144.9, 45.8, 54.6),  'Asia', 'Eastern Asia'),
     ('SHN', 'Saint Helena',            box(-6.3, -5.4, -16.3, -15.7),  'Africa', 'Western Africa'),
     ('SHN', 'Tristan da Cunha',       box(-13, -9, -41, -36),         'Africa', 'Western Africa'),

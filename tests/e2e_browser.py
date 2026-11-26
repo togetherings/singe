@@ -33,7 +33,7 @@ PACKAGES = {
     "world": (["World: UN countries", "World: all countries, territories and islands"], None),
 }
 # The Africa maps (windows on the World map): how many places each asks about.
-AFRICA_TOTALS = [6, 15, 9, 14, 10, 54, 62]
+AFRICA_TOTALS = [6, 15, 9, 14, 10, 54, 64]
 
 
 def check(browser, package, shots):

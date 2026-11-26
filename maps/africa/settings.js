@@ -17,7 +17,8 @@
                    African Union's; North Africa leaves out Western Sahara (the Sahrawi Arab Democratic Republic),
                    which is not a UN member. (translations: maps/africa/lang/<code>.json)
    Region settings: every region of any of the seven maps, with its capital, info and flag. The capitals are the World
-   map's (maps/world/settings.js), except Nigeria (Abuja, not Lagos), and the territories have theirs too. Where a
+   map's (maps/world/settings.js), except Nigeria (Abuja, not Lagos), and the territories have theirs too (not Ceuta and
+   Melilla: each is a city, so it has no capital of its own, like Vatican City on the World map). Where a
    place has several capitals, the most populated city is used, as on the World map. The flags are the World map's
    (maps/world/flags/), so the package lists each one it uses.
    The package's entries in edugame.json say which shapes to draw ("shapes": "world"), and the package lists
@@ -106,13 +107,14 @@
       orientation: 'vertical',
       in_game: [
         'Algeria', 'Angola', 'Benin', 'Botswana', 'Burkina Faso', 'Burundi', 'Cabo Verde', 'Cameroon',
-        'Canary Islands', 'Central African Republic', 'Chad', 'Comoros', 'Côte d\'Ivoire',
+        'Canary Islands', 'Central African Republic', 'Ceuta', 'Chad', 'Comoros', 'Côte d\'Ivoire',
         'Democratic Republic of the Congo', 'Djibouti', 'Egypt', 'Equatorial Guinea', 'Eritrea', 'Eswatini',
         'Ethiopia', 'Gabon', 'Ghana', 'Guinea', 'Guinea-Bissau', 'Kenya', 'Lesotho', 'Liberia', 'Libya', 'Madagascar',
-        'Madeira', 'Malawi', 'Mali', 'Mauritania', 'Mauritius', 'Mayotte', 'Morocco', 'Mozambique', 'Namibia', 'Niger',
-        'Nigeria', 'Republic of the Congo', 'Réunion', 'Rwanda', 'Saint Helena', 'São Tomé and Príncipe', 'Senegal',
-        'Seychelles', 'Sierra Leone', 'Somalia', 'Somaliland', 'South Africa', 'South Sudan', 'Sudan', 'Tanzania',
-        'The Gambia', 'Togo', 'Tristan da Cunha', 'Tunisia', 'Uganda', 'Western Sahara', 'Zambia', 'Zimbabwe'
+        'Madeira', 'Malawi', 'Mali', 'Mauritania', 'Mauritius', 'Mayotte', 'Melilla', 'Morocco', 'Mozambique',
+        'Namibia', 'Niger', 'Nigeria', 'Republic of the Congo', 'Rwanda', 'Réunion', 'Saint Helena', 'Senegal',
+        'Seychelles', 'Sierra Leone', 'Somalia', 'Somaliland', 'South Africa', 'South Sudan', 'Sudan',
+        'São Tomé and Príncipe', 'Tanzania', 'The Gambia', 'Togo', 'Tristan da Cunha', 'Tunisia', 'Uganda',
+        'Western Sahara', 'Zambia', 'Zimbabwe'
       ]
     }
   },
@@ -172,6 +174,10 @@
       capital: { name: 'N\'Djamena', lat: 12.115, lon: 15.0472, info: '' },
       info: '',
       flag: 'maps/world/flags/td.svg'
+    },
+    'Ceuta': {
+      info: 'An autonomous city of Spain on the north coast of Africa. Morocco claims it.',
+      flag: 'maps/world/flags/es-ce.svg'
     },
     'Comoros': {
       capital: { name: 'Moroni', lat: -11.7042, lon: 43.2402, info: '' },
@@ -288,6 +294,10 @@
       info: '',
       flag: 'maps/world/flags/mu.svg'
     },
+    'Melilla': {
+      info: 'An autonomous city of Spain on the north coast of Africa. Morocco claims it.',
+      flag: 'maps/world/flags/es-ml.svg'
+    },
     'Mayotte': {
       capital: { name: 'Mamoudzou', lat: -12.7806, lon: 45.2278, info: '' },
       info: 'An overseas department and region of France.',
@@ -366,7 +376,7 @@
     'Somaliland': {
       capital: { name: 'Hargeisa', lat: 9.56, lon: 44.065, info: '' },
       info: 'Declared itself independent of Somalia in 1991 and governs itself, but most countries count it as part of Somalia. On the maps of UN countries it is part of Somalia.',
-      flag: ''
+      flag: 'maps/world/flags/somaliland.svg'
     },
     'South Africa': {
       capital: { name: 'Johannesburg', lat: -26.1681, lon: 28.0281, info: '' },
