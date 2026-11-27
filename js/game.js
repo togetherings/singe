@@ -826,7 +826,7 @@
     });
     var wrap = !!map.wrap;
     g = { map: map, mode: mode, order: shuffle(indices), pos: 0, wrong: 0, tries: 0,
-          clicks: 0, found: 0, start: Date.now(), timer: null, done: {}, grade: {},
+          clicks: 0, found: 0, start: Date.now(), timer: null, done: {}, grade: {}, triesOf: {},
           wrap: wrap, root: $('game'), ratio: 1,
           infinite: wrap && (map.infinite_scroll !== undefined ? !!map.infinite_scroll : !!CONFIG.infinite_scroll) };
     $('mapBox').innerHTML = '';
@@ -964,14 +964,17 @@
     g.target = index !== undefined ? index : takeNext();
     $('skipPrev').disabled = !g.skipped.length;
     $('skipNext').disabled = !(g.pending.length || g.skipped.length);
-    g.tries = 0;
+    // Wrong tries belong to the prompt, so skipping and coming back doesn't wipe them (nor the hint).
+    g.tries = g.triesOf[g.target] || 0;
     var region = g.map.regions[g.target], flag = $('promptFlag');
     if (g.mode === 'flags') {                        // show the flag; the player clicks its region
       flag.src = region.flag;
       flag.classList.remove('hidden');
     }
     showPrompt();
-    $('feedback').textContent = '';
+    var left = MAX_TRIES - g.tries;
+    $('feedback').textContent = !g.tries ? '' : left > 0 ? tr('feedback.retry', { n: left }) : tr('feedback.hint');
+    if (g.tries && left <= 0) addCls(shapeEls(g.target), 'hint');   // the answer was shown before: show it again
     $('found').textContent = g.found;
   }
 
@@ -1105,7 +1108,7 @@
       if (!g.pending.length && !g.skipped.length) finishGame(); else nextTarget(takeNext());
     } else {
       // ---- wrong ----
-      g.wrong++; g.tries++;
+      g.wrong++; g.tries++; g.triesOf[g.target] = g.tries;
       addCls(shape, 'wrong');
       setTimeout(function () { remCls(shape, 'wrong'); }, 350);
       var left = MAX_TRIES - g.tries;
@@ -1166,9 +1169,18 @@
   function showTip(text, x, y, hideAfterMs) {
     var t = $('tip');
     t.textContent = text;
-    t.style.left = (x + 12) + 'px';
-    t.style.top = (y + 14) + 'px';
     t.classList.remove('hidden');
+    // Below and to the right of the pointer, or on the other side where it would go off the screen
+    // (a tap near the right edge of a phone). A label wider than the screen wraps.
+    var W = document.documentElement.clientWidth, H = document.documentElement.clientHeight, M = 4;
+    t.style.maxWidth = (W - 2 * M) + 'px';
+    t.style.whiteSpace = t.scrollWidth > W - 2 * M ? 'normal' : '';
+    var w = t.offsetWidth, h = t.offsetHeight;
+    var left = x + 12, top = y + 14;
+    if (left + w > W - M) left = x - 12 - w;
+    if (top + h > H - M) top = y - 14 - h;
+    t.style.left = Math.max(M, Math.min(left, W - M - w)) + 'px';
+    t.style.top = Math.max(M, Math.min(top, H - M - h)) + 'px';
     clearTimeout(tipTimer);
     if (hideAfterMs) tipTimer = setTimeout(hideTip, hideAfterMs);
   }

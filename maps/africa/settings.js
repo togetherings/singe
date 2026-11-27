@@ -131,28 +131,28 @@
       flag: 'maps/world/flags/ao.svg'
     },
     'Benin': {
-      capital: { name: 'Cotonou', lat: 6.363, lon: 2.4044, info: '' },
-      info: '',
+      capital: { name: 'Porto-Novo', lat: 6.4969, lon: 2.6289, info: '' },
+      info: 'Formerly called Dahomey (until 1975). Porto-Novo is the official capital; Cotonou, the largest city, is the seat of government.',
       flag: 'maps/world/flags/bj.svg'
     },
     'Botswana': {
       capital: { name: 'Gaborone', lat: -24.6463, lon: 25.9119, info: '' },
-      info: '',
+      info: 'Formerly called Bechuanaland (until 1966).',
       flag: 'maps/world/flags/bw.svg'
     },
     'Burkina Faso': {
       capital: { name: 'Ouagadougou', lat: 12.3723, lon: -1.5267, info: '' },
-      info: '',
+      info: 'Formerly called Upper Volta (until 1984).',
       flag: 'maps/world/flags/bf.svg'
     },
     'Burundi': {
-      capital: { name: 'Bujumbura', lat: -3.3761, lon: 29.36, info: '' },
-      info: '',
+      capital: { name: 'Gitega', lat: -3.4271, lon: 29.9246, info: '' },
+      info: 'Gitega has been the capital since 2019; Bujumbura, the former capital, is the largest city.',
       flag: 'maps/world/flags/bi.svg'
     },
     'Cabo Verde': {
       capital: { name: 'Praia', lat: 14.9167, lon: -23.5167, info: '' },
-      info: '',
+      info: 'Also called Cape Verde in English.',
       flag: 'maps/world/flags/cv.svg'
     },
     'Cameroon': {
@@ -167,7 +167,7 @@
     },
     'Central African Republic': {
       capital: { name: 'Bangui', lat: 4.3666, lon: 18.5583, info: '' },
-      info: '',
+      info: 'Formerly called Ubangi-Shari (until 1958).',
       flag: 'maps/world/flags/cf.svg'
     },
     'Chad': {
@@ -185,28 +185,28 @@
       flag: 'maps/world/flags/km.svg'
     },
     'Côte d\'Ivoire': {
-      capital: { name: 'Abidjan', lat: 5.3231, lon: -4.0202, info: '' },
-      info: '',
+      capital: { name: 'Yamoussoukro', lat: 6.8276, lon: -5.2893, info: '' },
+      info: 'Also known in English as Ivory Coast. Yamoussoukro has been the official capital since 1983; Abidjan, the largest city, is still where most of the government works.',
       flag: 'maps/world/flags/ci.svg'
     },
     'Democratic Republic of the Congo': {
       capital: { name: 'Kinshasa', lat: -4.3278, lon: 15.313, info: '', nudge: [-4.571, 15.49] },
-      info: '',
+      info: 'Called Zaire from 1971 to 1997.',
       flag: 'maps/world/flags/cd.svg'
     },
     'Djibouti': {
       capital: { name: 'Djibouti', lat: 11.595, lon: 43.148, info: '' },
-      info: '',
+      info: 'Formerly called French Somaliland, then the French Territory of the Afars and the Issas (until 1977).',
       flag: 'maps/world/flags/dj.svg'
     },
     'Egypt': {
       capital: { name: 'Cairo', lat: 30.0519, lon: 31.248, info: '' },
-      info: '',
+      info: 'Cairo is the capital. A planned New Capital is being built to the east of Cairo, and much of the government has moved there.',
       flag: 'maps/world/flags/eg.svg'
     },
     'Equatorial Guinea': {
-      capital: { name: 'Malabo', lat: 3.75, lon: 8.7833, info: '' },
-      info: '',
+      capital: { name: 'Ciudad de la Paz', lat: 1.5889, lon: 10.8225, info: '' },
+      info: 'Formerly called Spanish Guinea (until 1968). Ciudad de la Paz, also known as Djibloho or Oyala, became the capital in January 2026 and is still being built; the previous capital was Malabo.',
       flag: 'maps/world/flags/gq.svg'
     },
     'Eritrea': {
@@ -216,7 +216,7 @@
     },
     'Eswatini': {
       capital: { name: 'Mbabane', lat: -26.3167, lon: 31.1333, info: '' },
-      info: '',
+      info: 'Formerly called Swaziland (until 2018). Mbabane is the seat of government; Lobamba is the royal and legislative capital.',
       flag: 'maps/world/flags/sz.svg'
     },
     'Ethiopia': {
@@ -231,7 +231,7 @@
     },
     'Ghana': {
       capital: { name: 'Accra', lat: 5.552, lon: -0.2187, info: '' },
-      info: '',
+      info: 'Formerly called the Gold Coast (until 1957).',
       flag: 'maps/world/flags/gh.svg'
     },
     'Guinea': {
@@ -251,7 +251,7 @@
     },
     'Lesotho': {
       capital: { name: 'Maseru', lat: -29.3167, lon: 27.4833, info: '' },
-      info: '',
+      info: 'Formerly called Basutoland (until 1966).',
       flag: 'maps/world/flags/ls.svg'
     },
     'Liberia': {
@@ -266,7 +266,7 @@
     },
     'Madagascar': {
       capital: { name: 'Antananarivo', lat: -18.9147, lon: 47.5147, info: '' },
-      info: '',
+      info: 'Called the Malagasy Republic from 1958 to 1975.',
       flag: 'maps/world/flags/mg.svg'
     },
     'Madeira': {
@@ -276,12 +276,12 @@
     },
     'Malawi': {
       capital: { name: 'Lilongwe', lat: -13.9833, lon: 33.7833, info: '' },
-      info: '',
+      info: 'Formerly called Nyasaland (until 1964).',
       flag: 'maps/world/flags/mw.svg'
     },
     'Mali': {
       capital: { name: 'Bamako', lat: 12.652, lon: -8.002, info: '' },
-      info: '',
+      info: 'Formerly called French Sudan (until 1960).',
       flag: 'maps/world/flags/ml.svg'
     },
     'Mauritania': {
@@ -315,7 +315,7 @@
     },
     'Namibia': {
       capital: { name: 'Windhoek', lat: -22.57, lon: 17.0835, info: '' },
-      info: '',
+      info: 'Formerly called South West Africa (until 1990).',
       flag: 'maps/world/flags/na.svg'
     },
     'Niger': {
@@ -379,8 +379,8 @@
       flag: 'maps/world/flags/somaliland.svg'
     },
     'South Africa': {
-      capital: { name: 'Johannesburg', lat: -26.1681, lon: 28.0281, info: '' },
-      info: '',
+      capital: { name: 'Pretoria', lat: -25.7461, lon: 28.1881, info: '' },
+      info: 'South Africa has three capitals: Pretoria (the government), Cape Town (parliament) and Bloemfontein (the judicial capital). Johannesburg, the largest city, is not one of them.',
       flag: 'maps/world/flags/za.svg'
     },
     'South Sudan': {
@@ -394,8 +394,8 @@
       flag: 'maps/world/flags/sd.svg'
     },
     'Tanzania': {
-      capital: { name: 'Dar es Salaam', lat: -6.7981, lon: 39.2664, info: '' },
-      info: '',
+      capital: { name: 'Dodoma', lat: -6.1630, lon: 35.7516, info: '' },
+      info: 'Formed in 1964, when Tanganyika and Zanzibar united. Dodoma is the capital; Dar es Salaam, the former capital, is the largest city.',
       flag: 'maps/world/flags/tz.svg'
     },
     'The Gambia': {
@@ -424,18 +424,18 @@
       flag: 'maps/world/flags/ug.svg'
     },
     'Western Sahara': {
-      capital: { name: 'Bir Lehlou', lat: 26.1192, lon: -9.6525, info: '' },
-      info: 'A disputed territory. Morocco controls most of it. The Sahrawi Arab Democratic Republic, a member of the African Union, claims all of it and controls a strip in the east. On the maps of UN countries it is grey.',
+      capital: { name: 'Tifariti', lat: 26.1581, lon: -10.5669, info: '' },
+      info: 'A disputed territory. Morocco controls most of it. The Sahrawi Arab Democratic Republic, a member of the African Union, claims all of it and controls a strip in the east. On the maps of UN countries it is grey. The Sahrawi Republic claims Laayoune (El Aaiún), which Morocco controls, as its capital; its temporary capital is Tifariti (Bir Lehlou until 2008).',
       flag: 'maps/world/flags/eh.svg'
     },
     'Zambia': {
       capital: { name: 'Lusaka', lat: -15.4147, lon: 28.2814, info: '' },
-      info: '',
+      info: 'Formerly called Northern Rhodesia (until 1964).',
       flag: 'maps/world/flags/zm.svg'
     },
     'Zimbabwe': {
       capital: { name: 'Harare', lat: -17.8158, lon: 31.0428, info: '' },
-      info: '',
+      info: 'Formerly called Rhodesia (until 1980).',
       flag: 'maps/world/flags/zw.svg'
     }
   }
