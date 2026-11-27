@@ -75,7 +75,7 @@
     'Kpanguima': {
       province: 'Eastern',
       capital: { name: 'Panguma', lat: 8.186, lon: -11.135, info: 'Also spelled Kpanguma.' },
-      info: 'A new district, also spelled Kpanguma or Panguma. It is made from the Lower Bambara, Malegohun (Kenema), Yawei, Penguia, Kpeje West, Kpeje Bongre (Kailahun) chiefdoms and the new Jahn Chiefdom, which was cut out of Njaluahun Chiefdom. Kpeje Bongre is now two chiefdoms (Kpeje and Bongre), shown here as one. Its boundary here is unofficial and drawn from the best public data available.',
+      info: 'A new district, established in 2026, also spelled Kpanguma or Panguma. It is made from the Lower Bambara, Malegohun (Kenema), Yawei, Penguia, Kpeje West, Kpeje Bongre (Kailahun) chiefdoms and the new Jahn Chiefdom, which was cut out of Njaluahun Chiefdom. Kpeje Bongre is now two chiefdoms (Kpeje and Bongre), shown here as one. Its boundary here is unofficial and drawn from the best public data available.',
       flag: ''
     },
     'Bombali': {
@@ -87,7 +87,7 @@
     'Falaba': {
       province: 'Northern',
       capital: { name: 'Bendugu', lat: 9.53, lon: -10.96, info: '' },
-      info: '',
+      info: 'Established as a district in 2017.',
       flag: ''
     },
     'Koinadugu': {
@@ -111,7 +111,7 @@
     'Karene': {
       province: 'North West',
       capital: { name: 'Kamakwie', lat: 9.5, lon: -12.25, info: '' },
-      info: '',
+      info: 'Established as a district in 2017.',
       flag: ''
     },
     'Port Loko': {
@@ -129,7 +129,7 @@
     'Bonthe': {
       province: 'Southern',
       capital: { name: 'Mattru Jong', lat: 7.5997, lon: -12.1667, info: '' },
-      info: '',
+      info: 'Bonthe, on Sherbro Island, is the largest city in the district, and is sometimes mistaken for its capital. The capital is Mattru Jong.',
       flag: ''
     },
     'Moyamba': {
@@ -147,7 +147,7 @@
     'Bandajuma': {
       province: 'Southern',
       capital: { name: 'Bandajuma', lat: 7.572, lon: -11.651, info: '' },
-      info: 'A new district, made from the Wonde (Bo), Sowa, Pejeh (Futa Peje), Barri, Makpele and Soro Gbema (Pujehun), and Langrama, Niawa and Tunkia (Kenema) chiefdoms. Its boundary here is unofficial and drawn from the best public data available.',
+      info: 'A new district, established in 2026, made from the Wonde (Bo), Sowa, Pejeh (Futa Peje), Barri, Makpele and Soro Gbema (Pujehun), and Langrama, Niawa and Tunkia (Kenema) chiefdoms. Its boundary here is unofficial and drawn from the best public data available.',
       flag: ''
     },
     'Western Area Rural': {
