@@ -39,7 +39,7 @@
     'American Samoa': {
       capital: { name: 'Pago Pago', lat: -14.2756, lon: -170.702, info: '' },
       info: '',
-      flag: 'maps/us/flags/american_samoa.svg'
+      flag: 'maps/world/flags/as.svg'
     },
     'Arizona': {
       capital: { name: 'Phoenix', lat: 33.4484, lon: -112.074, info: '' },
@@ -91,7 +91,7 @@
     'Guam': {
       capital: { name: 'Hagåtña', lat: 13.4757, lon: 144.7489, info: '' },
       info: '',
-      flag: 'maps/us/flags/guam.svg'
+      flag: 'maps/world/flags/gu.svg'
     },
     'Hawaii': {
       capital: { name: 'Honolulu', lat: 21.3069, lon: -157.8583, info: '' },
@@ -216,7 +216,7 @@
     'Northern Mariana Islands': {
       capital: { name: 'Saipan', lat: 15.2123, lon: 145.7545, info: '' },
       info: '',
-      flag: 'maps/us/flags/northern_mariana_islands.svg'
+      flag: 'maps/world/flags/mp.svg'
     },
     'Ohio': {
       capital: { name: 'Columbus', lat: 39.9612, lon: -82.9988, info: '' },
@@ -241,7 +241,7 @@
     'Puerto Rico': {
       capital: { name: 'San Juan', lat: 18.4655, lon: -66.1057, info: '' },
       info: '',
-      flag: 'maps/us/flags/puerto_rico.svg'
+      flag: 'maps/world/flags/pr.svg'
     },
     'Rhode Island': {
       capital: { name: 'Providence', lat: 41.824, lon: -71.4128, info: '' },
@@ -271,7 +271,7 @@
     'U.S. Virgin Islands': {
       capital: { name: 'Charlotte Amalie', lat: 18.3419, lon: -64.9307, info: '' },
       info: '',
-      flag: 'maps/us/flags/us_virgin_islands.svg'
+      flag: 'maps/world/flags/vi.svg'
     },
     'Utah': {
       capital: { name: 'Salt Lake City', lat: 40.7608, lon: -111.891, info: '' },

@@ -6,6 +6,7 @@
 - **Flags of England, Scotland, Wales, Northern Ireland (the Ulster Banner), Cornwall (Saint Piran's flag), the Hebrides (the Western Isles Council's), Orkney and Shetland** (`maps/world/flags/gb-eng`, `gb-sct`, `gb-wls`, `gb-nir`, `gb-con`, `gb-els`, `gb-ork`, `gb-zet`): from Wikipedia (Wikimedia Commons), public domain.
 - **British Isles map:** Natural Earth 5.1.2 (public domain): Admin 0 – Map Units, and Cornwall's border from Admin 1 – States, Provinces; lakes from Natural Earth's lakes.
 - **France map:** Natural Earth 5.1.2 (public domain): Admin 1 – States, Provinces, France's departments merged into its regions, with its neighbours' provinces.
+- **Flags of Northern Cyprus, Crimea, Kaliningrad, Newfoundland and Labrador, Okinawa, Rapa Nui, Sakhalin, Sardinia, Sicily, Tasmania, the Azores, the Balearic Islands, Saba and Sint Eustatius** (`maps/world/flags/`): from Wikipedia (Wikimedia Commons), public domain.
 - **US state and territory flags** (`maps/us/flags/`): from Wikipedia (Wikimedia Commons), public domain.
 - **British Isles menu card** (`maps/british_isles/flag.svg`): the UK's and Ireland's flags (from `maps/world/flags/`) split diagonally.
 - Flags have had their metadata removed (`tools/clean_svg.py`); Tristan da Cunha's is optimised (see `data/flag_sources/README.md`).
