@@ -10,6 +10,7 @@
   id: 'france',
   name: 'France',
   blurb: 'Find the 18 regions of France, overseas regions included',
+  image: 'maps/france/flag.svg',
   credit: 'Boundaries: Natural Earth 5.1.2 (public domain, naturalearthdata.com), its departments merged into regions. The overseas regions are moved closer and resized.',
   orientation: 'horizontal',
   zoom_levels: 5,
