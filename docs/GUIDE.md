@@ -29,7 +29,7 @@ The kit puts a header at the top of the page: the game's title (the package's, l
 
 The appearance is kept on the device. The language is kept in the learner's save, so it follows them in Kolibri. A learner who hasn't chosen gets Kolibri's language (on the Kolibri Games games page), then the browser's, then English. `"options": {"theme": "light"}` in `edugame.json` sets the appearance a new user starts with.
 
-**Map colours** (SINGE's own choice in the same panel, kept on the device): Like this device (the default: high contrast when the computer or phone asks for more contrast), Normal, or High contrast. High contrast (`html[data-contrast="high"]` in `index.html`, with a light and a dark version) has white or black land, thick borders, and colours that differ from unanswered land by at least 3:1: first try dark blue (light) or light blue (dark), a later try orange or yellow, needed the hint crimson or red, so first try and needed the hint differ in lightness, not only in colour.
+**Map colours** (SINGE's own choice in the same panel, kept on the device): Like this device (the default: high contrast when the computer or phone asks for more contrast), Normal, or High contrast. High contrast (`html[data-contrast="high"]` in `index.html`, with a light and a dark version) has white or black land, thick borders, and colours that differ from unanswered land by at least 3:1: green, yellow and red, which also differ from each other in lightness (light: dark green, red, dark gold; dark: red, green, bright yellow), so they stay apart with red-green colour blindness.
 
 ## Keyboard
 While a map is on screen it has the keyboard; Escape goes back to the menu (it closes an open panel first).

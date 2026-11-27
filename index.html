@@ -53,11 +53,12 @@
     --tip-bg: #e4ebf1; --tip-text: #0f1b24; --backdrop: rgba(0,0,0,.65);
   }
   /* HIGH CONTRAST (Options > Map colours, or the device asking for more contrast): html[data-contrast="high"].
-     Answered places differ from unanswered ones by at least 3:1, and first try (blue) and needed the hint (red) differ
-     in lightness too, not only in colour; later tries are orange (light) or yellow (dark). Thicker borders. */
+     Green, yellow and red like the normal themes, but each differs from unanswered land by at least 3:1, and the three
+     differ in lightness from each other too (light: dark green, red, dark gold; dark: red, green, bright yellow), so they
+     stay apart with red-green colour blindness. Thicker borders. */
   html[data-contrast="high"] {
     --sea: #a9cbe8; --land: #ffffff; --text: #000000; --line: #000000; --card: #ffffff; --accent: #003e7e;
-    --good: #002f6c; --retry: #d98200; --bad: #a50021; --off: #767676; --done-line: #ffffff;
+    --good: #004617; --retry: #ba8b00; --bad: #cb0b1b; --off: #767676; --done-line: #ffffff;
     --hover: #ffe680; --hint-pulse: #ffd0c8; --water: #a9cbe8; --inbox-bg: #ffffff; --box-bg: #ffffff;
     --frame-bg: transparent; --bar-bg: rgba(255,255,255,.95);
     --ring-fill: #ffffff; --ring-line: #000000; --ring-hover: #ffe680; --dot: #000000;
@@ -66,7 +67,7 @@
   }
   html[data-theme="dark"][data-contrast="high"] {
     --sea: #000000; --land: #2e2e2e; --text: #ffffff; --line: #ffffff; --card: #000000; --accent: #5fb4ff;
-    --good: #b5e3ff; --retry: #ffe14d; --bad: #e03c3c; --off: #000000; --done-line: #000000;
+    --good: #25d250; --retry: #ffe957; --bad: #f43535; --off: #000000; --done-line: #000000;
     --hover: #5a5a5a; --hint-pulse: #6b1a1a; --water: #000000; --inbox-bg: #111111; --box-bg: #000000;
     --frame-bg: transparent; --bar-bg: rgba(0,0,0,.92);
     --ring-fill: #ffffff; --ring-line: #000000; --ring-hover: #ffe14d; --dot: #000000;
