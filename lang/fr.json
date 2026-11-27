@@ -147,9 +147,5 @@
   "keys.k_help": "?",
   "keys.t_help": "Cette liste",
   "keys.k_menu": "Échap",
-  "keys.t_menu": "Fermer un panneau, ou revenir au menu",
-  "option.contrast": "Couleurs de la carte",
-  "contrast.auto": "Comme cet appareil",
-  "contrast.normal": "Normales",
-  "contrast.high": "Contraste élevé"
+  "keys.t_menu": "Fermer un panneau, ou revenir au menu"
 }

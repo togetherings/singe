@@ -12,71 +12,49 @@
 <style>
   /* ---------- Colours (change here to re-theme the whole game) ----------
      Light is the default. The dark theme (further down) overrides the same names. */
+  /* Contrast where it matters (text 4.5:1 or more; borders, answers against unanswered land, the pointer outline 3:1
+     or more), calm colours elsewhere (the page and sea, places not in the game). The answer colours come from the
+     Okabe-Ito and Paul Tol colour-blind-safe palettes and differ in lightness too, so they stay apart with colour
+     blindness. (The light theme's yellow is the one exception: a real yellow can't be dark enough for 3:1 on white.) */
   :root {
-    --sea: #dcebf2;      /* page background: "water" */
-    --land: #f6f1e4;     /* unanswered region */
-    --text: #1d2b36;     /* text */
-    --line: #1d2b36;     /* borders and outlines */
-    --good: #378f60;     /* correctly identified region (first try) */
-    --bad: #e2604f;      /* wrong-click flash, hint, needed the hint */
-    --retry: #e5a500;    /* found on 2nd or 3rd try (before the hint) */
+    --sea: #d6e9f5;      /* page background and sea */
+    --land: #ffffff;     /* unanswered region */
+    --text: #000000;     /* text */
+    --line: #000000;     /* borders and outlines */
+    --good: #117733;     /* answered on the first try (Tol's dark green) */
+    --retry: #F0E442;    /* answered on a later try (Okabe-Ito yellow) */
+    --bad: #D55E00;      /* wrong-click flash, the hint, needed the hint (Okabe-Ito vermillion) */
     --done-line: var(--line);   /* borders of answered regions */
-    --kbd: #000000; --kbd-halo: #ffffff;   /* the keyboard's highlight: a dark outline with a light glow */
+    --point: #ffffff;    /* the pointer outline (hover and keyboard): a band of this, edged with --line */
+    --shade: .85;        /* hover and keyboard: what's under the pointer gets this much darker (or lighter, dark theme) */
     --card: #ffffff;     /* menu cards, information panel, buttons */
-    --accent: #1f6f8b;   /* button hover */
-    --met-bg: #cfeedd; --met-line: #2e8b57;   /* mode button once its accuracy goal is reached */
-    --header-bg: #1d2b36; --header-text: #ffffff;
-    --frame-bg: rgba(255,255,255,.35);   /* the outlined page area */
-    --box-bg: rgba(255,255,255,.35);     /* boxes around moved regions (Alaska etc.) */
-    --inbox-bg: #f0f7fa;                 /* the boxes under a world map: solid, so the map never shows through them */
-    --hover: #ffffff;                    /* region under the mouse */
-    --hint-pulse: #f6c9c3;               /* the hinted region pulses between red and this */
-    --ring-fill: #ffffff; --ring-line: #1d2b36; --ring-hover: #bfe3f5; --dot: #1d2b36;   /* capital circles */
-    --tip-bg: #1d2b36; --tip-text: #ffffff;                                               /* name label */
-    --backdrop: rgba(29,43,54,.55);                                                       /* behind pop-ups */
-    --bar-bg: rgba(220,235,242,.85);   /* world map: the see-through chips of the game bar laid over the map */
-    --water: #e8f2f7;    /* the colour of the sea on the map, for lakes */
-    --off: #b3b1a5;      /* world map: regions that are not part of the game (grey) */
+    --accent: #0b5394;   /* button hover */
+    --met-bg: #d7f0e1; --met-line: #117733;   /* mode button once its accuracy goal is reached */
+    --header-bg: #000000; --header-text: #ffffff;
+    --frame-bg: rgba(255,255,255,.55);   /* the outlined page area */
+    --box-bg: rgba(255,255,255,.55);     /* boxes around moved regions (Alaska etc.) */
+    --inbox-bg: #eef6fb;                 /* the boxes under a world map: solid, so the map never shows through them */
+    --hint-pulse: #ffd7c2;               /* the hinted region pulses between vermillion and this */
+    --ring-fill: var(--land); --ring-line: var(--line); --dot: var(--line);   /* circles: small countries and capitals */
+    --tip-bg: #000000; --tip-text: #ffffff;                                     /* name label */
+    --backdrop: rgba(0,0,0,.55);                                                /* behind pop-ups */
+    --bar-bg: rgba(214,233,245,.92);   /* world map: the see-through chips of the game bar laid over the map */
+    --water: #d6e9f5;    /* lakes: the colour of the sea */
+    --off: #e4e4e4; --off-line: #a8a8a8;   /* regions that are not part of the game: pale, so they stay in the background */
     --pageW: 760px;      /* page width; wider for horizontal maps (body.wide) */
   }
   html[data-theme="dark"] {
     color-scheme: dark;
-    --sea: #0f1b24; --land: #243645; --text: #e4ebf1; --line: #a3b6c7;
-    --done-line: #0f1b24;   /* dark borders between coloured regions, so they still show */
-    --kbd: #ffffff; --kbd-halo: #000000;
-    --met-bg: #1f4d38; --met-line: #4fb883;
-    --good: #3f8f67; --bad: #c4564a; --retry: #b8a42b; --card: #17252f; --accent: #2f7f9f;
-    --header-bg: #081018; --header-text: #e4ebf1;
-    --frame-bg: rgba(255,255,255,.03); --box-bg: rgba(255,255,255,.05); --inbox-bg: #222d36;
-    --hover: #35506a; --hint-pulse: #7a3a34; --off: #17232d; --bar-bg: rgba(15,27,36,.85); --water: #131f28;
-    --ring-fill: #eef3f6; --ring-line: #0f1b24; --ring-hover: #8fd0ee; --dot: #0f1b24;
-    --tip-bg: #e4ebf1; --tip-text: #0f1b24; --backdrop: rgba(0,0,0,.65);
+    --sea: #0b1d2e; --land: #2a2a2a; --text: #ffffff; --line: #ffffff; --done-line: #ffffff;
+    --good: #009E73; --retry: #F0E442; --bad: #D55E00;   /* Okabe-Ito green, yellow, vermillion */
+    --point: #000000; --shade: 1.22;
+    --card: #21446a; --accent: #0072B2; --met-bg: #00382a; --met-line: #2fd3a0;
+    --header-bg: #000000; --header-text: #ffffff;
+    --frame-bg: rgba(255,255,255,.04); --box-bg: rgba(255,255,255,.04); --inbox-bg: #21446a;
+    --hint-pulse: #5a2a12; --bar-bg: rgba(11,29,46,.92); --water: #0b1d2e;
+    --off: #16283a; --off-line: #2f4356;
+    --tip-bg: #ffffff; --tip-text: #000000; --backdrop: rgba(0,0,0,.65);
   }
-  /* HIGH CONTRAST (Options > Map colours, or the device asking for more contrast): html[data-contrast="high"].
-     Green, yellow and red like the normal themes, but each differs from unanswered land by at least 3:1, and the three
-     differ in lightness from each other too (light: dark green, red, dark gold; dark: red, green, bright yellow), so they
-     stay apart with red-green colour blindness. Thicker borders. */
-  html[data-contrast="high"] {
-    --sea: #a9cbe8; --land: #ffffff; --text: #000000; --line: #000000; --card: #ffffff; --accent: #003e7e;
-    --good: #004617; --retry: #ba8b00; --bad: #cb0b1b; --off: #767676; --done-line: #ffffff;
-    --hover: #d4d4d4; --hint-pulse: #ffd0c8; --water: #a9cbe8; --inbox-bg: #ffffff; --box-bg: #ffffff;
-    --frame-bg: transparent; --bar-bg: rgba(255,255,255,.95);
-    --ring-fill: #ffffff; --ring-line: #000000; --ring-hover: #d4d4d4; --dot: #000000;
-    --tip-bg: #000000; --tip-text: #ffffff; --kbd: #000000; --kbd-halo: #ffd400;
-    --met-bg: #d7f0e1; --met-line: #00552a; --header-bg: #000000; --header-text: #ffffff;
-  }
-  html[data-theme="dark"][data-contrast="high"] {
-    --sea: #000000; --land: #2e2e2e; --text: #ffffff; --line: #ffffff; --card: #000000; --accent: #5fb4ff;
-    --good: #25d250; --retry: #ffe957; --bad: #f43535; --off: #000000; --done-line: #000000;
-    --hover: #5a5a5a; --hint-pulse: #6b1a1a; --water: #000000; --inbox-bg: #111111; --box-bg: #000000;
-    --frame-bg: transparent; --bar-bg: rgba(0,0,0,.92);
-    --ring-fill: #ffffff; --ring-line: #000000; --ring-hover: #a6a6a6; --dot: #000000;
-    --tip-bg: #ffffff; --tip-text: #000000; --kbd: #ffffff; --kbd-halo: #ff3df5;
-    --met-bg: #00381c; --met-line: #6be39c; --header-bg: #000000; --header-text: #ffffff;
-  }
-  html[data-contrast="high"] .region { stroke-width: 2; }
-  html[data-contrast="high"] .mk, html[data-contrast="high"] .cap .ring { stroke-width: 3; }
-  html[data-contrast="high"] .off, html[data-contrast="high"] .region.off { stroke: #767676; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--sea); color: var(--text);
          font: 16px/1.5 Georgia, "Times New Roman", serif; }
@@ -196,14 +174,17 @@
   .frame-back { fill: var(--water); stroke: none; pointer-events: none; }
   .frame { fill: var(--box-bg); stroke: var(--line); stroke-width: 1.5; pointer-events: none;
            vector-effect: non-scaling-stroke; }
-  .region:hover, .region.hover { fill: var(--hover); }
   /* invisible wide outline that makes small regions easier to tap */
   .halo { fill: none; stroke: rgba(0,0,0,0); stroke-width: 28px; pointer-events: stroke;
           vector-effect: non-scaling-stroke; cursor: pointer; }
   .region.done { fill: var(--good); stroke: var(--done-line); cursor: default; }
-  .region.off, .region.off:hover, .capitals .region.off, .capitals .region.off:hover { fill: var(--off); cursor: default; }
+  .region.off, .region.off:hover, .capitals .region.off, .capitals .region.off:hover { fill: var(--off); stroke: var(--off-line); cursor: default; }
   .region.done.retry { fill: var(--retry); }
   .region.notmain, .mk.notmain { fill: var(--retry); }   /* a part of the country was clicked, not its main area: flashes yellow */
+  /* The hint and the wrong-part flash also get a thick dashed outline, so they never look like an answered place
+     (even when the pulse is off for people who ask for less motion) */
+  .region.hint, .region.notmain, .mk.hint, .mk.notmain, .cap.hint .ring { stroke: var(--line); stroke-width: 4px; stroke-dasharray: 8 5; }
+  .mk.hint, .mk.notmain, .cap.hint .ring { stroke-width: 2.6px; stroke-dasharray: 3 2; }
   .region.done.hinted { fill: var(--bad); }
   .region.wrong { fill: var(--bad); }
   .region.hint { fill: var(--bad); animation: pulse .8s ease-in-out infinite alternate; }   /* hint flashes red */
@@ -211,18 +192,16 @@
   @media (prefers-reduced-motion: reduce) { .region.hint { animation: none; } }
 
   /* Capitals mode: regions stay plain green; capitals are circles on top */
-  .capitals .region, .capitals .region:hover { fill: var(--good); cursor: default; }
+  .capitals .region, .capitals .region:hover { fill: var(--land); cursor: default; }
   .cap .ring { fill: var(--ring-fill); stroke: var(--ring-line); stroke-width: 2; cursor: pointer;
                vector-effect: non-scaling-stroke; }
   .cap .hit { fill: transparent; cursor: pointer; pointer-events: all; }   /* big invisible tap area */
   .cap.found .hit { cursor: default; }
   .cap .dot { fill: var(--dot); display: none; pointer-events: none; }
-  .cap:not(.found):hover .ring, .cap.hover:not(.found) .ring { fill: var(--ring-hover); stroke-width: 3.5; }   /* hover highlight (.hover: the same circle in another place, see hoverHalo in game.js) */
   .cap.wrong .ring { fill: var(--bad) !important; }   /* wrong guess: flashes red (beats hover colour) */
   .cap.hint .ring { animation: pulseRed .8s ease-in-out infinite alternate; }
   @keyframes pulseRed { to { fill: var(--bad); } }
   .cap.found .ring { cursor: default; }
-  .practice .cap:hover .ring, .practice .cap.hover .ring { fill: var(--ring-hover); }
   .cap.found .dot { display: block; }              /* black dot once correctly picked */
   .cap.first .ring { fill: var(--good); }
   .cap.retry .ring { fill: var(--retry); }
@@ -232,7 +211,6 @@
   /* World map: markers of tiny countries and island chains (circles shown while the region is too small to click),
      and the fixed boxes under the map */
   .mk { fill: var(--ring-fill); stroke: var(--ring-line); stroke-width: 2; cursor: pointer; vector-effect: non-scaling-stroke; }
-  .mk:hover, .mk.hover { fill: var(--ring-hover); stroke-width: 3.5; }
   .mk.done { fill: var(--good); cursor: default; }
   .mk.done.retry { fill: var(--retry); }
   .mk.done.hinted, .mk.wrong { fill: var(--bad); }
@@ -288,13 +266,18 @@
   #flagBig { display: block; max-width: 88vw; max-height: 80vh; min-width: min(70vw, 420px); object-fit: contain; }
   #flagClose { position: absolute; top: -14px; right: -14px; width: 2em; padding: 2px 0; font-size: 1.1rem; line-height: 1; }
 
-  /* ---------- Keyboard ---------- */
-  /* The highlighted place: a thick outline in two colours (one dark, one light), so it shows on any fill. */
-  .region.kbd, .mk.kbd, .cap.kbd .ring { stroke: var(--kbd) !important; stroke-width: 3px !important; vector-effect: non-scaling-stroke;
-              filter: drop-shadow(0 0 1.5px var(--kbd-halo)) drop-shadow(0 0 1.5px var(--kbd-halo)); }
+  /* ---------- Pointer (hover and keyboard) ---------- */
+  /* What the mouse or the keyboard points at gets a shade darker (lighter in dark), and an outline drawn on top of
+     everything: a band of --point edged with --line (on a circle, a ring round it, so its colour still shows).
+     game.js draws the outline (drawPointers). */
+  .region.hover:not(.inactive), .region.kbd, .mk.hover, .mk.kbd, .cap.hover .ring, .cap.kbd .ring { filter: brightness(var(--shade)); }
+  .capitals .region.hover { filter: none; }
+  .ptr { fill: none; pointer-events: none; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+  .ptr-edge { stroke: var(--line); stroke-width: 9px; }
+  .ptr-band { stroke: var(--point); stroke-width: 5px; }
   #mapBox:focus { outline: none; }
-  #kbdRing { position: fixed; z-index: 3; pointer-events: none; border-radius: 50%; border: 3px solid var(--kbd);
-             box-shadow: 0 0 0 2px var(--kbd-halo), inset 0 0 0 2px var(--kbd-halo); }
+  #kbdRing { position: fixed; z-index: 3; pointer-events: none; border-radius: 50%; border: 4px solid var(--point);
+             box-shadow: 0 0 0 2px var(--line), inset 0 0 0 2px var(--line); }
   #kbdRing.hidden { display: none; }                 /* the highlight shows where the keyboard is */
   #kbdHint { position: fixed; z-index: 6; bottom: 12px; left: 50%; transform: translateX(-50%); pointer-events: none;
              padding: 4px 12px; border-radius: 4px; background: var(--tip-bg); color: var(--tip-text); font-size: .95rem;

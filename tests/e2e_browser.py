@@ -143,7 +143,7 @@ def check_tries_and_label(browser, errors):
 def check_keyboard(browser, errors, shots):
     """The map has the keyboard: Tab and the arrows move a highlight, Enter answers, . and , skip and go back,
     + - Page Up Page Down Home zoom, ? lists the keys, Escape closes a panel and then goes back to the menu.
-    The High contrast choice in Options changes the colours."""
+    The place pointed at gets an outline drawn on top of the map."""
     server = cli.make_preview_server(ROOT, 0, package="countries")
     threading.Thread(target=server.serve_forever, daemon=True).start()
     base = "http://127.0.0.1:%d/" % server.server_address[1]
@@ -164,6 +164,7 @@ def check_keyboard(browser, errors, shots):
         first = lit()
         assert len(first) == 1, first
         assert frame.locator("#kbdSay").inner_text() == "A place you haven't found yet"   # never the answer
+        assert frame.locator("#mapBox .ptr-band").count() >= 1                       # the outline on top
         page.keyboard.press("Tab")
         assert lit() != first
         page.keyboard.press("Shift+Tab")
@@ -198,17 +199,6 @@ def check_keyboard(browser, errors, shots):
         assert not frame.locator("#game").get_attribute("class")
         page.keyboard.press("Escape")                                               # ...then back to the menu
         frame.locator("#menu:not(.hidden)").wait_for()
-        assert frame.evaluate("document.documentElement.dataset.contrast") in ("normal", "high")
-        # Options > Map colours > High contrast
-        game.locator(".eg-options-button").click()
-        game.locator(".eg-card input[value=high]").check()
-        game.locator(".eg-card .eg-primary").click()
-        assert frame.evaluate("document.documentElement.dataset.contrast") == "high"
-        game.locator(".mapCard").first.locator(".modeBtn").nth(1).click()
-        game.locator("#prompt:has-text('Find')").wait_for()
-        assert frame.evaluate("getComputedStyle(document.querySelector('#mapBox .region')).fill") == "rgb(255, 255, 255)"
-        if shots:
-            page.screenshot(path=os.path.join(shots, "high-contrast.png"))
         context.close()
     finally:
         server.shutdown()

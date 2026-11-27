@@ -829,7 +829,7 @@
           clicks: 0, found: 0, start: Date.now(), timer: null, done: {}, grade: {}, triesOf: {},
           wrap: wrap, root: $('game'), ratio: 1,
           infinite: wrap && (map.infinite_scroll !== undefined ? !!map.infinite_scroll : !!CONFIG.infinite_scroll) };
-    kb.key = null;
+    kb.key = null; ptrMouse = null;
     $('mapBox').innerHTML = '';
     $('stripBox').innerHTML = '';
     // The boxes under a world map are pulled up over the map with a negative margin (see fitWorld). That margin must go when the
@@ -850,18 +850,20 @@
     // Circles are linked too: hovering a circle (a region's marker or a capital) in a box lights up the same circle
     // (and the region) on the main map, on both copies of the world, and the other way round.
     function hoverHalo(e, on) {
-      var t = e.target, cl = t.classList, k, els;
+      var t = e.target, cl = t.classList, k, els, key = null;
       if (!cl) return;
-      if ((cl.contains('halo') || cl.contains('region')) && !cl.contains('inactive')) {
+      if ((cl.contains('halo') || cl.contains('region') || cl.contains('mk')) && !cl.contains('inactive')) {
         els = g.root.querySelectorAll('.region[data-i="' + t.getAttribute('data-i') + '"], .mk[data-i="' + t.getAttribute('data-i') + '"]');
         for (k = 0; k < els.length; k++) els[k].classList.toggle('hover', on);
-      } else if (cl.contains('mk')) {
-        els = g.root.querySelectorAll('.region[data-i="' + t.getAttribute('data-i') + '"], .mk[data-i="' + t.getAttribute('data-i') + '"]');
-        for (k = 0; k < els.length; k++) els[k].classList.toggle('hover', on);
+        if (g.mode !== 'capitals') key = 'r' + t.getAttribute('data-i');
       } else if (t.parentNode && t.parentNode.classList && t.parentNode.classList.contains('cap')) {
         els = g.root.querySelectorAll('.cap[data-c="' + t.parentNode.getAttribute('data-c') + '"]');
         for (k = 0; k < els.length; k++) els[k].classList.toggle('hover', on);
+        key = 'c' + t.parentNode.getAttribute('data-c');
       }
+      if (!key) return;
+      if (on) ptrMouse = key; else if (ptrMouse === key) ptrMouse = null;
+      drawPointers();
     }
     [svg, g.strip].forEach(function (v) {
       if (!v) return;
@@ -892,7 +894,7 @@
     $('bar').classList.toggle('flagMode', mode === 'flags');     // layout: the flag takes the middle of row 1
     $('bar').classList.toggle('practice', practice);             // Practice has no timer or prompts
     var c = setupZoom(svg, map);
-    c.onZoom = function (ratio) { g.ratio = ratio; sizeCircles(); kbRing(); };
+    c.onZoom = function (ratio) { g.ratio = ratio; sizeCircles(); kbRing(); drawPointers(); };
     sizeCircles();
     $('gameCredit').textContent = mapStr(map, 'credit') || '';
     g.pending = g.order.slice();                     // prompts not shown yet
@@ -1301,7 +1303,41 @@
          + - Page Up Page Down  zoom    Home or 0  the whole map    . and ,  Skip and Back    ?  the list of keys
        The highlight never names a place the learner hasn't found (in Practice it does, like hovering).
      ===================================================================== */
-  var kb = { key: null, used: false, hintTimer: null };   // key: the highlighted place ('r' + region number, 'c' + capital)
+  var kb = { key: null, used: false, hintTimer: null };
+  var ptrMouse = null;                               // the place under the mouse ('r' + region, 'c' + capital)
+
+  // The pointer outline (index.html, "Pointer"): for the places under the mouse and the keyboard, a copy of each
+  // shape's outline added at the end of its own group, so it's drawn above every neighbour's border (a ring round a
+  // circle). The copies ignore the mouse. Drawn again after zooming (a ring's size is in screen pixels).
+  function drawPointers() {
+    if (!g.root) return;
+    var old = g.root.querySelectorAll('.ptr'), k;
+    for (k = 0; k < old.length; k++) old[k].parentNode.removeChild(old[k]);
+    [ptrMouse, kb.key].forEach(function (key, n) {
+      if (!key || (n === 1 && key === ptrMouse)) return;
+      var els = kbEls(key);
+      for (var e = 0; e < els.length; e++) {
+        var el = els[e].classList.contains('cap') ? els[e].querySelector('.ring') : els[e];
+        if (!el || el.style.display === 'none' || (els[e].style && els[e].style.display === 'none')) continue;
+        if (el.classList.contains('region') && !el.getAttribute('d')) continue;
+        ['ptr ptr-edge', 'ptr ptr-band'].forEach(function (cls) {
+          var c;
+          if (el.tagName === 'circle') {
+            var m = el.getScreenCTM(), px = m ? Math.abs(m.a) || 1 : 1;
+            c = document.createElementNS(SVG_NS, 'circle');
+            c.setAttribute('cx', el.getAttribute('cx')); c.setAttribute('cy', el.getAttribute('cy'));
+            c.setAttribute('r', +el.getAttribute('r') + 5 / px);                       // a ring round it, 5 pixels out
+          } else {
+            c = el.cloneNode(false);
+            c.removeAttribute('style');
+          }
+          c.setAttribute('class', cls);
+          c.setAttribute('aria-hidden', 'true');
+          (el.tagName === 'circle' && els[e].classList.contains('cap') ? els[e].parentNode : el.parentNode).appendChild(c);
+        });
+      }
+    });
+  }   // key: the highlighted place ('r' + region number, 'c' + capital)
 
   function kbEls(key) {
     var i = key.slice(1);
@@ -1311,6 +1347,7 @@
     if (kb.key && g.root) remCls(kbEls(kb.key), 'kbd');
     kb.key = null;
     kbRing();
+    drawPointers();
   }
   // A small place (a circle, a tiny island) also gets a ring at least 26 pixels across around it, so the highlight
   // can be seen. It follows zooming and moving the map. (The copy of the place that is on screen is used.)
@@ -1367,6 +1404,7 @@
     kbClear();
     kb.key = t.key;
     addCls(kbEls(t.key), 'kbd');
+    drawPointers();
     setTimeout(kbRing, 0);
     if (t.strip) { try { g.strip.scrollIntoView({ block: 'nearest' }); } catch (e) {} }
     else if (zc) zc.show(t.x, t.y);
@@ -1567,24 +1605,6 @@
 
   // ---- Another language chosen in Options (the kit's panel). Appearance is the kit's too: the page gets
   // data-theme="light" or "dark", and the colours at the top of index.html follow it. ----
-  // ---- Map colours (Options): normal, high contrast, or like the device (high contrast when it asks for more) ----
-  // index.html has the colours: html[data-contrast="high"], with the light or dark theme.
-  var moreContrast = null;
-  try { moreContrast = window.matchMedia('(prefers-contrast: more)'); } catch (e) {}
-  function applyContrast() {
-    var v = EG.option('contrast'), high = v === 'high' || (v === 'auto' && !!(moreContrast && moreContrast.matches));
-    document.documentElement.setAttribute('data-contrast', high ? 'high' : 'normal');
-  }
-  EG.addOption({ key: 'contrast', label: 'option.contrast', 'default': 'auto', keep: 'device',
-                 choices: [{ value: 'auto', label: 'contrast.auto' }, { value: 'normal', label: 'contrast.normal' },
-                           { value: 'high', label: 'contrast.high' }] });
-  applyContrast();
-  EG.on('optionchange', function (e) { if (e.key === 'contrast') applyContrast(); });
-  if (moreContrast) {
-    if (moreContrast.addEventListener) moreContrast.addEventListener('change', applyContrast);
-    else if (moreContrast.addListener) moreContrast.addListener(applyContrast);
-  }
-
   EG.on('languagechange', function (e) {
     lang = e.language;
     if ($('fsBtn')) fsLabel();

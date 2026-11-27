@@ -33,8 +33,7 @@
     "keys.map": "Read by screen readers when the map has the keyboard.",
     "keys.hint": "Shown for a few seconds at the bottom of the screen the first time a key is used in a game.",
     "keys.unknown": "Read by screen readers for a highlighted place the learner hasn't found (its name would give the answer away).",
-    "keys.k_tab": "The list of keys: each k_ is the key (as printed on the keyboard), each t_ what it does.",
-    "option.contrast": "In the Options panel. Like this device = high contrast when the computer or phone is set to more contrast."
+    "keys.k_tab": "The list of keys: each k_ is the key (as printed on the keyboard), each t_ what it does."
   },
   "title": "SINGE: Studies In Geography",
   "description": "Find regions, capitals and flags on maps.",
@@ -180,9 +179,5 @@
   "keys.k_help": "?",
   "keys.t_help": "This list",
   "keys.k_menu": "Escape",
-  "keys.t_menu": "Close a panel, or go back to the menu",
-  "option.contrast": "Map colours",
-  "contrast.auto": "Like this device",
-  "contrast.normal": "Normal",
-  "contrast.high": "High contrast"
+  "keys.t_menu": "Close a panel, or go back to the menu"
 }
