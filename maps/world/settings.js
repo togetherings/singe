@@ -683,7 +683,7 @@
     },
     'Saint Martin': {
       info: 'The northern part of the island of Saint Martin, a French overseas collectivity. The island is shared with Sint Maarten (the Netherlands), so on this map the two are ONE region and ONE circle. In the games, click that circle to answer for either of them.',
-      flag: 'maps/world/flags/mf.svg'
+      flag: ''
     },
     'Morocco': {
       capital: { name: 'Rabat', lat: 34.0253, lon: -6.8364, info: '' },
@@ -1213,7 +1213,7 @@
     },
     'Svalbard': {
       info: '',
-      flag: 'maps/world/flags/sj.svg'
+      flag: ''
     },
     'Bonaire': {
       info: '',
@@ -1291,6 +1291,10 @@
     'Sicily': {
       info: '',
       flag: 'maps/world/flags/it-82.svg'
+    },
+    'Corsica': {
+      info: '',
+      flag: 'maps/world/flags/fr-20r.svg'
     },
     'Tasmania': {
       info: '',
