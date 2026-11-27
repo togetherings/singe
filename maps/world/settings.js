@@ -28,8 +28,8 @@
                        different scope; each variant's name and blurb (translations: maps/world/lang/<code>.json)
    Region settings: only regions with a capital are listed. A capital is { name, lat, lon, info }.
    Capitals are Natural Earth populated places. Where a country has several capitals, the most populated
-   city was used (South Africa -> Johannesburg, Netherlands -> The Hague, Benin -> Cotonou, Israel -> Tel Aviv...);
-   change any of them here. Territories have no capital unless another state recognises them as sovereign.
+   city was used, except where it was wrong or the capital moved (South Africa -> Pretoria, not Johannesburg); a
+   country's info names its other capitals. Change any of them here. Territories have no capital unless another state recognises them as sovereign.
    Capitals are real latitude/longitude. Anything left empty ('') is not shown.
    Combined places: Saint Martin + Sint Maarten and Sint Eustatius + Saba are ONE region and ONE circle on the
    map (they are next to each other), but each keeps its own entry here (capital, info, flag) and its own question
@@ -93,7 +93,7 @@
       flag: 'maps/world/flags/ax.svg'
     },
     'Andorra': {
-      capital: { name: 'Andorra', lat: 42.5108, lon: 1.5266, info: '' },
+      capital: { name: 'Andorra la Vella', lat: 42.5108, lon: 1.5266, info: '' },
       info: '',
       flag: 'maps/world/flags/ad.svg'
     },
@@ -137,8 +137,8 @@
       flag: 'maps/world/flags/az.svg'
     },
     'Burundi': {
-      capital: { name: 'Bujumbura', lat: -3.3761, lon: 29.36, info: '' },
-      info: '',
+      capital: { name: 'Gitega', lat: -3.4271, lon: 29.9246, info: '' },
+      info: 'Gitega has been the capital since 2019; Bujumbura, the former capital, is the largest city.',
       flag: 'maps/world/flags/bi.svg'
     },
     'Belgium': {
@@ -147,18 +147,18 @@
       flag: 'maps/world/flags/be.svg'
     },
     'Benin': {
-      capital: { name: 'Cotonou', lat: 6.363, lon: 2.4044, info: '' },
-      info: '',
+      capital: { name: 'Porto-Novo', lat: 6.4969, lon: 2.6289, info: '' },
+      info: 'Formerly called Dahomey (until 1975). Porto-Novo is the official capital; Cotonou, the largest city, is the seat of government.',
       flag: 'maps/world/flags/bj.svg'
     },
     'Burkina Faso': {
       capital: { name: 'Ouagadougou', lat: 12.3723, lon: -1.5267, info: '' },
-      info: '',
+      info: 'Formerly called Upper Volta (until 1984).',
       flag: 'maps/world/flags/bf.svg'
     },
     'Bangladesh': {
       capital: { name: 'Dhaka', lat: 23.725, lon: 90.4066, info: '' },
-      info: '',
+      info: 'Formerly East Pakistan (until 1971).',
       flag: 'maps/world/flags/bd.svg'
     },
     'Bulgaria': {
@@ -187,12 +187,12 @@
     },
     'Belarus': {
       capital: { name: 'Minsk', lat: 53.9019, lon: 27.5647, info: '' },
-      info: '',
+      info: 'Formerly called Byelorussia (until 1991).',
       flag: 'maps/world/flags/by.svg'
     },
     'Belize': {
       capital: { name: 'Belmopan', lat: 17.252, lon: -88.7671, info: '' },
-      info: '',
+      info: 'Formerly called British Honduras (until 1973).',
       flag: 'maps/world/flags/bz.svg'
     },
     'Bermuda': {
@@ -201,7 +201,7 @@
     },
     'Bolivia': {
       capital: { name: 'La Paz', lat: -16.496, lon: -68.1519, info: '' },
-      info: '',
+      info: 'La Paz is the seat of government; Sucre is the constitutional capital.',
       flag: 'maps/world/flags/bo.svg'
     },
     'Brazil': {
@@ -226,12 +226,12 @@
     },
     'Botswana': {
       capital: { name: 'Gaborone', lat: -24.6463, lon: 25.9119, info: '' },
-      info: '',
+      info: 'Formerly called Bechuanaland (until 1966).',
       flag: 'maps/world/flags/bw.svg'
     },
     'Central African Republic': {
       capital: { name: 'Bangui', lat: 4.3666, lon: 18.5583, info: '' },
-      info: '',
+      info: 'Formerly called Ubangi-Shari (until 1958).',
       flag: 'maps/world/flags/cf.svg'
     },
     'Canada': {
@@ -255,8 +255,8 @@
       flag: 'maps/world/flags/cn.svg'
     },
     'Côte d\'Ivoire': {
-      capital: { name: 'Abidjan', lat: 5.3231, lon: -4.0202, info: '' },
-      info: '',
+      capital: { name: 'Yamoussoukro', lat: 6.8276, lon: -5.2893, info: '' },
+      info: 'Also known in English as Ivory Coast. Yamoussoukro has been the official capital since 1983; Abidjan, the largest city, is still where most of the government works.',
       flag: 'maps/world/flags/ci.svg'
     },
     'Cameroon': {
@@ -266,7 +266,7 @@
     },
     'Democratic Republic of the Congo': {
       capital: { name: 'Kinshasa', lat: -4.3278, lon: 15.313, info: '', nudge: [-4.571, 15.49] },
-      info: '',
+      info: 'Called Zaire from 1971 to 1997.',
       flag: 'maps/world/flags/cd.svg'
     },
     'Republic of the Congo': {
@@ -279,7 +279,7 @@
       flag: 'maps/world/flags/ck.svg'
     },
     'Colombia': {
-      capital: { name: 'Bogota', lat: 4.5984, lon: -74.0853, info: '' },
+      capital: { name: 'Bogotá', lat: 4.5984, lon: -74.0853, info: '' },
       info: '',
       flag: 'maps/world/flags/co.svg'
     },
@@ -290,7 +290,7 @@
     },
     'Cabo Verde': {
       capital: { name: 'Praia', lat: 14.9167, lon: -23.5167, info: '' },
-      info: '',
+      info: 'Also called Cape Verde in English.',
       flag: 'maps/world/flags/cv.svg'
     },
     'Costa Rica': {
@@ -323,7 +323,7 @@
     },
     'Czechia': {
       capital: { name: 'Prague', lat: 50.087, lon: 14.4229, info: '' },
-      info: '',
+      info: 'Also called the Czech Republic.',
       flag: 'maps/world/flags/cz.svg'
     },
     'Germany': {
@@ -333,7 +333,7 @@
     },
     'Djibouti': {
       capital: { name: 'Djibouti', lat: 11.595, lon: 43.148, info: '' },
-      info: '',
+      info: 'Formerly called French Somaliland, then the French Territory of the Afars and the Issas (until 1977).',
       flag: 'maps/world/flags/dj.svg'
     },
     'Dominica': {
@@ -342,7 +342,7 @@
       flag: 'maps/world/flags/dm.svg'
     },
     'Denmark': {
-      capital: { name: 'København', lat: 55.6805, lon: 12.5615, info: '' },
+      capital: { name: 'Copenhagen', lat: 55.6805, lon: 12.5615, info: '' },
       info: '',
       flag: 'maps/world/flags/dk.svg'
     },
@@ -363,7 +363,7 @@
     },
     'Egypt': {
       capital: { name: 'Cairo', lat: 30.0519, lon: 31.248, info: '' },
-      info: '',
+      info: 'Cairo is the capital. A planned New Capital is being built to the east of Cairo, and much of the government has moved there.',
       flag: 'maps/world/flags/eg.svg'
     },
     'Eritrea': {
@@ -435,7 +435,7 @@
     },
     'Ghana': {
       capital: { name: 'Accra', lat: 5.552, lon: -0.2187, info: '' },
-      info: '',
+      info: 'Formerly called the Gold Coast (until 1957).',
       flag: 'maps/world/flags/gh.svg'
     },
     'Gibraltar': {
@@ -458,8 +458,8 @@
       flag: 'maps/world/flags/gw.svg'
     },
     'Equatorial Guinea': {
-      capital: { name: 'Malabo', lat: 3.75, lon: 8.7833, info: '' },
-      info: '',
+      capital: { name: 'Ciudad de la Paz', lat: 1.5889, lon: 10.8225, info: '' },
+      info: 'Formerly called Spanish Guinea (until 1968). Ciudad de la Paz, also known as Djibloho or Oyala, became the capital in January 2026 and is still being built; the previous capital was Malabo.',
       flag: 'maps/world/flags/gq.svg'
     },
     'Greece': {
@@ -487,7 +487,7 @@
     },
     'Guyana': {
       capital: { name: 'Georgetown', lat: 6.802, lon: -58.167, info: '' },
-      info: '',
+      info: 'Formerly called British Guiana (until 1966).',
       flag: 'maps/world/flags/gy.svg'
     },
     'Hong Kong': {
@@ -516,7 +516,7 @@
     },
     'Indonesia': {
       capital: { name: 'Jakarta', lat: -6.1725, lon: 106.8275, info: '' },
-      info: '',
+      info: 'Jakarta is the capital. A new capital, Nusantara, is being built on Borneo; the move is planned but hasn\'t happened yet.',
       flag: 'maps/world/flags/id.svg'
     },
     'Isle of Man': {
@@ -535,7 +535,7 @@
     },
     'Iran': {
       capital: { name: 'Tehran', lat: 35.6739, lon: 51.4224, info: '' },
-      info: '',
+      info: 'Called Persia in English until 1935. Tehran is the capital; the government has proposed moving it to the Makran coast in the south, but no move has begun.',
       flag: 'maps/world/flags/ir.svg'
     },
     'Iraq': {
@@ -550,7 +550,7 @@
     },
     'Israel': {
       capital: { name: 'Tel Aviv', lat: 32.0819, lon: 34.7681, info: '' },
-      info: '',
+      info: 'Israel considers Jerusalem its capital, and its government and parliament sit there; its status is disputed, and most countries keep their embassies in Tel Aviv.',
       flag: 'maps/world/flags/il.svg'
     },
     'Italy': {
@@ -578,8 +578,8 @@
       flag: 'maps/world/flags/jp.svg'
     },
     'Kazakhstan': {
-      capital: { name: 'Nur-Sultan', lat: 51.1811, lon: 71.4278, info: '' },
-      info: '',
+      capital: { name: 'Astana', lat: 51.1694, lon: 71.4491, info: '' },
+      info: 'Astana has been the capital since 1997 (before that it was Almaty); it was called Nur-Sultan from 2019 to 2022.',
       flag: 'maps/world/flags/kz.svg'
     },
     'Kenya': {
@@ -589,17 +589,17 @@
     },
     'Kyrgyzstan': {
       capital: { name: 'Bishkek', lat: 42.875, lon: 74.5833, info: '' },
-      info: '',
+      info: 'Formerly called Kirghizia (until 1991).',
       flag: 'maps/world/flags/kg.svg'
     },
     'Cambodia': {
       capital: { name: 'Phnom Penh', lat: 11.552, lon: 104.9147, info: '' },
-      info: '',
+      info: 'Called Kampuchea from 1975 to 1989.',
       flag: 'maps/world/flags/kh.svg'
     },
     'Kiribati': {
       capital: { name: 'Tarawa', lat: 1.3382, lon: 173.0176, info: '' },
-      info: '',
+      info: 'Formerly the Gilbert Islands (until 1979).',
       flag: 'maps/world/flags/ki.svg'
     },
     'Saint Kitts and Nevis': {
@@ -609,7 +609,7 @@
     },
     'South Korea': {
       capital: { name: 'Seoul', lat: 37.5683, lon: 126.9978, info: '' },
-      info: '',
+      info: 'Seoul is the capital. Many government ministries have moved to Sejong, a city built to be the administrative capital.',
       flag: 'maps/world/flags/kr.svg'
     },
     'Kosovo': {
@@ -653,13 +653,13 @@
       flag: 'maps/world/flags/li.svg'
     },
     'Sri Lanka': {
-      capital: { name: 'Colombo', lat: 6.932, lon: 79.8578, info: '' },
-      info: '',
+      capital: { name: 'Sri Jayawardenepura Kotte', lat: 6.9108, lon: 79.8878, info: '' },
+      info: 'Formerly called Ceylon (until 1972). Sri Jayawardenepura Kotte is the official capital, where parliament meets; Colombo, next to it, is the largest city and where most of the government works.',
       flag: 'maps/world/flags/lk.svg'
     },
     'Lesotho': {
       capital: { name: 'Maseru', lat: -29.3167, lon: 27.4833, info: '' },
-      info: '',
+      info: 'Formerly called Basutoland (until 1966).',
       flag: 'maps/world/flags/ls.svg'
     },
     'Lithuania': {
@@ -697,12 +697,12 @@
     },
     'Moldova': {
       capital: { name: 'Chișinău', lat: 47.005, lon: 28.8577, info: '' },
-      info: '',
+      info: 'Formerly called Moldavia (until 1991).',
       flag: 'maps/world/flags/md.svg'
     },
     'Madagascar': {
       capital: { name: 'Antananarivo', lat: -18.9147, lon: 47.5147, info: '' },
-      info: '',
+      info: 'Called the Malagasy Republic from 1958 to 1975.',
       flag: 'maps/world/flags/mg.svg'
     },
     'Maldives': {
@@ -722,12 +722,12 @@
     },
     'North Macedonia': {
       capital: { name: 'Skopje', lat: 42.0, lon: 21.4335, info: '' },
-      info: '',
+      info: 'Called Macedonia until 2019.',
       flag: 'maps/world/flags/mk.svg'
     },
     'Mali': {
       capital: { name: 'Bamako', lat: 12.652, lon: -8.002, info: '' },
-      info: '',
+      info: 'Formerly called French Sudan (until 1960).',
       flag: 'maps/world/flags/ml.svg'
     },
     'Malta': {
@@ -736,13 +736,13 @@
       flag: 'maps/world/flags/mt.svg'
     },
     'Myanmar': {
-      capital: { name: 'Yangon', lat: 16.7853, lon: 96.1647, info: '' },
-      info: '',
+      capital: { name: 'Naypyidaw', lat: 19.7450, lon: 96.1297, info: '' },
+      info: 'Formerly called Burma (the name changed in 1989, and some countries still use it). Naypyidaw has been the capital since 2005; before that it was Yangon (Rangoon), the largest city.',
       flag: 'maps/world/flags/mm.svg'
     },
     'Montenegro': {
       capital: { name: 'Podgorica', lat: 42.466, lon: 19.2663, info: '' },
-      info: '',
+      info: 'Podgorica is the capital; Cetinje, the old royal capital, still has the president\'s official residence.',
       flag: 'maps/world/flags/me.svg'
     },
     'Mongolia': {
@@ -775,17 +775,17 @@
     },
     'Malawi': {
       capital: { name: 'Lilongwe', lat: -13.9833, lon: 33.7833, info: '' },
-      info: '',
+      info: 'Formerly called Nyasaland (until 1964).',
       flag: 'maps/world/flags/mw.svg'
     },
     'Malaysia': {
       capital: { name: 'Kuala Lumpur', lat: 3.1398, lon: 101.6887, info: '' },
-      info: '',
+      info: 'Kuala Lumpur is the capital; most of the government has moved to Putrajaya, nearby.',
       flag: 'maps/world/flags/my.svg'
     },
     'Namibia': {
       capital: { name: 'Windhoek', lat: -22.57, lon: 17.0835, info: '' },
-      info: '',
+      info: 'Formerly called South West Africa (until 1990).',
       flag: 'maps/world/flags/na.svg'
     },
     'New Caledonia': {
@@ -816,8 +816,8 @@
       flag: 'maps/world/flags/nu.svg'
     },
     'Netherlands': {
-      capital: { name: 'The Hague', lat: 52.08, lon: 4.27, info: '' },
-      info: '',
+      capital: { name: 'Amsterdam', lat: 52.3676, lon: 4.9041, info: '' },
+      info: 'Often called Holland, which is really the name of two of its provinces; since 2020 the government uses only "the Netherlands" for the whole country. Amsterdam is the capital; the government, the parliament and the king work in The Hague.',
       flag: 'maps/world/flags/nl.svg'
     },
     'Norway': {
@@ -870,8 +870,8 @@
       flag: 'maps/world/flags/ph.svg'
     },
     'Palau': {
-      capital: { name: 'Melekeok', lat: 7.4874, lon: 134.6265, info: '' },
-      info: '',
+      capital: { name: 'Ngerulmud', lat: 7.5006, lon: 134.6242, info: '' },
+      info: 'Ngerulmud, in Melekeok State, has been the capital since 2006; before that it was Koror.',
       flag: 'maps/world/flags/pw.svg'
     },
     'Papua New Guinea': {
@@ -904,8 +904,8 @@
       flag: 'maps/world/flags/py.svg'
     },
     'Palestine': {
-      capital: { name: 'Gaza City', lat: 31.53, lon: 34.445, info: '' },
-      info: '',
+      capital: { name: 'Ramallah', lat: 31.9038, lon: 35.2034, info: '' },
+      info: 'Palestine declares East Jerusalem its capital; the Palestinian Authority\'s government works in Ramallah.',
       flag: 'maps/world/flags/ps.svg'
     },
     'French Polynesia': {
@@ -933,8 +933,8 @@
       flag: 'maps/world/flags/rw.svg'
     },
     'Western Sahara': {
-      capital: { name: 'Bir Lehlou', lat: 26.1192, lon: -9.6525, info: '' },
-      info: '',
+      capital: { name: 'Tifariti', lat: 26.1581, lon: -10.5669, info: '' },
+      info: 'A disputed territory. Morocco controls most of it. The Sahrawi Arab Democratic Republic, a member of the African Union, claims all of it and controls a strip in the east. On the maps of UN countries it is grey. The Sahrawi Republic claims Laayoune (El Aaiún), which Morocco controls, as its capital; its temporary capital is Tifariti (Bir Lehlou until 2008).',
       flag: 'maps/world/flags/eh.svg'
     },
     'Saudi Arabia': {
@@ -1003,7 +1003,7 @@
     },
     'Suriname': {
       capital: { name: 'Paramaribo', lat: 5.835, lon: -55.167, info: '' },
-      info: '',
+      info: 'Formerly called Dutch Guiana (until 1975).',
       flag: 'maps/world/flags/sr.svg'
     },
     'Slovakia': {
@@ -1023,7 +1023,7 @@
     },
     'Eswatini': {
       capital: { name: 'Mbabane', lat: -26.3167, lon: 31.1333, info: '' },
-      info: '',
+      info: 'Formerly called Swaziland (until 2018). Mbabane is the seat of government; Lobamba is the royal and legislative capital.',
       flag: 'maps/world/flags/sz.svg'
     },
     'Seychelles': {
@@ -1052,7 +1052,7 @@
     },
     'Thailand': {
       capital: { name: 'Bangkok', lat: 13.7519, lon: 100.5147, info: '' },
-      info: '',
+      info: 'Formerly called Siam (until 1939).',
       flag: 'maps/world/flags/th.svg'
     },
     'Tajikistan': {
@@ -1067,7 +1067,7 @@
     },
     'Timor-Leste': {
       capital: { name: 'Dili', lat: -8.5594, lon: 125.5795, info: '' },
-      info: '',
+      info: 'Also known as East Timor.',
       flag: 'maps/world/flags/tl.svg'
     },
     'Tonga': {
@@ -1087,12 +1087,12 @@
     },
     'Türkiye': {
       capital: { name: 'Ankara', lat: 39.9292, lon: 32.8624, info: '' },
-      info: '',
+      info: 'Formerly called Turkey in English: the country asked to be called Türkiye in 2022.',
       flag: 'maps/world/flags/tr.svg'
     },
     'Tuvalu': {
       capital: { name: 'Funafuti', lat: -8.5167, lon: 179.2166, info: '' },
-      info: '',
+      info: 'Formerly the Ellice Islands (until 1978).',
       flag: 'maps/world/flags/tv.svg'
     },
     'Taiwan': {
@@ -1101,8 +1101,8 @@
       flag: 'maps/world/flags/tw.svg'
     },
     'Tanzania': {
-      capital: { name: 'Dar es Salaam', lat: -6.7981, lon: 39.2664, info: '' },
-      info: '',
+      capital: { name: 'Dodoma', lat: -6.1630, lon: 35.7516, info: '' },
+      info: 'Formed in 1964, when Tanganyika and Zanzibar united. Dodoma is the capital; Dar es Salaam, the former capital, is the largest city.',
       flag: 'maps/world/flags/tz.svg'
     },
     'Uganda': {
@@ -1121,7 +1121,7 @@
       flag: 'maps/world/flags/uy.svg'
     },
     'United States': {
-      capital: { name: 'Washington,  D.C.', lat: 38.9015, lon: -77.0114, info: '' },
+      capital: { name: 'Washington, D.C.', lat: 38.9015, lon: -77.0114, info: '' },
       info: '',
       flag: 'maps/world/flags/us.svg'
     },
@@ -1159,7 +1159,7 @@
     },
     'Vanuatu': {
       capital: { name: 'Port Vila', lat: -17.7334, lon: 168.3166, info: '' },
-      info: '',
+      info: 'Formerly the New Hebrides (until 1980).',
       flag: 'maps/world/flags/vu.svg'
     },
     'Wallis and Futuna': {
@@ -1168,7 +1168,7 @@
     },
     'Samoa': {
       capital: { name: 'Apia', lat: -13.8357, lon: -171.7686, info: '', nudge: [-13.336, -173.069] },
-      info: '',
+      info: 'Called Western Samoa until 1997.',
       flag: 'maps/world/flags/ws.svg'
     },
     'Yemen': {
@@ -1177,18 +1177,18 @@
       flag: 'maps/world/flags/ye.svg'
     },
     'South Africa': {
-      capital: { name: 'Johannesburg', lat: -26.1681, lon: 28.0281, info: '' },
-      info: '',
+      capital: { name: 'Pretoria', lat: -25.7461, lon: 28.1881, info: '' },
+      info: 'South Africa has three capitals: Pretoria (the government), Cape Town (parliament) and Bloemfontein (the judicial capital). Johannesburg, the largest city, is not one of them.',
       flag: 'maps/world/flags/za.svg'
     },
     'Zambia': {
       capital: { name: 'Lusaka', lat: -15.4147, lon: 28.2814, info: '' },
-      info: '',
+      info: 'Formerly called Northern Rhodesia (until 1964).',
       flag: 'maps/world/flags/zm.svg'
     },
     'Zimbabwe': {
       capital: { name: 'Harare', lat: -17.8158, lon: 31.0428, info: '' },
-      info: '',
+      info: 'Formerly called Rhodesia (until 1980).',
       flag: 'maps/world/flags/zw.svg'
     },
     'French Guiana': {

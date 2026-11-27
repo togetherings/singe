@@ -38,10 +38,12 @@
       "capital": "Alger"
     },
     "Benin": {
-      "name": "Bénin"
+      "name": "Bénin",
+      "info": "Anciennement le Dahomey (jusqu'en 1975). Porto-Novo est la capitale officielle ; Cotonou, la plus grande ville, est le siège du gouvernement."
     },
     "Cabo Verde": {
-      "name": "Cap-Vert"
+      "name": "Cap-Vert",
+      "info": "Aussi appelé Cabo Verde."
     },
     "Cameroon": {
       "name": "Cameroun"
@@ -52,7 +54,8 @@
       "capital_info": "Les îles Canaries ont deux capitales, Las Palmas de Gran Canaria et Santa Cruz de Tenerife ; la plus grande est utilisée ici."
     },
     "Central African Republic": {
-      "name": "République centrafricaine"
+      "name": "République centrafricaine",
+      "info": "Anciennement l'Oubangui-Chari (jusqu'en 1958)."
     },
     "Ceuta": {
       "info": "Une ville autonome de l'Espagne sur la côte nord de l'Afrique. Le Maroc la revendique."
@@ -65,14 +68,17 @@
       "name": "Comores"
     },
     "Democratic Republic of the Congo": {
-      "name": "République démocratique du Congo"
+      "name": "République démocratique du Congo",
+      "info": "Appelée Zaïre de 1971 à 1997."
     },
     "Egypt": {
       "name": "Égypte",
-      "capital": "Le Caire"
+      "capital": "Le Caire",
+      "info": "Le Caire est la capitale. Une Nouvelle Capitale est en construction à l'est du Caire, et une grande partie du gouvernement s'y est installée."
     },
     "Equatorial Guinea": {
-      "name": "Guinée équatoriale"
+      "name": "Guinée équatoriale",
+      "info": "Anciennement la Guinée espagnole (jusqu'en 1968). Ciudad de la Paz, aussi appelée Djibloho ou Oyala, est devenue la capitale en janvier 2026 et est encore en construction ; l'ancienne capitale était Malabo."
     },
     "Eritrea": {
       "name": "Érythrée"
@@ -111,7 +117,8 @@
       "name": "Maroc"
     },
     "Namibia": {
-      "name": "Namibie"
+      "name": "Namibie",
+      "info": "Anciennement le Sud-Ouest africain (jusqu'en 1990)."
     },
     "Republic of the Congo": {
       "name": "République du Congo"
@@ -135,7 +142,8 @@
       "info": "S'est déclaré indépendant de la Somalie en 1991 et se gouverne lui-même. Israël l'a reconnu en décembre 2025, le premier pays à le faire ; la plupart des pays le considèrent comme une partie de la Somalie. Sur les cartes des pays de l'ONU, il fait partie de la Somalie."
     },
     "South Africa": {
-      "name": "Afrique du Sud"
+      "name": "Afrique du Sud",
+      "info": "L'Afrique du Sud a trois capitales : Pretoria (le gouvernement), Le Cap (le parlement) et Bloemfontein (la capitale judiciaire). Johannesburg, la plus grande ville, n'en fait pas partie."
     },
     "South Sudan": {
       "name": "Soudan du Sud"
@@ -149,7 +157,8 @@
     },
     "Tanzania": {
       "name": "Tanzanie",
-      "capital": "Dar es Salam"
+      "capital": "Dodoma",
+      "info": "Née en 1964 de l'union du Tanganyika et de Zanzibar. Dodoma est la capitale ; Dar es Salam, l'ancienne capitale, est la plus grande ville."
     },
     "The Gambia": {
       "name": "Gambie"
@@ -165,10 +174,47 @@
     },
     "Western Sahara": {
       "name": "Sahara occidental",
-      "info": "Un territoire disputé. Le Maroc en contrôle la plus grande partie. La République arabe sahraouie démocratique, membre de l'Union africaine, le revendique tout entier et contrôle une bande à l'est. Sur les cartes des pays de l'ONU, il est en gris."
+      "info": "Un territoire disputé. Le Maroc en contrôle la plus grande partie. La République arabe sahraouie démocratique, membre de l'Union africaine, le revendique tout entier et contrôle une bande à l'est. Sur les cartes des pays de l'ONU, il est en gris. La République sahraouie revendique Laâyoune (El Aaiún), contrôlée par le Maroc, comme capitale ; sa capitale provisoire est Tifariti (Bir Lehlou jusqu'en 2008)."
     },
     "Zambia": {
-      "name": "Zambie"
+      "name": "Zambie",
+      "info": "Anciennement la Rhodésie du Nord (jusqu'en 1964)."
+    },
+    "Lesotho": {
+      "info": "Anciennement le Basutoland (jusqu'en 1966)."
+    },
+    "Madagascar": {
+      "info": "Appelée République malgache de 1958 à 1975."
+    },
+    "Burundi": {
+      "info": "Gitega est la capitale depuis 2019 ; Bujumbura, l'ancienne capitale, est la plus grande ville."
+    },
+    "Mali": {
+      "info": "Anciennement le Soudan français (jusqu'en 1960)."
+    },
+    "Ghana": {
+      "info": "Anciennement la Côte-de-l'Or (jusqu'en 1957)."
+    },
+    "Burkina Faso": {
+      "info": "Anciennement la Haute-Volta (jusqu'en 1984)."
+    },
+    "Côte d'Ivoire": {
+      "info": "Yamoussoukro est la capitale officielle depuis 1983 ; Abidjan, la plus grande ville, accueille encore la plus grande partie du gouvernement."
+    },
+    "Eswatini": {
+      "info": "Anciennement le Swaziland (jusqu'en 2018). Mbabane est le siège du gouvernement ; Lobamba est la capitale royale et législative."
+    },
+    "Botswana": {
+      "info": "Anciennement le Bechuanaland (jusqu'en 1966)."
+    },
+    "Malawi": {
+      "info": "Anciennement le Nyassaland (jusqu'en 1964)."
+    },
+    "Zimbabwe": {
+      "info": "Anciennement la Rhodésie (jusqu'en 1980)."
+    },
+    "Djibouti": {
+      "info": "Anciennement la Côte française des Somalis, puis le Territoire français des Afars et des Issas (jusqu'en 1977)."
     }
   }
 }

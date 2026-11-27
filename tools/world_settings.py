@@ -11,8 +11,8 @@ Capitals come from Natural Earth's populated places (public domain). Rules:
   - Only UN members, the two UN observers (Vatican City, Palestine) and the places other states recognise as
     sovereign (Taiwan, Kosovo, Western Sahara, Northern Cyprus) get a capital. Territories and parts do not.
   - When Natural Earth lists more than one capital for a country (South Africa, Benin, Bolivia, Netherlands...),
-    the MOST POPULATED city is used. (Edit the file to change one; see the table printed by this script.)
-  - Palestine has no capital in the data, so its most populated "region capital" is used (Gaza City).
+    the MOST POPULATED city is used, unless OVERRIDE names the capital (South Africa -> Pretoria, Netherlands ->
+    Amsterdam...). Countries with more than one capital mention the others in their info (in maps/world/settings.js).
 """
 import argparse, collections, json, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -26,6 +26,24 @@ MANUAL = {                                 # capitals missing from the cities fi
 }
 OVERRIDE = {                               # capitals chosen by hand where the "most populated" rule picks wrong: code -> (name, lat, lon)
     'NGA': ('Abuja', 9.0833, 7.5333),      # the cities file also marks Lagos (bigger), which hasn't been the capital since 1991
+    # the most populated city was wrong, the capital moved, or the name is in another language (see maps/world/settings.js)
+    'AND': ('Andorra la Vella', 42.5108, 1.5266),
+    'BDI': ('Gitega', -3.4271, 29.9246),
+    'BEN': ('Porto-Novo', 6.4969, 2.6289),
+    'CIV': ('Yamoussoukro', 6.8276, -5.2893),
+    'COL': ('Bogotá', 4.5984, -74.0853),
+    'DNK': ('Copenhagen', 55.6805, 12.5615),
+    'GNQ': ('Ciudad de la Paz', 1.5889, 10.8225),
+    'KAZ': ('Astana', 51.1694, 71.4491),
+    'LKA': ('Sri Jayawardenepura Kotte', 6.9108, 79.8878),
+    'MMR': ('Naypyidaw', 19.7450, 96.1297),
+    'NLD': ('Amsterdam', 52.3676, 4.9041),
+    'PLW': ('Ngerulmud', 7.5006, 134.6242),
+    'PSX': ('Ramallah', 31.9038, 35.2034),
+    'SAH': ('Tifariti', 26.1581, -10.5669),
+    'TZA': ('Dodoma', -6.1630, 35.7516),
+    'USA': ('Washington, D.C.', 38.9015, -77.0114),
+    'ZAF': ('Pretoria', -25.7461, 28.1881),
 }
 
 
@@ -159,8 +177,8 @@ def main():
      insets            the fixed boxes under the map, which do not scroll or zoom: title of each box
    Region settings: only regions with a capital are listed. A capital is { name, lat, lon, info }.
    Capitals are Natural Earth populated places. Where a country has several capitals, the most populated
-   city was used (South Africa -> Johannesburg, Netherlands -> The Hague, Benin -> Cotonou, Israel -> Tel Aviv...);
-   change any of them here. Territories have no capital unless another state recognises them as sovereign.
+   city was used, except where it was wrong or the capital moved (South Africa -> Pretoria, not Johannesburg); a
+   country's info names its other capitals. Change any of them here. Territories have no capital unless another state recognises them as sovereign.
    Capitals are real latitude/longitude. Anything left empty ('') is not shown.
    Combined places: Saint Martin + Sint Maarten and Sint Eustatius + Saba are ONE region and ONE circle on the
    map (they are next to each other), but each keeps its own entry here (capital, info, flag) and its own question
