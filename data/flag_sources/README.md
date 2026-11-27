@@ -8,3 +8,7 @@ Original files of flags that are kept in the game in a smaller form. Never in th
 
 New flags: run `python3 tools/clean_svg.py IN.svg OUT.svg` to remove what doesn't draw anything (metadata such as
 Flagpedia's C2PA content credentials, and Inkscape/Sodipodi editor settings), and compare the two by rendering them.
+
+The 31 bigger US state and territory flags (`maps/us/flags/`) are optimised the same way (8.4 MB to 6.5 MB for all 56;
+each kept only if at least 5% smaller). Their originals are the Wikipedia files, not kept here: each was checked by
+rendering it and the original at 1600 px wide, and the differences are scattered single pixels along edges.
