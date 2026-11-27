@@ -140,6 +140,80 @@ def check_tries_and_label(browser, errors):
         server.shutdown()
 
 
+def check_keyboard(browser, errors, shots):
+    """The map has the keyboard: Tab and the arrows move a highlight, Enter answers, . and , skip and go back,
+    + - Page Up Page Down Home zoom, ? lists the keys, Escape closes a panel and then goes back to the menu.
+    The High contrast choice in Options changes the colours."""
+    server = cli.make_preview_server(ROOT, 0, package="countries")
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    base = "http://127.0.0.1:%d/" % server.server_address[1]
+    try:
+        context = browser.new_context(viewport={"width": 1200, "height": 900})
+        page = context.new_page()
+        page.on("pageerror", lambda e: errors.append(str(e)))
+        page.on("console", lambda m: m.type == "error" and errors.append(m.text))
+        page.goto(base)
+        page.select_option("#mode", "local")
+        game = page.frame_locator("#game")
+        game.locator(".mapCard").first.locator(".modeBtn").nth(1).click()          # Sierra Leone, Regions
+        game.locator("#prompt:has-text('Find')").wait_for()
+        frame = page.frames[1]
+        assert frame.evaluate("document.activeElement.id") == "mapBox"
+        lit = lambda: frame.evaluate("[...new Set([...document.querySelectorAll('#mapBox .kbd')].map(e => e.getAttribute('data-name')))]")
+        page.keyboard.press("Tab")
+        first = lit()
+        assert len(first) == 1, first
+        assert frame.locator("#kbdSay").inner_text() == "A place you haven't found yet"   # never the answer
+        page.keyboard.press("Tab")
+        assert lit() != first
+        page.keyboard.press("Shift+Tab")
+        assert lit() == first
+        page.keyboard.press("ArrowDown")
+        assert lit() != first and len(lit()) == 1
+        asked = frame.locator("#prompt").inner_text()
+        page.keyboard.press(".")                                                    # skip
+        assert frame.locator("#prompt").inner_text() != asked
+        page.keyboard.press(",")                                                    # back
+        assert frame.locator("#prompt").inner_text() == asked
+        # Answer: walk to the place asked for with Tab, then Enter.
+        target = asked.split(": ", 1)[1]
+        for _ in range(40):
+            if lit() == [target]:
+                break
+            page.keyboard.press("Tab")
+        page.keyboard.press("Enter")
+        frame.locator("#found:has-text('1')").wait_for()
+        assert frame.locator("#kbdSay").inner_text() == target                      # found: now its name may be said
+        full = frame.evaluate("document.querySelector('#mapBox svg').getAttribute('viewBox')")
+        page.keyboard.press("PageUp")
+        assert frame.evaluate("document.querySelector('#mapBox svg').getAttribute('viewBox')") != full
+        page.keyboard.press("Home")
+        assert frame.evaluate("document.querySelector('#mapBox svg').getAttribute('viewBox')") == full
+        page.keyboard.press("?")
+        frame.locator("#keysBack:not(.hidden)").wait_for()
+        if shots:
+            page.screenshot(path=os.path.join(shots, "keyboard-keys.png"))
+        page.keyboard.press("Escape")                                               # closes the list...
+        assert frame.locator("#keysBack").get_attribute("class") == "hidden"
+        assert not frame.locator("#game").get_attribute("class")
+        page.keyboard.press("Escape")                                               # ...then back to the menu
+        frame.locator("#menu:not(.hidden)").wait_for()
+        assert frame.evaluate("document.documentElement.dataset.contrast") in ("normal", "high")
+        # Options > Map colours > High contrast
+        game.locator(".eg-options-button").click()
+        game.locator(".eg-card input[value=high]").check()
+        game.locator(".eg-card .eg-primary").click()
+        assert frame.evaluate("document.documentElement.dataset.contrast") == "high"
+        game.locator(".mapCard").first.locator(".modeBtn").nth(1).click()
+        game.locator("#prompt:has-text('Find')").wait_for()
+        assert frame.evaluate("getComputedStyle(document.querySelector('#mapBox .region')).fill") == "rgb(255, 255, 255)"
+        if shots:
+            page.screenshot(path=os.path.join(shots, "high-contrast.png"))
+        context.close()
+    finally:
+        server.shutdown()
+
+
 def check_site(browser, shots):
     """The website, as GitHub Pages gets it: the kit's menu page and a page for each set of maps."""
     out = tempfile.mkdtemp()
@@ -208,6 +282,7 @@ def main():
         for package in PACKAGES:
             check(context, package, args.screenshots)
         check_tries_and_label(browser, errors)
+        check_keyboard(browser, errors, args.screenshots)
         check_site(context, args.screenshots)
         browser.close()
     if errors:

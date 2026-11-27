@@ -17,9 +17,11 @@
     --land: #f6f1e4;     /* unanswered region */
     --text: #1d2b36;     /* text */
     --line: #1d2b36;     /* borders and outlines */
-    --good: #6fb98f;     /* correctly identified region (first try) */
-    --bad: #e0675a;      /* wrong-click flash, hint, needed the hint */
-    --retry: #f4e04d;    /* found on 2nd or 3rd try (before the hint) */
+    --good: #378f60;     /* correctly identified region (first try) */
+    --bad: #e2604f;      /* wrong-click flash, hint, needed the hint */
+    --retry: #e5a500;    /* found on 2nd or 3rd try (before the hint) */
+    --done-line: var(--line);   /* borders of answered regions */
+    --kbd: #000000; --kbd-halo: #ffffff;   /* the keyboard's highlight: a dark outline with a light glow */
     --card: #ffffff;     /* menu cards, information panel, buttons */
     --accent: #1f6f8b;   /* button hover */
     --met-bg: #cfeedd; --met-line: #2e8b57;   /* mode button once its accuracy goal is reached */
@@ -34,12 +36,14 @@
     --backdrop: rgba(29,43,54,.55);                                                       /* behind pop-ups */
     --bar-bg: rgba(220,235,242,.85);   /* world map: the see-through chips of the game bar laid over the map */
     --water: #e8f2f7;    /* the colour of the sea on the map, for lakes */
-    --off: #cdccc2;      /* world map: regions that are not part of the game (grey) */
+    --off: #b3b1a5;      /* world map: regions that are not part of the game (grey) */
     --pageW: 760px;      /* page width; wider for horizontal maps (body.wide) */
   }
   html[data-theme="dark"] {
     color-scheme: dark;
-    --sea: #0f1b24; --land: #243645; --text: #e4ebf1; --line: #7f95a8;
+    --sea: #0f1b24; --land: #243645; --text: #e4ebf1; --line: #a3b6c7;
+    --done-line: #0f1b24;   /* dark borders between coloured regions, so they still show */
+    --kbd: #ffffff; --kbd-halo: #000000;
     --met-bg: #1f4d38; --met-line: #4fb883;
     --good: #3f8f67; --bad: #c4564a; --retry: #b8a42b; --card: #17252f; --accent: #2f7f9f;
     --header-bg: #081018; --header-text: #e4ebf1;
@@ -48,6 +52,30 @@
     --ring-fill: #eef3f6; --ring-line: #0f1b24; --ring-hover: #8fd0ee; --dot: #0f1b24;
     --tip-bg: #e4ebf1; --tip-text: #0f1b24; --backdrop: rgba(0,0,0,.65);
   }
+  /* HIGH CONTRAST (Options > Map colours, or the device asking for more contrast): html[data-contrast="high"].
+     Answered places differ from unanswered ones by at least 3:1, and first try (blue) and needed the hint (red) differ
+     in lightness too, not only in colour; later tries are orange (light) or yellow (dark). Thicker borders. */
+  html[data-contrast="high"] {
+    --sea: #a9cbe8; --land: #ffffff; --text: #000000; --line: #000000; --card: #ffffff; --accent: #003e7e;
+    --good: #002f6c; --retry: #d98200; --bad: #a50021; --off: #767676; --done-line: #ffffff;
+    --hover: #ffe680; --hint-pulse: #ffd0c8; --water: #a9cbe8; --inbox-bg: #ffffff; --box-bg: #ffffff;
+    --frame-bg: transparent; --bar-bg: rgba(255,255,255,.95);
+    --ring-fill: #ffffff; --ring-line: #000000; --ring-hover: #ffe680; --dot: #000000;
+    --tip-bg: #000000; --tip-text: #ffffff; --kbd: #000000; --kbd-halo: #ffd400;
+    --met-bg: #d7f0e1; --met-line: #00552a; --header-bg: #000000; --header-text: #ffffff;
+  }
+  html[data-theme="dark"][data-contrast="high"] {
+    --sea: #000000; --land: #2e2e2e; --text: #ffffff; --line: #ffffff; --card: #000000; --accent: #5fb4ff;
+    --good: #b5e3ff; --retry: #ffe14d; --bad: #e03c3c; --off: #000000; --done-line: #000000;
+    --hover: #5a5a5a; --hint-pulse: #6b1a1a; --water: #000000; --inbox-bg: #111111; --box-bg: #000000;
+    --frame-bg: transparent; --bar-bg: rgba(0,0,0,.92);
+    --ring-fill: #ffffff; --ring-line: #000000; --ring-hover: #ffe14d; --dot: #000000;
+    --tip-bg: #ffffff; --tip-text: #000000; --kbd: #ffffff; --kbd-halo: #ff3df5;
+    --met-bg: #00381c; --met-line: #6be39c; --header-bg: #000000; --header-text: #ffffff;
+  }
+  html[data-contrast="high"] .region { stroke-width: 2; }
+  html[data-contrast="high"] .mk, html[data-contrast="high"] .cap .ring { stroke-width: 3; }
+  html[data-contrast="high"] .off, html[data-contrast="high"] .region.off { stroke: #767676; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--sea); color: var(--text);
          font: 16px/1.5 Georgia, "Times New Roman", serif; }
@@ -171,7 +199,7 @@
   /* invisible wide outline that makes small regions easier to tap */
   .halo { fill: none; stroke: rgba(0,0,0,0); stroke-width: 28px; pointer-events: stroke;
           vector-effect: non-scaling-stroke; cursor: pointer; }
-  .region.done { fill: var(--good); cursor: default; }
+  .region.done { fill: var(--good); stroke: var(--done-line); cursor: default; }
   .region.off, .region.off:hover, .capitals .region.off, .capitals .region.off:hover { fill: var(--off); cursor: default; }
   .region.done.retry { fill: var(--retry); }
   .region.notmain, .mk.notmain { fill: var(--retry); }   /* a part of the country was clicked, not its main area: flashes yellow */
@@ -259,6 +287,32 @@
   #flagBig { display: block; max-width: 88vw; max-height: 80vh; min-width: min(70vw, 420px); object-fit: contain; }
   #flagClose { position: absolute; top: -14px; right: -14px; width: 2em; padding: 2px 0; font-size: 1.1rem; line-height: 1; }
 
+  /* ---------- Keyboard ---------- */
+  /* The highlighted place: a thick outline in two colours (one dark, one light), so it shows on any fill. */
+  .region.kbd, .mk.kbd, .cap.kbd .ring { stroke: var(--kbd) !important; stroke-width: 3px !important; vector-effect: non-scaling-stroke;
+              filter: drop-shadow(0 0 1.5px var(--kbd-halo)) drop-shadow(0 0 1.5px var(--kbd-halo)); }
+  #mapBox:focus { outline: none; }
+  #kbdRing { position: fixed; z-index: 3; pointer-events: none; border-radius: 50%; border: 3px solid var(--kbd);
+             box-shadow: 0 0 0 2px var(--kbd-halo), inset 0 0 0 2px var(--kbd-halo); }
+  #kbdRing.hidden { display: none; }                 /* the highlight shows where the keyboard is */
+  #kbdHint { position: fixed; z-index: 6; bottom: 12px; left: 50%; transform: translateX(-50%); pointer-events: none;
+             padding: 4px 12px; border-radius: 4px; background: var(--tip-bg); color: var(--tip-text); font-size: .95rem;
+             max-width: calc(100vw - 24px); text-align: center; }
+  #kbdHint.hidden { display: none; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .keysLine { font-size: .9rem; opacity: .85; }
+  #keysBack { position: fixed; inset: 0; z-index: 10; background: var(--backdrop);
+              display: flex; align-items: center; justify-content: center; padding: 16px; }
+  #keysBack.hidden { display: none; }
+  #keysCard { position: relative; background: var(--card); border: 2px solid var(--line); border-radius: 8px;
+              padding: 16px 20px; max-width: 520px; width: 100%; max-height: 85vh; overflow-y: auto; }
+  #keysCard h3 { margin: 0 32px 8px 0; font-size: 1.4rem; }
+  #keysClose { position: absolute; top: 8px; right: 8px; width: 2em; padding: 2px 0; font-size: 1.1rem; line-height: 1; }
+  html[dir="rtl"] #keysClose { right: auto; left: 8px; }
+  #keysList { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; }
+  #keysList dt { font-weight: bold; white-space: nowrap; }
+  #keysList dd { margin: 0; }
+
   /* ---------- Options page ---------- */
 
   /* ---------- Results page ---------- */
@@ -278,13 +332,14 @@
   <div id="menu">
     <h2 data-t="menu.title"></h2>
     <p data-t="menu.intro"></p>
+    <p class="keysLine" data-t="menu.keyboard"></p>
     <div id="menuList"></div>
   </div>
 
   <!-- ======================= GAME PAGE ======================= -->
   <div id="game" class="hidden">
     <div id="bar">
-      <div id="prompt"></div>
+      <div id="prompt" aria-live="polite"></div>
       <img id="promptFlag" class="hidden" tabindex="0" role="button" data-t-attr="alt:flag.alt,title:flag.hint">
       <div id="stats">
         <span data-t="game.time"></span><span id="time" class="num">0:00</span>
@@ -302,11 +357,14 @@
         <button id="zoomOut" data-t-attr="title:zoom.out,aria-label:zoom.out">&minus;</button>
         <button id="zoomFull" data-t="zoom.full" data-t-attr="title:zoom.full_hint,aria-label:zoom.full_hint"></button>
         <button id="zoomIn" data-t-attr="title:zoom.in,aria-label:zoom.in">+</button>
+        <button id="keysBtn" data-t-attr="title:keys.button,aria-label:keys.button" aria-haspopup="dialog">&#x2328;&#xFE0E;</button>
       </span>
       <button id="backBtn" data-t="game.back"></button>
       <div id="feedback" aria-live="polite"></div>
     </div>
-    <div id="mapBox"></div>
+    <div id="kbdHint" class="hidden" data-t="keys.hint"></div>
+    <div id="mapBox" tabindex="-1" role="application" data-t-attr="aria-label:keys.map"></div>
+    <div id="kbdSay" class="sr" aria-live="polite"></div>
     <div id="stripBox"></div>   <!-- world map: the fixed boxes under the map (Caribbean, Pacific) -->
     <div id="gameCredit" class="credit"></div>
   </div>
@@ -330,6 +388,7 @@
 
 </main>
 <div id="tip" class="hidden"></div>
+<div id="kbdRing" class="hidden" aria-hidden="true"></div>
 
 <!-- Information panel (Practice mode): shown when a region or capital that has information is clicked -->
 <!-- Full-size flag (Flags mode): shown when the flag is clicked -->
@@ -337,6 +396,26 @@
   <div id="flagCard" role="dialog" aria-modal="true" data-t-attr="aria-label:flag.full_alt">
     <button id="flagClose" data-t-attr="aria-label:common.close">&times;</button>
     <img id="flagBig" data-t-attr="alt:flag.full_alt">
+  </div>
+</div>
+
+<!-- The keyboard's keys (the ⌨ button or the ? key) -->
+<div id="keysBack" class="hidden">
+  <div id="keysCard" role="dialog" aria-modal="true" aria-labelledby="keysTitle">
+    <button id="keysClose" data-t-attr="aria-label:common.close">&times;</button>
+    <h3 id="keysTitle" data-t="keys.title"></h3>
+    <dl id="keysList">
+      <dt data-t="keys.k_tab"></dt><dd data-t="keys.t_tab"></dd>
+      <dt data-t="keys.k_arrows"></dt><dd data-t="keys.t_arrows"></dd>
+      <dt data-t="keys.k_choose"></dt><dd data-t="keys.t_choose"></dd>
+      <dt data-t="keys.k_pan"></dt><dd data-t="keys.t_pan"></dd>
+      <dt data-t="keys.k_zoom"></dt><dd data-t="keys.t_zoom"></dd>
+      <dt data-t="keys.k_full"></dt><dd data-t="keys.t_full"></dd>
+      <dt data-t="keys.k_skip"></dt><dd data-t="keys.t_skip"></dd>
+      <dt data-t="keys.k_back"></dt><dd data-t="keys.t_back"></dd>
+      <dt data-t="keys.k_help"></dt><dd data-t="keys.t_help"></dd>
+      <dt data-t="keys.k_menu"></dt><dd data-t="keys.t_menu"></dd>
+    </dl>
   </div>
 </div>
 

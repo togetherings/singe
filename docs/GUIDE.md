@@ -29,6 +29,18 @@ The kit puts a header at the top of the page: the game's title (the package's, l
 
 The appearance is kept on the device. The language is kept in the learner's save, so it follows them in Kolibri. A learner who hasn't chosen gets Kolibri's language (on the Kolibri Games games page), then the browser's, then English. `"options": {"theme": "light"}` in `edugame.json` sets the appearance a new user starts with.
 
+**Map colours** (SINGE's own choice in the same panel, kept on the device): Like this device (the default: high contrast when the computer or phone asks for more contrast), Normal, or High contrast. High contrast (`html[data-contrast="high"]` in `index.html`, with a light and a dark version) has white or black land, thick borders, and colours that differ from unanswered land by at least 3:1: first try dark blue (light) or light blue (dark), a later try orange or yellow, needed the hint crimson or red, so first try and needed the hint differ in lightness, not only in colour.
+
+## Keyboard
+While a map is on screen it has the keyboard; Escape goes back to the menu (it closes an open panel first).
+- **Tab / Shift+Tab**: the next or previous place, in reading order (rows from the top, left to right, then the boxes under a world map). It wraps round and never leaves the map.
+- **Arrow keys**: the nearest place in that direction (round the world on the World map). **Shift + arrows** move the map.
+- **Enter or Space**: answer with the highlighted place (in Practice, open its information).
+- **+ − Page Up Page Down**: zoom (on the highlighted place); **Home or 0**: the whole map.
+- **.** and **,**: Skip and Back. **?** (or the ⌨ button next to zoom): the list of keys.
+
+The highlight is a thick outline with a glow (`--kbd`, `--kbd-halo`), plus a ring at least 26 pixels across around a small place. It never says the name of a place the learner hasn't found (screen readers hear "a place you haven't found yet"), except in Practice. The map scrolls to keep it in view. The first key in a game shows a line of help at the bottom for a few seconds, and the map menu has a line about the keyboard. `js/game.js`, section 5d.
+
 ## Languages
 **Interface text.** Every piece of text the game shows is in `lang/<code>.json`, one entry per text. To add a language, run `edugame translate . sw` (this copies the English text into `lang/sw.json` and adds `sw` to `languages` in `edugame.json`), put the language's own name in `_language`, and translate. Keep the `{words in braces}`: the game fills them in. Entries with `one` / `other` give separate wording for singular and plural (languages with more forms can add `few`, `many`...). Anything missing falls back to English; `edugame check .` lists what's missing. See the kit's docs/LANGUAGES.md.
 
