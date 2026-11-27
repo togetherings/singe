@@ -24,7 +24,7 @@ Optional extras a map script can provide (see us.py):
     PROJECTION = {'lon0':.., 'lat0':.., 'p1':.., 'p2':..}   draw the map with an Albers projection
                  (default is plain longitude/latitude, fine for small areas such as one country)
     a feature may also contain 'inset': {...} to move and resize it (e.g. Alaska and Hawaii)
-    and 'kind': 'territory' etc. (map settings can switch a kind off)
+    and 'kind': 'territory' etc. (map settings can switch a kind off), and 'off': 1 for a grey neighbour
     FRAMES = [{'region': name, 'pts': [(x, y), ...]}]  outlines to draw around moved regions
 See sierra_leone.py for an example.
 
@@ -193,9 +193,9 @@ def build_map(features, map_id, scale, projection=None, frames=None):
     if projection:                                  # ---- projected map ----
         def flat(f, lon, lat):
             return project(lon, lat, projection, f.get('inset'))
-        pts = [flat(f, *p) for f in features for r in rings(f['geometry']) for p in r]
-        pts += [c for fr in (frames or []) for c in fr['pts']]     # boxes count too
-        pad = 0.01
+        pts = [flat(f, *p) for f in features if not f.get('off') for r in rings(f['geometry']) for p in r]
+        pts += [c for fr in (frames or []) for c in fr['pts']]     # boxes count too (grey neighbours don't: the map cuts them)
+        pad = 0.03 if any(f.get('off') for f in features) else 0.01   # (more room, so the neighbours show)
         x0, x1 = min(p[0] for p in pts) - pad, max(p[0] for p in pts) + pad
         y0, y1 = min(p[1] for p in pts) - pad, max(p[1] for p in pts) + pad
         out.update(projection=projection, origin=[round(x0, 5), round(y1, 5)], scale=scale,
@@ -223,8 +223,13 @@ def build_map(features, map_id, scale, projection=None, frames=None):
             xs, ys = [p[0] for p in xy], [p[1] for p in xy]
             biggest = max(biggest, max(xs) - min(xs), max(ys) - min(ys))
         reg = {'name': f['name'], 'd': ''.join(paths)}
+        if not reg['d']:
+            print('  (left out: %s is too small to draw)' % f['name'])
+            continue
         if f.get('kind'):
             reg['kind'] = f['kind']                 # e.g. 'territory' - lets map settings switch groups off
+        if f.get('off'):
+            reg['off'] = 1                          # a neighbouring country: drawn grey, never asked about (France)
         if biggest < SMALL_REGION * width:
             reg['small'] = 1
         if f.get('inset'):

@@ -2,7 +2,7 @@
 
 A map game where you click the correct location of countries, capitals and flags. It is plain HTML, CSS and JavaScript (no libraries), works offline, and is built to run inside the [Kolibri](https://learningequality.org/kolibri/) Offline Learning Platform as an HTML5 app. It is a *Scored Game* made with [EduGame Kit](https://github.com/togetherings/edugame-kit), so it works with the [Kolibri Games](https://github.com/togetherings/kolibri-games) plugin's scoreboards. Scores are saved through SCORM 1.2 in Kolibri (and in the browser when played elsewhere).
 
-**Maps:** Sierra Leone (18 districts, including the new Bandajuma and Kpanguima), United States, British Isles (the UK's four nations, Ireland, the Crown Dependencies, Cornwall, and Scotland's three island groups), Africa (seven maps: the African Union's five regions, the whole continent, and every country and territory), World (two versions: UN members only, or every country, territory and island).
+**Maps:** Sierra Leone (18 districts, including the new Bandajuma and Kpanguima), United States, British Isles (the UK's four nations, Ireland, the Crown Dependencies, Cornwall, and Scotland's three island groups), France (18 regions, the overseas ones in boxes), Africa (seven maps: the African Union's five regions, the whole continent, and every country and territory), World (two versions: UN members only, or every country, territory and island).
 **Modes:** Practice, Regions, Capitals, Flags (each can be turned on or off per map).
 
 **Current version: 0.4.0** (see [CHANGELOG.md](CHANGELOG.md)).
