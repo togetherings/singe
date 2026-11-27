@@ -829,6 +829,7 @@
           clicks: 0, found: 0, start: Date.now(), timer: null, done: {}, grade: {}, triesOf: {},
           wrap: wrap, root: $('game'), ratio: 1,
           infinite: wrap && (map.infinite_scroll !== undefined ? !!map.infinite_scroll : !!CONFIG.infinite_scroll) };
+    kb.key = null; ptrMouse = null;
     $('mapBox').innerHTML = '';
     $('stripBox').innerHTML = '';
     // The boxes under a world map are pulled up over the map with a negative margin (see fitWorld). That margin must go when the
@@ -849,18 +850,20 @@
     // Circles are linked too: hovering a circle (a region's marker or a capital) in a box lights up the same circle
     // (and the region) on the main map, on both copies of the world, and the other way round.
     function hoverHalo(e, on) {
-      var t = e.target, cl = t.classList, k, els;
+      var t = e.target, cl = t.classList, k, els, key = null;
       if (!cl) return;
-      if ((cl.contains('halo') || cl.contains('region')) && !cl.contains('inactive')) {
+      if ((cl.contains('halo') || cl.contains('region') || cl.contains('mk')) && !cl.contains('inactive')) {
         els = g.root.querySelectorAll('.region[data-i="' + t.getAttribute('data-i') + '"], .mk[data-i="' + t.getAttribute('data-i') + '"]');
         for (k = 0; k < els.length; k++) els[k].classList.toggle('hover', on);
-      } else if (cl.contains('mk')) {
-        els = g.root.querySelectorAll('.region[data-i="' + t.getAttribute('data-i') + '"], .mk[data-i="' + t.getAttribute('data-i') + '"]');
-        for (k = 0; k < els.length; k++) els[k].classList.toggle('hover', on);
+        if (g.mode !== 'capitals') key = 'r' + t.getAttribute('data-i');
       } else if (t.parentNode && t.parentNode.classList && t.parentNode.classList.contains('cap')) {
         els = g.root.querySelectorAll('.cap[data-c="' + t.parentNode.getAttribute('data-c') + '"]');
         for (k = 0; k < els.length; k++) els[k].classList.toggle('hover', on);
+        key = 'c' + t.parentNode.getAttribute('data-c');
       }
+      if (!key) return;
+      if (on) ptrMouse = key; else if (ptrMouse === key) ptrMouse = null;
+      drawPointers();
     }
     [svg, g.strip].forEach(function (v) {
       if (!v) return;
@@ -891,7 +894,7 @@
     $('bar').classList.toggle('flagMode', mode === 'flags');     // layout: the flag takes the middle of row 1
     $('bar').classList.toggle('practice', practice);             // Practice has no timer or prompts
     var c = setupZoom(svg, map);
-    c.onZoom = function (ratio) { g.ratio = ratio; sizeCircles(); };
+    c.onZoom = function (ratio) { g.ratio = ratio; sizeCircles(); kbRing(); drawPointers(); };
     sizeCircles();
     $('gameCredit').textContent = mapStr(map, 'credit') || '';
     g.pending = g.order.slice();                     // prompts not shown yet
@@ -905,6 +908,7 @@
     $('totCap').textContent = capCount;
     $('totals').classList.toggle('noCaps', !capCount);
     $('skipBtns').classList.toggle('hidden', practice || !skipEnabled(map, mode));
+    focusMap();
     if (practice) {
       showPrompt();
       $('feedback').textContent = '';
@@ -1052,7 +1056,7 @@
     $('infoBack').classList.remove('hidden');
     $('infoClose').focus();
   }
-  function closeInfo() { $('infoBack').classList.add('hidden'); }
+  function closeInfo() { var was = !$('infoBack').classList.contains('hidden'); $('infoBack').classList.add('hidden'); if (was) focusMap(); }
 
   function onMapClick(e) {
     var t = e.target;
@@ -1135,6 +1139,7 @@
       g.result = { acc: acc, secs: secs, goal: goal, r: r };
       showResult();
       show('results');
+      if (kb.used) $('againBtn').focus();       // keyboard players carry on from the results
     });
   }
   // The results page's words (made again when the learner chooses another language in Options).
@@ -1155,6 +1160,8 @@
 
   function leaveGame() {
     if (g.timer) clearInterval(g.timer);
+    kbClear();
+    $('kbdHint').classList.add('hidden');
     $('stripBox').style.marginTop = '';
     hideTip();
     closeInfo();
@@ -1200,7 +1207,9 @@
     var base = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };   // the whole map
     var view = { x: base.x, y: base.y, w: base.w, h: base.h }; // the part currently shown
     var ptrs = {};                                   // fingers / mouse currently down
-    var c = { moved: false, step: step, zoomBy: zoomBy, reset: reset, move: move, up: up, onZoom: null };
+    var c = { moved: false, step: step, zoomBy: zoomBy, reset: reset, move: move, up: up, onZoom: null,
+              show: showPoint, pan: pan, zoomOn: zoomAt };
+    c.base = base;
     zc = c;
 
     // Write the view to the SVG, keeping it inside the map.
@@ -1226,6 +1235,15 @@
       apply();
     }
     function reset() { view = { x: base.x, y: base.y, w: base.w, h: base.h }; apply(); }   // the "Full" button
+    // Keyboard: bring map point (mx, my) into view if it's near or past the edge (the zoom stays the same).
+    function showPoint(mx, my) {
+      if (g.infinite) mx += Math.round((view.x + view.w / 2 - mx) / base.w) * base.w;   // the nearest copy of the world
+      var mxg = view.w * 0.12, myg = view.h * 0.12;
+      if (mx < view.x + mxg || mx > view.x + view.w - mxg) view.x = mx - view.w / 2;
+      if (my < view.y + myg || my > view.y + view.h - myg) view.y = my - view.h / 2;
+      apply();
+    }
+    function pan(fx, fy) { view.x += fx * view.w; view.y += fy * view.h; apply(); }   // keyboard: Shift + arrows
     function zoomBy(f) { zoomAt(f, view.x + view.w / 2, view.y + view.h / 2); }  // buttons: zoom on centre
     function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
     function two() { var k = Object.keys(ptrs); return k.length === 2 ? [ptrs[k[0]], ptrs[k[1]]] : null; }
@@ -1277,6 +1295,229 @@
   }
 
   /* =====================================================================
+     5d. KEYBOARD
+       While a map is on screen it has the keyboard (Escape goes back to the menu):
+         Tab / Shift+Tab  the next / previous place, in reading order (rows from the top, left to right)
+         arrow keys       the nearest place that way        Shift + arrows   move the map
+         Enter or Space   answer with the highlighted place (Practice: its information)
+         + - Page Up Page Down  zoom    Home or 0  the whole map    . and ,  Skip and Back    ?  the list of keys
+       The highlight never names a place the learner hasn't found (in Practice it does, like hovering).
+     ===================================================================== */
+  var kb = { key: null, used: false, hintTimer: null };
+  var ptrMouse = null;                               // the place under the mouse ('r' + region, 'c' + capital)
+
+  // The pointer outline (index.html, "Pointer"): for the places under the mouse and the keyboard, a copy of each
+  // shape's outline added at the end of its own group, so it's drawn above every neighbour's border (a ring round a
+  // circle). The copies ignore the mouse. Drawn again after zooming (a ring's size is in screen pixels).
+  function drawPointers() {
+    if (!g.root) return;
+    var old = g.root.querySelectorAll('.ptr'), k;
+    for (k = 0; k < old.length; k++) old[k].parentNode.removeChild(old[k]);
+    [ptrMouse, kb.key].forEach(function (key, n) {
+      if (!key || (n === 1 && key === ptrMouse)) return;
+      var els = kbEls(key);
+      for (var e = 0; e < els.length; e++) {
+        var el = els[e].classList.contains('cap') ? els[e].querySelector('.ring') : els[e];
+        if (!el || el.style.display === 'none' || (els[e].style && els[e].style.display === 'none')) continue;
+        if (el.classList.contains('region') && !el.getAttribute('d')) continue;
+        ['ptr ptr-edge', 'ptr ptr-band'].forEach(function (cls) {
+          var c;
+          if (el.tagName === 'circle') {
+            var m = el.getScreenCTM(), px = m ? Math.abs(m.a) || 1 : 1;
+            c = document.createElementNS(SVG_NS, 'circle');
+            c.setAttribute('cx', el.getAttribute('cx')); c.setAttribute('cy', el.getAttribute('cy'));
+            c.setAttribute('r', +el.getAttribute('r') + 5 / px);                       // a ring round it, 5 pixels out
+          } else {
+            c = el.cloneNode(false);
+            c.removeAttribute('style');
+          }
+          c.setAttribute('class', cls);
+          c.setAttribute('aria-hidden', 'true');
+          (el.tagName === 'circle' && els[e].classList.contains('cap') ? els[e].parentNode : el.parentNode).appendChild(c);
+        });
+      }
+    });
+  }   // key: the highlighted place ('r' + region number, 'c' + capital)
+
+  function kbEls(key) {
+    var i = key.slice(1);
+    return g.root.querySelectorAll(key.charAt(0) === 'c' ? '.cap[data-c="' + i + '"]' : '.region[data-i="' + i + '"], .mk[data-i="' + i + '"]');
+  }
+  function kbClear() {
+    if (kb.key && g.root) remCls(kbEls(kb.key), 'kbd');
+    kb.key = null;
+    kbRing();
+    drawPointers();
+  }
+  // A small place (a circle, a tiny island) also gets a ring at least 26 pixels across around it, so the highlight
+  // can be seen. It follows zooming and moving the map. (The copy of the place that is on screen is used.)
+  function kbRing() {
+    var ring = $('kbdRing');
+    if (!kb.key || $('game').classList.contains('hidden')) { ring.classList.add('hidden'); return; }
+    var els = kbEls(kb.key), box = null, W = document.documentElement.clientWidth, H = document.documentElement.clientHeight;
+    for (var k = 0; k < els.length; k++) {
+      if (els[k].style.display === 'none') continue;
+      var r = els[k].getBoundingClientRect();
+      if (r.width === 0 && r.height === 0) continue;
+      if (r.right < 0 || r.left > W || r.bottom < 0 || r.top > H) continue;
+      if (!box || r.width * r.height < box.width * box.height) box = r;   // the smallest copy on screen (a circle)
+    }
+    if (!box || Math.max(box.width, box.height) >= 26) { ring.classList.add('hidden'); return; }
+    var d = 26, cx = box.left + box.width / 2, cy = box.top + box.height / 2;
+    ring.style.left = (cx - d / 2) + 'px'; ring.style.top = (cy - d / 2) + 'px';
+    ring.style.width = ring.style.height = d + 'px';
+    ring.classList.remove('hidden');
+  }
+  // Every place that can be chosen right now, with a position in map units (the boxes under a world map count as
+  // being below it): [{ key, el, x, y, strip }]. The first copy of each place is used: the main map's, then a box's.
+  function kbTargets() {
+    var out = [], seen = {}, wantR = g.mode !== 'capitals', wantC = g.mode === 'capitals' || g.mode === 'practice';
+    var main = g.wrap ? g.tile : g.svg, W = zc ? zc.base.w : 1, H = zc ? zc.base.h : 1;
+    var sel = (wantR ? ['.region:not(.inactive)', '.mk'] : []).concat(wantC ? ['.cap'] : []).join(',');
+    function from(root, strip) {
+      if (!root) return;
+      var els = root.querySelectorAll(sel), sx = 1, sy0 = 0;
+      if (strip) { var vb = root.viewBox.baseVal; sx = W / vb.width; sy0 = zc.base.y + H - vb.y * sx; }
+      for (var k = 0; k < els.length; k++) {
+        var el = els[k], cap = el.classList.contains('cap'), key = cap ? 'c' + el.getAttribute('data-c') : 'r' + el.getAttribute('data-i');
+        if (seen[key] || el.style.display === 'none') continue;
+        seen[key] = true;
+        var x, y, r = !cap && g.map.regions[+key.slice(1)], c0 = cap ? el.querySelector('.ring') : el;
+        if (c0.tagName === 'circle') { x = +c0.getAttribute('cx'); y = +c0.getAttribute('cy'); }
+        else if (!strip && r && r.mk) { x = r.mk[0]; y = r.mk[1]; }                  // a country's own middle (not its overseas parts')
+        else { var b = el.getBBox(); x = b.x + b.width / 2; y = b.y + b.height / 2; }
+        out.push({ key: key, el: cap ? el.querySelector('.hit') : el, x: strip ? x * sx : x, y: strip ? sy0 + y * sx : y, strip: strip });
+      }
+    }
+    from(main, false);
+    from(g.strip, true);
+    return out;
+  }
+  function kbFind(list, key) { for (var k = 0; k < list.length; k++) if (list[k].key === key) return list[k]; return null; }
+  function kbDx(a, b) {                              // b.x - a.x, the short way round on a world map
+    var d = b.x - a.x, W = zc ? zc.base.w : 0;
+    if (g.infinite && !a.strip && !b.strip) d -= Math.round(d / W) * W;
+    return d;
+  }
+  // Highlight a place, keep it in view, and say what may be said about it.
+  function kbSet(t) {
+    kbClear();
+    kb.key = t.key;
+    addCls(kbEls(t.key), 'kbd');
+    drawPointers();
+    setTimeout(kbRing, 0);
+    if (t.strip) { try { g.strip.scrollIntoView({ block: 'nearest' }); } catch (e) {} }
+    else if (zc) zc.show(t.x, t.y);
+    var el = kbFind(kbTargets(), t.key), r = el ? el.el.getBoundingClientRect() : null;
+    var label = el ? labelFor(el.el) : null;
+    if (label && r) showTip(label, r.left + r.width / 2, r.top + r.height / 2); else hideTip();
+    $('kbdSay').textContent = label || tr('keys.unknown');
+  }
+  function kbStep(dir) {                             // Tab: reading order
+    var list = kbTargets(); if (!list.length) return;
+    var row = (zc ? zc.base.h : 1) / 14;
+    list.sort(function (a, b) {
+      var ra = Math.floor(a.y / row), rb = Math.floor(b.y / row);
+      return ra !== rb ? ra - rb : a.x - b.x;
+    });
+    var at = -1;
+    for (var k = 0; k < list.length; k++) if (list[k].key === kb.key) at = k;
+    kbSet(list[at < 0 ? (dir > 0 ? 0 : list.length - 1) : (at + dir + list.length) % list.length]);
+  }
+  function kbMove(dx, dy) {                          // arrows: the nearest place in that direction
+    var list = kbTargets(); if (!list.length) return;
+    var cur = kb.key && kbFind(list, kb.key);
+    if (!cur) {                                      // nothing highlighted yet: start in the middle of what's shown
+      var v = g.svg.viewBox.baseVal, mid = { x: v.x + v.width / 2, y: v.y + v.height / 2, strip: false }, near = null, nd = Infinity;
+      list.forEach(function (t) { var d = Math.hypot(kbDx(mid, t), t.y - mid.y); if (!t.strip && d < nd) { nd = d; near = t; } });
+      return kbSet(near || list[0]);
+    }
+    var best = null, bs = Infinity, wide = null, ws = Infinity;
+    list.forEach(function (t) {
+      if (t.key === cur.key) return;
+      var ox = kbDx(cur, t), oy = t.y - cur.y, along = ox * dx + oy * dy, side = Math.abs(ox * dy - oy * dx);
+      if (along <= 0) return;
+      var score = along + 2 * side;
+      if (side <= along * 1.5) { if (score < bs) { bs = score; best = t; } }    // within about 56 degrees of the arrow
+      else if (score < ws) { ws = score; wide = t; }
+    });
+    if (best || wide) kbSet(best || wide);
+  }
+  function kbChoose() {
+    var t = kb.key && kbFind(kbTargets(), kb.key);
+    if (!t) return kbStep(1);
+    var r = t.el.getBoundingClientRect();
+    onMapClick({ target: t.el, currentTarget: null, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 });
+    if (kb.key && g.mode !== 'practice') {           // say how it went, and the place's name once it's found
+      var lab = labelFor(t.el);
+      $('kbdSay').textContent = lab || '';
+    }
+  }
+  function kbZoom(f) {
+    if (!zc) return;
+    var t = kb.key && kbFind(kbTargets(), kb.key);
+    if (t && !t.strip) zc.zoomOn(f, t.x, t.y); else zc.zoomBy(f);
+    if (t && !t.strip) zc.show(t.x, t.y);
+  }
+  function focusMap() {
+    if ($('game').classList.contains('hidden')) return;
+    try { $('mapBox').focus({ preventScroll: true }); } catch (e) {}
+  }
+  function kbShowHint() {
+    if (kb.used) return;
+    kb.used = true;
+    $('kbdHint').classList.remove('hidden');
+    clearTimeout(kb.hintTimer);
+    kb.hintTimer = setTimeout(function () { $('kbdHint').classList.add('hidden'); }, 8000);
+  }
+  function openKeys() { hideTip(); $('keysBack').classList.remove('hidden'); $('keysClose').focus(); }
+  function closeKeys() { $('keysBack').classList.add('hidden'); focusMap(); }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.defaultPrevented) return;                  // (the kit's Options panel took it: its Escape, its Tab)
+    if (e.key === 'Escape') {                        // a panel first, then the game itself
+      if (!$('keysBack').classList.contains('hidden')) { closeKeys(); return; }
+      if (!$('infoBack').classList.contains('hidden')) { closeInfo(); return; }
+      if (!$('flagBack').classList.contains('hidden')) { closeFlag(); return; }
+    }
+    if ($('game').classList.contains('hidden') || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (!$('keysBack').classList.contains('hidden') || !$('infoBack').classList.contains('hidden') ||
+        !$('flagBack').classList.contains('hidden')) {             // a panel has the keyboard (its one button: Close)
+      if (e.key === 'Tab') e.preventDefault();
+      return;
+    }
+    var t = e.target, tag = t && t.tagName;
+    if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+    if (t && t.closest && t.closest('.eg-overlay')) return;                  // the kit's Options panel
+    var onButton = tag === 'BUTTON' || tag === 'A' || (t && t.getAttribute && t.getAttribute('role') === 'button');
+    var k = e.key, done = true, step = zc ? zc.step : 1.5;
+    if (k === 'Tab') kbStep(e.shiftKey ? -1 : 1);
+    else if (k === 'ArrowLeft' || k === 'ArrowRight' || k === 'ArrowUp' || k === 'ArrowDown') {
+      var dx = k === 'ArrowLeft' ? -1 : k === 'ArrowRight' ? 1 : 0, dy = k === 'ArrowUp' ? -1 : k === 'ArrowDown' ? 1 : 0;
+      if (e.shiftKey) { if (zc) zc.pan(dx * 0.25, dy * 0.25); } else kbMove(dx, dy);
+    }
+    else if ((k === 'Enter' || k === ' ') && !onButton) kbChoose();
+    else if (k === '+' || k === '=' || k === 'PageUp') kbZoom(step);
+    else if (k === '-' || k === '_' || k === 'PageDown') kbZoom(1 / step);
+    else if (k === 'Home' || k === '0') { if (zc) zc.reset(); }
+    else if (k === '.' || k === '>') { if (!$('skipBtns').classList.contains('hidden')) skipPrompt(); }
+    else if (k === ',' || k === '<') { if (!$('skipBtns').classList.contains('hidden')) backPrompt(); }
+    else if (k === '?') openKeys();
+    else if (k === 'Escape') leaveGame();
+    else done = false;
+    if (!done) return;
+    e.preventDefault();
+    if (k !== 'Escape' && k !== '?') { kbShowHint(); if (document.activeElement !== $('mapBox')) focusMap(); }
+  });
+  // A button clicked with the mouse gives the keyboard back to the map; so does a click on the map, which also
+  // drops the keyboard highlight (the mouse is in charge then).
+  $('bar').addEventListener('click', function (e) { if (e.target.closest('button') && e.target.id !== 'backBtn') focusMap(); });
+  $('mapBox').addEventListener('pointerdown', function () { kbClear(); });
+  $('keysBtn').onclick = openKeys;
+  $('keysClose').onclick = closeKeys;
+  $('keysBack').onclick = function (e) { if (e.target === this) closeKeys(); };
+
+  /* =====================================================================
      6. START UP
      ===================================================================== */
   $('zoomIn').onclick   = function () { if (zc) zc.zoomBy(zc.step); };
@@ -1320,7 +1561,8 @@
   }
   window.addEventListener('orientationchange', checkRotate);
   $('rotateOk').onclick = function () { rotateDismissed = true; checkRotate(); };
-  window.addEventListener('resize', function () { checkRotate(); if (g.svg && !$('game').classList.contains('hidden')) { fitWorld(); sizeCircles(); } });
+  window.addEventListener('scroll', function () { if (kb.key) kbRing(); }, { passive: true });
+  window.addEventListener('resize', function () { if (kb.key) setTimeout(kbRing, 50); checkRotate(); if (g.svg && !$('game').classList.contains('hidden')) { fitWorld(); sizeCircles(); } });
   $('infoClose').onclick = closeInfo;
 
   // ---- Full Screen button (in the header; hidden where the browser does not allow it) ----
@@ -1341,7 +1583,6 @@
     document.addEventListener('webkitfullscreenchange', function () { fsLabel(); setTimeout(function () { fitWorld(); sizeCircles(); }, 100); });
   }
   $('infoBack').onclick = function (e) { if (e.target === this) closeInfo(); };   // click outside the card
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeInfo(); });
   $('skipNext').onclick = skipPrompt;
   $('skipPrev').onclick = backPrompt;
   $('backBtn').onclick = leaveGame;
@@ -1356,12 +1597,11 @@
     $('flagBack').classList.remove('hidden');
     $('flagClose').focus();
   }
-  function closeFlag() { $('flagBack').classList.add('hidden'); }
+  function closeFlag() { var was = !$('flagBack').classList.contains('hidden'); $('flagBack').classList.add('hidden'); if (was) focusMap(); }
   $('promptFlag').onclick = openFlag;
   $('promptFlag').onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openFlag(); } };
   $('flagBack').onclick = closeFlag;                 // click anywhere to close
   $('flagClose').onclick = closeFlag;
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeFlag(); });
 
   // ---- Another language chosen in Options (the kit's panel). Appearance is the kit's too: the page gets
   // data-theme="light" or "dark", and the colours at the top of index.html follow it. ----

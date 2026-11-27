@@ -29,6 +29,19 @@ The kit puts a header at the top of the page: the game's title (the package's, l
 
 The appearance is kept on the device. The language is kept in the learner's save, so it follows them in Kolibri. A learner who hasn't chosen gets Kolibri's language (on the Kolibri Games games page), then the browser's, then English. `"options": {"theme": "light"}` in `edugame.json` sets the appearance a new user starts with.
 
+**Colours** (`index.html`, top): contrast only where it matters. Text is 4.5:1 or more on its background; borders (black in light, white in dark), answered places against unanswered land, and the pointer outline are 3:1 or more; the page and sea, places not in the game, lakes and boxes are calm and don't need contrast. Answers: first try green, a later try yellow, needed the hint vermillion (Okabe-Ito and Paul Tol colour-blind-safe palettes), which differ in lightness too, so they stay apart with colour blindness (checked with simulations). The light theme's yellow is under 3:1 on white land: a real yellow can't be darker. Capitals mode shows countries in the plain land colour.
+
+**Pointing** (hover and keyboard): the place gets `--shade` darker (lighter in dark) and an outline drawn above everything (`drawPointers` in `js/game.js`: copies of the shape's outline at the end of its group; a ring 5 pixels round a circle), a band of `--point` edged with `--line`. The hint and the wrong-part flash get a thick dashed outline.
+## Keyboard
+While a map is on screen it has the keyboard; Escape goes back to the menu (it closes an open panel first).
+- **Tab / Shift+Tab**: the next or previous place, in reading order (rows from the top, left to right, then the boxes under a world map). It wraps round and never leaves the map.
+- **Arrow keys**: the nearest place in that direction (round the world on the World map). **Shift + arrows** move the map.
+- **Enter or Space**: answer with the highlighted place (in Practice, open its information).
+- **+ − Page Up Page Down**: zoom (on the highlighted place); **Home or 0**: the whole map.
+- **.** and **,**: Skip and Back. **?** (or the ⌨ button next to zoom): the list of keys.
+
+The highlight is the pointing outline (see Colours above), plus a ring at least 26 pixels across around a small place. It never says the name of a place the learner hasn't found (screen readers hear "a place you haven't found yet"), except in Practice. The map scrolls to keep it in view. The first key in a game shows a line of help at the bottom for a few seconds, and the map menu has a line about the keyboard. `js/game.js`, section 5d.
+
 ## Languages
 **Interface text.** Every piece of text the game shows is in `lang/<code>.json`, one entry per text. To add a language, run `edugame translate . sw` (this copies the English text into `lang/sw.json` and adds `sw` to `languages` in `edugame.json`), put the language's own name in `_language`, and translate. Keep the `{words in braces}`: the game fills them in. Entries with `one` / `other` give separate wording for singular and plural (languages with more forms can add `few`, `many`...). Anything missing falls back to English; `edugame check .` lists what's missing. See the kit's docs/LANGUAGES.md.
 
