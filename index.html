@@ -164,6 +164,7 @@
   /* regions that are drawn but not part of the game (e.g. D.C. when territories are off) */
   .region.inactive { pointer-events: none; cursor: default; }
   /* boxes drawn around regions that were moved to a new place (e.g. Alaska, Hawaii) */
+  .frame-back { fill: var(--water); stroke: none; pointer-events: none; }
   .frame { fill: var(--box-bg); stroke: var(--line); stroke-width: 1.5; pointer-events: none;
            vector-effect: non-scaling-stroke; }
   .region:hover, .region.hover { fill: var(--hover); }

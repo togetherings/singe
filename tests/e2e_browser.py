@@ -27,7 +27,7 @@ from tests.kolibri_play import PLAY_ROUND
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PACKAGES = {
-    "countries": (["Sierra Leone", "United States", "British Isles"], ["Sierra Leone", "États-Unis"]),
+    "countries": (["Sierra Leone", "United States", "British Isles", "France"], ["Sierra Leone", "États-Unis"]),
     "africa": (["North Africa", "West Africa", "Central Africa", "East Africa", "Southern Africa", "Africa: UN countries",
                 "Africa: all countries and territories"], ["Afrique du Nord", "Afrique de l'Ouest"]),
     "world": (["World: UN countries", "World: all countries, territories and islands"], None),

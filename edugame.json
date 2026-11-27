@@ -91,7 +91,9 @@
         "africa_all_flags": "board.africa_all_flags",
         "british_isles": "board.british_isles",
         "british_isles_capitals": "board.british_isles_capitals",
-        "british_isles_flags": "board.british_isles_flags"
+        "british_isles_flags": "board.british_isles_flags",
+        "france": "board.france",
+        "france_capitals": "board.france_capitals"
       },
       "total": {
         "label": "all_maps",
@@ -115,6 +117,7 @@
         "maps/sierra_leone/*",
         "maps/us/*",
         "maps/british_isles/*",
+        "maps/france/*",
         "maps/world/flags/gb-eng.svg",
         "maps/world/flags/gb-sct.svg",
         "maps/world/flags/gb-wls.svg",
@@ -132,7 +135,8 @@
         "maps": [
           "sierra_leone",
           "us",
-          "british_isles"
+          "british_isles",
+          "france"
         ]
       }
     },

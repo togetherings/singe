@@ -93,6 +93,13 @@ Cornwall (with the Isles of Scilly) is cut out of England along its admin-1 bord
 are Scotland's islands in the World map's boxes; Rockall is left out. Everything else in the area (France, Belgium,
 the Netherlands, Norway, the Faroe Islands) is grey.
 
+## France map
+`maps/france/shapes.js` is made by `map_generation.py` with `tools/france.py` (see `data/natural_earth/README.md` for the
+command), like the US map: an Albers projection, with the five overseas regions moved and resized into boxes (`LAYOUT`
+in france.py). Natural Earth's departments are merged into the 18 regions by their "region" field. The neighbouring
+countries are grey (`off` in the shapes file): they are drawn first, so the boxes cover them, and the map's own edges
+cut them. `BOX_NEIGHBOURS` draws countries inside a box (Suriname and Brazil beside French Guiana), cut to the box.
+
 ## Africa maps: windows on the World map
 The seven Africa maps (`maps/africa/settings.js`, and `maps/africa/lang/fr.json` for French) have no shapes of their own:
 their entries in edugame.json say `"shapes": "world"`, so they draw `maps/world/shapes.js`, and the Africa package lists

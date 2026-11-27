@@ -1,0 +1,38 @@
+{
+  "name": "France",
+  "blurb": "Trouvez les 18 régions de France, outre-mer compris",
+  "credit": "Limites : Natural Earth 5.1.2 (domaine public, naturalearthdata.com), ses départements regroupés en régions. Les régions d'outre-mer sont rapprochées et redimensionnées.",
+  "regions": {
+    "Brittany": {
+      "name": "Bretagne"
+    },
+    "Corsica": {
+      "name": "Corse",
+      "info": "Une île de la Méditerranée, plus autonome que les autres régions (une « collectivité territoriale »)."
+    },
+    "French Guiana": {
+      "name": "Guyane",
+      "info": "Une région d'outre-mer en Amérique du Sud, entre le Suriname et le Brésil."
+    },
+    "Guadeloupe": {
+      "info": "Une région d'outre-mer dans les Caraïbes. Sa capitale, Basse-Terre, est plus petite que Pointe-à-Pitre."
+    },
+    "Martinique": {
+      "info": "Une région d'outre-mer dans les Caraïbes."
+    },
+    "Mayotte": {
+      "info": "Une région d'outre-mer dans l'océan Indien, entre Madagascar et l'Afrique : la plus récente région de France (2011)."
+    },
+    "Normandy": {
+      "name": "Normandie"
+    },
+    "Occitania": {
+      "name": "Occitanie"
+    },
+    "Provence-Alpes-Côte d'Azur": {},
+    "Réunion": {
+      "name": "La Réunion",
+      "info": "Une région d'outre-mer dans l'océan Indien, à l'est de Madagascar."
+    }
+  }
+}

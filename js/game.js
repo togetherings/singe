@@ -496,13 +496,7 @@
     var h = map.projection ? map.size[1] : Math.round((b[3] - b[1]) * k);
     var svg = document.createElementNS(SVG_NS, 'svg');
     svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-    (map.frames || []).forEach(function (f) {          // outlines around regions that were moved (e.g. Alaska)
-      var box = document.createElementNS(SVG_NS, 'polygon');
-      box.setAttribute('class', 'frame');
-      box.setAttribute('points', f.pts.map(function (p) { return p.join(','); }).join(' '));
-      svg.appendChild(box);
-    });
-    map.regions.forEach(function (r, i) {
+    function addRegion(r, i) {
       var d = r.d;                       // ready-made path wins if supplied
       if (!d) {
         d = 'M' + r.poly.map(function (p) {
@@ -511,11 +505,26 @@
       }
       var path = document.createElementNS(SVG_NS, 'path');
       path.setAttribute('d', d);
-      path.setAttribute('class', r.inactive ? 'region inactive' : 'region');
+      path.setAttribute('class', r.inactive ? (r.off ? 'region inactive off' : 'region inactive') : 'region');
       path.setAttribute('data-name', r.name);
       path.setAttribute('data-i', i);    // index back into map.regions
       svg.appendChild(path);
+    }
+    // grey neighbours ("off": France's) first, then the boxes of moved regions (Alaska, Réunion), which hide whatever is
+    // under them (an opaque sea-coloured back, then the box), then the grey neighbours drawn INSIDE a box (Brazil and
+    // Suriname beside French Guiana), then the regions in the game
+    map.regions.forEach(function (r, i) { if (r.off && !r.inset) addRegion(r, i); });
+    (map.frames || []).forEach(function (f) {          // outlines around regions that were moved (e.g. Alaska)
+      var pts = f.pts.map(function (p) { return p.join(','); }).join(' ');
+      ['frame-back', 'frame'].forEach(function (cls) {
+        var box = document.createElementNS(SVG_NS, 'polygon');
+        box.setAttribute('class', cls);
+        box.setAttribute('points', pts);
+        svg.appendChild(box);
+      });
     });
+    map.regions.forEach(function (r, i) { if (r.off && r.inset) addRegion(r, i); });
+    map.regions.forEach(function (r, i) { if (!r.off) addRegion(r, i); });
     return svg;
   }
 
@@ -782,7 +791,7 @@
   // Crop the view to what is actually drawn (some regions may have been switched off).
   // Needs the map to be visible, because it measures the shapes.
   function fitView(svg) {
-    var x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, items = svg.querySelectorAll('.region, .frame');
+    var x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, items = svg.querySelectorAll('.region:not(.off), .frame');   // (grey neighbours are cut by the view)
     for (var i = 0; i < items.length; i++) {
       var b = items[i].getBBox();
       x0 = Math.min(x0, b.x); y0 = Math.min(y0, b.y);
