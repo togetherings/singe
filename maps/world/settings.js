@@ -1261,6 +1261,18 @@
       info: '',
       flag: 'maps/world/flags/somaliland.svg'
     },
+    'Hebrides': {
+      info: '',
+      flag: 'maps/world/flags/gb-els.svg'
+    },
+    'Orkney Islands': {
+      info: '',
+      flag: 'maps/world/flags/gb-ork.svg'
+    },
+    'Shetland Islands': {
+      info: '',
+      flag: 'maps/world/flags/gb-zet.svg'
+    },
     'Saint Helena': {
       info: '',
       flag: 'maps/world/flags/sh.svg'

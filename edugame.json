@@ -88,7 +88,10 @@
         "africa_flags": "board.africa_flags",
         "africa_all": "board.africa_all",
         "africa_all_capitals": "board.africa_all_capitals",
-        "africa_all_flags": "board.africa_all_flags"
+        "africa_all_flags": "board.africa_all_flags",
+        "british_isles": "board.british_isles",
+        "british_isles_capitals": "board.british_isles_capitals",
+        "british_isles_flags": "board.british_isles_flags"
       },
       "total": {
         "label": "all_maps",
@@ -110,12 +113,26 @@
       "description": "package.countries_about",
       "files": [
         "maps/sierra_leone/*",
-        "maps/us/*"
+        "maps/us/*",
+        "maps/british_isles/*",
+        "maps/world/flags/gb-eng.svg",
+        "maps/world/flags/gb-sct.svg",
+        "maps/world/flags/gb-wls.svg",
+        "maps/world/flags/gb-nir.svg",
+        "maps/world/flags/ie.svg",
+        "maps/world/flags/im.svg",
+        "maps/world/flags/je.svg",
+        "maps/world/flags/gg.svg",
+        "maps/world/flags/gb-con.svg",
+        "maps/world/flags/gb-els.svg",
+        "maps/world/flags/gb-ork.svg",
+        "maps/world/flags/gb-zet.svg"
       ],
       "config": {
         "maps": [
           "sierra_leone",
-          "us"
+          "us",
+          "british_isles"
         ]
       }
     },

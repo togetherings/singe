@@ -84,6 +84,15 @@ or for every map with `skip_enabled: true / false` in `config.js` (`null` lets e
 Put an image path in a region's `flag` setting (e.g. `flag: 'maps/my_country/bo.png'`), add the image to the
 package, and set `flags: true` in the map's `modes`. The game shows a flag and the player clicks its region.
 
+## British Isles map
+`maps/british_isles/shapes.js` is made by `tools/british_isles.py` (see `data/natural_earth/README.md` for the
+command). It is a world-type map like the Africa maps (a window: `in_game`, `insets: false`), but with shapes of its
+own at 200 units per degree, ten times the World map's, and squeezed sideways (`x_scale: 0.8` in the projection) so
+Great Britain keeps its true shape. England, Scotland, Wales and Northern Ireland come from Natural Earth's map units;
+Cornwall (with the Isles of Scilly) is cut out of England along its admin-1 border; the Hebrides, Orkney and Shetland
+are Scotland's islands in the World map's boxes; Rockall is left out. Everything else in the area (France, Belgium,
+the Netherlands, Norway, the Faroe Islands) is grey.
+
 ## Africa maps: windows on the World map
 The seven Africa maps (`maps/africa/settings.js`, and `maps/africa/lang/fr.json` for French) have no shapes of their own:
 their entries in edugame.json say `"shapes": "world"`, so they draw `maps/world/shapes.js`, and the Africa package lists

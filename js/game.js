@@ -474,7 +474,7 @@
   }
   function toXY(map, region, lon, lat) {
     var k = map.scale || 100, P, ins = region && region.inset;
-    if (map.wrap) return [(lon + 180) * k, (millerY(map.projection.lat_top) - millerY(lat)) * k];
+    if (map.wrap) return [(lon + 180) * k * (map.projection.x_scale || 1), (millerY(map.projection.lat_top) - millerY(lat)) * k];   // (x_scale: the British Isles map is squeezed sideways)
     if (!map.projection) { var b = map.bounds; return [(lon - b[0]) * k, (b[3] - lat) * k]; }
     if (ins) {
       P = albers(lon, lat, ins.proj);
