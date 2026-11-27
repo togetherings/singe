@@ -1,0 +1,54 @@
+{
+  "name": "Îles Britanniques",
+  "blurb": "Trouvez les nations, les îles et les dépendances de la Couronne de Grande-Bretagne et d'Irlande",
+  "credit": "Limites : Natural Earth 5.1.2 (domaine public, naturalearthdata.com) ; la Cornouailles d'après sa limite de niveau 1. Drapeaux : Wikipédia (domaine public).",
+  "regions": {
+    "England": {
+      "name": "Angleterre",
+      "capital": "Londres"
+    },
+    "Scotland": {
+      "name": "Écosse",
+      "capital": "Édimbourg"
+    },
+    "Wales": {
+      "name": "Pays de Galles"
+    },
+    "Northern Ireland": {
+      "name": "Irlande du Nord",
+      "info": "La bannière d'Ulster montrée ici était le drapeau du gouvernement d'Irlande du Nord de 1953 à 1972. Depuis, l'Union Flag est le seul drapeau officiel de l'Irlande du Nord."
+    },
+    "Ireland": {
+      "name": "Irlande"
+    },
+    "Isle of Man": {
+      "name": "Île de Man",
+      "info": "Une dépendance de la Couronne : elle se gouverne elle-même et ne fait pas partie du Royaume-Uni."
+    },
+    "Jersey": {
+      "capital": "Saint-Hélier",
+      "info": "Une dépendance de la Couronne : elle se gouverne elle-même et ne fait pas partie du Royaume-Uni."
+    },
+    "Guernsey": {
+      "name": "Guernesey",
+      "capital": "Saint-Pierre-Port",
+      "info": "Une dépendance de la Couronne, avec Aurigny et Sercq : elle se gouverne elle-même et ne fait pas partie du Royaume-Uni."
+    },
+    "Cornwall": {
+      "name": "Cornouailles",
+      "info": "Un comté d'Angleterre, avec les îles Scilly. Les Cornouaillais sont reconnus comme minorité nationale depuis 2014, et la Cornouailles a sa propre langue et son propre drapeau (la croix de saint Piran)."
+    },
+    "Hebrides": {
+      "name": "Hébrides",
+      "info": "Des îles au large de la côte ouest de l'Écosse : les Hébrides extérieures (Na h-Eileanan Siar) et les Hébrides intérieures (Skye, Mull, Islay et d'autres). Le drapeau est celui du conseil des Hébrides extérieures."
+    },
+    "Orkney Islands": {
+      "name": "Orcades",
+      "info": "Des îles au nord de l'Écosse continentale, qui font partie de l'Écosse."
+    },
+    "Shetland Islands": {
+      "name": "Shetland",
+      "info": "Les îles les plus au nord du Royaume-Uni, qui font partie de l'Écosse."
+    }
+  }
+}
