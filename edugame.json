@@ -129,7 +129,12 @@
         "maps/world/flags/gb-con.svg",
         "maps/world/flags/gb-els.svg",
         "maps/world/flags/gb-ork.svg",
-        "maps/world/flags/gb-zet.svg"
+        "maps/world/flags/gb-zet.svg",
+        "maps/world/flags/pr.svg",
+        "maps/world/flags/gu.svg",
+        "maps/world/flags/as.svg",
+        "maps/world/flags/mp.svg",
+        "maps/world/flags/vi.svg"
       ],
       "config": {
         "maps": [
@@ -264,7 +269,9 @@
       "title": "package.world",
       "description": "package.world_about",
       "files": [
-        "maps/world/*"
+        "maps/world/*",
+        "maps/us/flags/alaska.svg",
+        "maps/us/flags/hawaii.svg"
       ],
       "config": {
         "maps": [

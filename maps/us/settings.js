@@ -22,291 +22,291 @@
   zoom_levels: 5,
   pass_accuracy: { regions: 80, capitals: 0, flags: 0 },
   skip: true,
-  modes: { practice: true, regions: true, capitals: true, flags: false },
+  modes: { practice: true, regions: true, capitals: true, flags: true },
   include_territories: true,
 
   regions: {
     'Alabama': {
       capital: { name: 'Montgomery', lat: 32.3777, lon: -86.3, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/alabama.svg'
     },
     'Alaska': {
       capital: { name: 'Juneau', lat: 58.3019, lon: -134.4197, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/alaska.svg'
     },
     'American Samoa': {
       capital: { name: 'Pago Pago', lat: -14.2756, lon: -170.702, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/world/flags/as.svg'
     },
     'Arizona': {
       capital: { name: 'Phoenix', lat: 33.4484, lon: -112.074, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/arizona.svg'
     },
     'Arkansas': {
       capital: { name: 'Little Rock', lat: 34.7465, lon: -92.2896, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/arkansas.svg'
     },
     'California': {
       capital: { name: 'Sacramento', lat: 38.5816, lon: -121.4944, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/california.svg'
     },
     'Colorado': {
       capital: { name: 'Denver', lat: 39.7392, lon: -104.9903, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/colorado.svg'
     },
     'Connecticut': {
       capital: { name: 'Hartford', lat: 41.7658, lon: -72.6734, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/connecticut.svg'
     },
     'Delaware': {
       capital: { name: 'Dover', lat: 39.1582, lon: -75.5244, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/delaware.svg'
     },
     'District of Columbia': {
       // Washington, D.C. is the US capital. It is only a target in Capitals mode (hide_in_practice),
       // so in Practice mode D.C. appears just as a region.
       capital: { name: 'Washington, D.C.', lat: 38.8951, lon: -77.0364, info: '', hide_in_practice: true },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/district_of_columbia.svg'
     },
     'Florida': {
       capital: { name: 'Tallahassee', lat: 30.4383, lon: -84.2807, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/florida.svg'
     },
     'Georgia': {
       capital: { name: 'Atlanta', lat: 33.749, lon: -84.388, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/georgia.svg'
     },
     'Guam': {
       capital: { name: 'Hagåtña', lat: 13.4757, lon: 144.7489, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/world/flags/gu.svg'
     },
     'Hawaii': {
       capital: { name: 'Honolulu', lat: 21.3069, lon: -157.8583, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/hawaii.svg'
     },
     'Idaho': {
       capital: { name: 'Boise', lat: 43.615, lon: -116.2023, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/idaho.svg'
     },
     'Illinois': {
       capital: { name: 'Springfield', lat: 39.7817, lon: -89.6501, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/illinois.svg'
     },
     'Indiana': {
       capital: { name: 'Indianapolis', lat: 39.7684, lon: -86.1581, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/indiana.svg'
     },
     'Iowa': {
       capital: { name: 'Des Moines', lat: 41.5868, lon: -93.625, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/iowa.svg'
     },
     'Kansas': {
       capital: { name: 'Topeka', lat: 39.0473, lon: -95.6752, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/kansas.svg'
     },
     'Kentucky': {
       capital: { name: 'Frankfort', lat: 38.2009, lon: -84.8733, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/kentucky.svg'
     },
     'Louisiana': {
       capital: { name: 'Baton Rouge', lat: 30.4515, lon: -91.1871, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/louisiana.svg'
     },
     'Maine': {
       capital: { name: 'Augusta', lat: 44.3106, lon: -69.7795, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/maine.svg'
     },
     'Maryland': {
       capital: { name: 'Annapolis', lat: 38.9784, lon: -76.4922, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/maryland.svg'
     },
     'Massachusetts': {
       capital: { name: 'Boston', lat: 42.3601, lon: -71.0589, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/massachusetts.svg'
     },
     'Michigan': {
       capital: { name: 'Lansing', lat: 42.7325, lon: -84.5555, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/michigan.svg'
     },
     'Minnesota': {
       capital: { name: 'Saint Paul', lat: 44.9537, lon: -93.09, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/minnesota.svg'
     },
     'Mississippi': {
       capital: { name: 'Jackson', lat: 32.2988, lon: -90.1848, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/mississippi.svg'
     },
     'Missouri': {
       capital: { name: 'Jefferson City', lat: 38.5767, lon: -92.1735, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/missouri.svg'
     },
     'Montana': {
       capital: { name: 'Helena', lat: 46.5891, lon: -112.0391, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/montana.svg'
     },
     'Nebraska': {
       capital: { name: 'Lincoln', lat: 40.8136, lon: -96.7026, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/nebraska.svg'
     },
     'Nevada': {
       capital: { name: 'Carson City', lat: 39.1638, lon: -119.7674, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/nevada.svg'
     },
     'New Hampshire': {
       capital: { name: 'Concord', lat: 43.2081, lon: -71.5376, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/new_hampshire.svg'
     },
     'New Jersey': {
       capital: { name: 'Trenton', lat: 40.2206, lon: -74.7597, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/new_jersey.svg'
     },
     'New Mexico': {
       capital: { name: 'Santa Fe', lat: 35.687, lon: -105.9378, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/new_mexico.svg'
     },
     'New York': {
       capital: { name: 'Albany', lat: 42.6526, lon: -73.7562, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/new_york.svg'
     },
     'North Carolina': {
       capital: { name: 'Raleigh', lat: 35.7796, lon: -78.6382, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/north_carolina.svg'
     },
     'North Dakota': {
       capital: { name: 'Bismarck', lat: 46.8083, lon: -100.7837, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/north_dakota.svg'
     },
     'Northern Mariana Islands': {
       capital: { name: 'Saipan', lat: 15.2123, lon: 145.7545, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/world/flags/mp.svg'
     },
     'Ohio': {
       capital: { name: 'Columbus', lat: 39.9612, lon: -82.9988, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/ohio.svg'
     },
     'Oklahoma': {
       capital: { name: 'Oklahoma City', lat: 35.4676, lon: -97.5164, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/oklahoma.svg'
     },
     'Oregon': {
       capital: { name: 'Salem', lat: 44.9429, lon: -123.0351, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/oregon.svg'
     },
     'Pennsylvania': {
       capital: { name: 'Harrisburg', lat: 40.2732, lon: -76.8867, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/pennsylvania.svg'
     },
     'Puerto Rico': {
       capital: { name: 'San Juan', lat: 18.4655, lon: -66.1057, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/world/flags/pr.svg'
     },
     'Rhode Island': {
       capital: { name: 'Providence', lat: 41.824, lon: -71.4128, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/rhode_island.svg'
     },
     'South Carolina': {
       capital: { name: 'Columbia', lat: 34.0007, lon: -81.0348, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/south_carolina.svg'
     },
     'South Dakota': {
       capital: { name: 'Pierre', lat: 44.3683, lon: -100.351, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/south_dakota.svg'
     },
     'Tennessee': {
       capital: { name: 'Nashville', lat: 36.1627, lon: -86.7816, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/tennessee.svg'
     },
     'Texas': {
       capital: { name: 'Austin', lat: 30.2672, lon: -97.7431, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/texas.svg'
     },
     'U.S. Virgin Islands': {
       capital: { name: 'Charlotte Amalie', lat: 18.3419, lon: -64.9307, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/world/flags/vi.svg'
     },
     'Utah': {
       capital: { name: 'Salt Lake City', lat: 40.7608, lon: -111.891, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/utah.svg'
     },
     'Vermont': {
       capital: { name: 'Montpelier', lat: 44.2601, lon: -72.5754, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/vermont.svg'
     },
     'Virginia': {
       capital: { name: 'Richmond', lat: 37.5407, lon: -77.436, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/virginia.svg'
     },
     'Washington': {
       capital: { name: 'Olympia', lat: 47.0379, lon: -122.9007, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/washington.svg'
     },
     'West Virginia': {
       capital: { name: 'Charleston', lat: 38.3498, lon: -81.6326, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/west_virginia.svg'
     },
     'Wisconsin': {
       capital: { name: 'Madison', lat: 43.0731, lon: -89.4012, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/wisconsin.svg'
     },
     'Wyoming': {
       capital: { name: 'Cheyenne', lat: 41.14, lon: -104.8202, info: '' },
       info: '',
-      flag: ''
+      flag: 'maps/us/flags/wyoming.svg'
     }
   }
 });

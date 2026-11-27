@@ -22,7 +22,7 @@ SINGE comes in separate zipped packages of maps. Download them from the [Release
 
 | Package | Maps |
 |---|---|
-| `singe-countries-<version>.zip` | Sierra Leone, United States |
+| `singe-countries-<version>.zip` | Sierra Leone, United States, British Isles, France |
 | `singe-world-<version>.zip` | World (UN countries) and World (all countries, territories and islands) |
 | `singe-africa-<version>.zip` | North, West, Central, East and Southern Africa, Africa (UN countries) and Africa (all countries and territories) |
 

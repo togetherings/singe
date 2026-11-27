@@ -13,6 +13,7 @@
   name: 'British Isles',
   blurb: 'Find the nations, islands and Crown Dependencies of Great Britain and Ireland',
   credit: 'Boundaries: Natural Earth 5.1.2 (public domain, naturalearthdata.com); Cornwall from its admin-1 border. Flags: Wikipedia (public domain).',
+  image: 'maps/british_isles/flag.svg',   // the UK's and Ireland's flags, split diagonally (made from maps/world/flags/gb.svg and ie.svg)
   orientation: 'vertical',
   insets: false,
   infinite_scroll: false,

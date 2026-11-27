@@ -314,7 +314,7 @@
     'Northern Cyprus': {
       capital: { name: 'North Nicosia', lat: 35.1856, lon: 33.3823, info: '', nudge: [35.3, 33.55] },
       info: '',
-      flag: ''
+      flag: 'maps/world/flags/northern-cyprus.svg'
     },
     'Cyprus': {
       capital: { name: 'Nicosia', lat: 35.1667, lon: 33.3666, info: '', nudge: [34.97, 33.37] },
@@ -682,9 +682,8 @@
       flag: 'maps/world/flags/mo.svg'
     },
     'Saint Martin': {
-      capital: { name: 'Marigot', lat: 18.0675, lon: -63.0829, info: '' },
       info: 'The northern part of the island of Saint Martin, a French overseas collectivity. The island is shared with Sint Maarten (the Netherlands), so on this map the two are ONE region and ONE circle. In the games, click that circle to answer for either of them.',
-      flag: 'maps/world/flags/mf.svg'
+      flag: ''
     },
     'Morocco': {
       capital: { name: 'Rabat', lat: 34.0253, lon: -6.8364, info: '' },
@@ -1214,16 +1213,15 @@
     },
     'Svalbard': {
       info: '',
-      flag: 'maps/world/flags/sj.svg'
+      flag: ''
     },
     'Bonaire': {
       info: '',
       flag: 'maps/world/flags/bq.svg'
     },
     'Sint Eustatius': {
-      capital: { name: 'Oranjestad', lat: 17.4838, lon: -62.984, info: '' },
       info: 'A Dutch special municipality in the Caribbean, right next to Saba. The two islands are close together and are administered the same way by the Netherlands, so on this map they are ONE region and ONE circle. In the games, click that circle to answer for either of them.',
-      flag: ''
+      flag: 'maps/world/flags/bq-se.svg'
     },
     'Christmas Island': {
       info: '',
@@ -1258,8 +1256,65 @@
       flag: 'maps/world/flags/sh-ta.svg'
     },
     'Somaliland': {
-      info: '',
+      capital: { name: 'Hargeisa', lat: 9.5600, lon: 44.0650, info: '' },
+      info: 'Declared itself independent of Somalia in 1991. Israel recognised it in December 2025, the first country to do so; most countries count it as part of Somalia.',
       flag: 'maps/world/flags/somaliland.svg'
+    },
+    'Crimea': {
+      info: 'A peninsula on the Black Sea, part of Ukraine; Russia has occupied it since 2014 and claims it. Its flag is used under both claims.',
+      flag: 'maps/world/flags/ua-43.svg'
+    },
+    'Kaliningrad': {
+      info: '',
+      flag: 'maps/world/flags/ru-kgd.svg'
+    },
+    'Newfoundland': {
+      info: 'The flag is the flag of the province of Newfoundland and Labrador, which also includes Labrador on the mainland.',
+      flag: 'maps/world/flags/ca-nl.svg'
+    },
+    'Okinawa Islands': {
+      info: '',
+      flag: 'maps/world/flags/jp-47.svg'
+    },
+    'Easter Island (Rapa Nui)': {
+      info: '',
+      flag: 'maps/world/flags/cl-rapa-nui.svg'
+    },
+    'Sakhalin': {
+      info: '',
+      flag: 'maps/world/flags/ru-sak.svg'
+    },
+    'Sardinia': {
+      info: '',
+      flag: 'maps/world/flags/it-88.svg'
+    },
+    'Sicily': {
+      info: '',
+      flag: 'maps/world/flags/it-82.svg'
+    },
+    'Corsica': {
+      info: '',
+      flag: 'maps/world/flags/fr-20r.svg'
+    },
+    'Tasmania': {
+      info: '',
+      flag: 'maps/world/flags/au-tas.svg'
+    },
+    'Azores': {
+      info: '',
+      flag: 'maps/world/flags/pt-20.svg'
+    },
+    'Balearic Islands': {
+      info: '',
+      flag: 'maps/world/flags/es-ib.svg'
+    },
+    'Alaska': {
+      info: 'A state of the United States.',
+      flag: 'maps/us/flags/alaska.svg'
+    },
+    'Hawaii': {
+      info: 'A state of the United States.',
+      flag: 'maps/us/flags/hawaii.svg'
     },
     'Hebrides': {
       info: '',
@@ -1278,14 +1333,12 @@
       flag: 'maps/world/flags/sh.svg'
     },
     'Sint Maarten': {
-      capital: { name: 'Philipsburg', lat: 18.0237, lon: -63.0458, info: '' },
       info: 'The southern part of the island of Saint Martin, a country within the Kingdom of the Netherlands. The island is shared with Saint Martin (France), so on this map the two are ONE region and ONE circle. In the games, click that circle to answer for either of them.',
       flag: 'maps/world/flags/sx.svg'
     },
     'Saba': {
-      capital: { name: 'The Bottom', lat: 17.634, lon: -63.2467, info: '' },
       info: 'A Dutch special municipality in the Caribbean, right next to Sint Eustatius. The two islands are close together and are administered the same way by the Netherlands, so on this map they are ONE region and ONE circle. In the games, click that circle to answer for either of them.',
-      flag: ''
+      flag: 'maps/world/flags/bq-sa.svg'
     }
   }
 });

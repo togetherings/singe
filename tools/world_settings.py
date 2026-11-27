@@ -52,8 +52,10 @@ INFO = {                                    # the note shown for the combined pl
     'Saba': 'A Dutch special municipality in the Caribbean, right next to Sint Eustatius. The two islands are close together and are administered the same way by the Netherlands, so on this map they are ONE region and ONE circle. In the games, click that circle to answer for either of them.',
 }
 # places whose flag file is not named after their own ISO code (parts of countries that have a flag of their own)
-FLAG_FILE = {'Svalbard': 'sj', 'Bonaire': 'bq', 'Christmas Island': 'cx', 'Cocos (Keeling) Islands': 'cc', 'Tokelau': 'tk',
+FLAG_FILE = {'Bonaire': 'bq', 'Christmas Island': 'cx', 'Cocos (Keeling) Islands': 'cc', 'Tokelau': 'tk',
              'French Guiana': 'gf', 'Guadeloupe': 'gp', 'Martinique': 'mq', 'Réunion': 're', 'Mayotte': 'yt', 'Saint Helena': 'sh'}
+# places left out of the Flags game: their only flag is their country's (France's, Norway's)
+NO_FLAG = {'Saint Martin', 'Svalbard'}
 WITH_REGION = {'ITA': 'Vatican City'}       # Rome's circle also stands for Vatican City in Practice mode
 
 
@@ -118,7 +120,7 @@ def main():
     if args.flags:
         have = set(f[:-4] for f in os.listdir(args.flags) if f.endswith('.svg'))
         for r in shapes['regions']:
-            if r.get('decor'):
+            if r.get('decor') or r['name'] in NO_FLAG:
                 continue
             iso = FLAG_FILE.get(r['name'], (r.get('iso2') or '').lower())
             if iso and iso in have:

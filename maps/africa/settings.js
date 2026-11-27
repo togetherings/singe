@@ -375,7 +375,7 @@
     },
     'Somaliland': {
       capital: { name: 'Hargeisa', lat: 9.56, lon: 44.065, info: '' },
-      info: 'Declared itself independent of Somalia in 1991 and governs itself, but most countries count it as part of Somalia. On the maps of UN countries it is part of Somalia.',
+      info: 'Declared itself independent of Somalia in 1991 and governs itself. Israel recognised it in December 2025, the first country to do so; most countries count it as part of Somalia. On the maps of UN countries it is part of Somalia.',
       flag: 'maps/world/flags/somaliland.svg'
     },
     'South Africa': {
