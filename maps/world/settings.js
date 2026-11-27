@@ -817,7 +817,7 @@
     },
     'Netherlands': {
       capital: { name: 'Amsterdam', lat: 52.3676, lon: 4.9041, info: '' },
-      info: 'Amsterdam is the capital; the government, the parliament and the king work in The Hague.',
+      info: 'Often called Holland, which is really the name of two of its provinces; since 2020 the government uses only "the Netherlands" for the whole country. Amsterdam is the capital; the government, the parliament and the king work in The Hague.',
       flag: 'maps/world/flags/nl.svg'
     },
     'Norway': {
