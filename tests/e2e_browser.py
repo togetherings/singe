@@ -38,7 +38,7 @@ PACKAGES = {
 # The Africa maps (windows on the World map): how many places each asks about.
 AFRICA_TOTALS = [6, 15, 9, 14, 10, 54, 64]
 # The Asia maps: how many places each asks about, and the box set by hand ("view": west, south, east, north) if any.
-ASIA_MAPS = [(9, [26, 30, 150, 62]), (5, None), (11, None), (8, None), (17, None), (50, [26, -13.5, 150, 62]),
+ASIA_MAPS = [(9, [26, 30, 92, 62]), (5, None), (11, None), (8, None), (17, None), (50, [26, -13.5, 150, 62]),
              (60, [26, -13.5, 150, 62])]
 
 

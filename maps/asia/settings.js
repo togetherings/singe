@@ -4,9 +4,10 @@
    Windows on the World map, like the Africa maps (see maps/africa/settings.js for how windows work: in_game, scope,
    insets, view_pad). Settings that are specific to these maps:
      view          [west, south, east, north] in degrees: the box the map shows, set by hand instead of the box around
-                   the places in the game. North and Central Asia and the two whole-Asia maps use it to cut Russia off
-                   at 62 deg N and 150 deg E (northern Siberia, Kamchatka and Chukotka would otherwise fill most of the
-                   map: the World map's projection stretches land more the further north it is). The whole-Asia maps
+                   the places in the game. The two whole-Asia maps use it to cut Russia off at 62 deg N and 150 deg E
+                   (northern Siberia, Kamchatka and Chukotka would otherwise fill most of the map: the World map's
+                   projection stretches land more the further north it is), and North and Central Asia at 62 deg N and
+                   92 deg E, a little past Kazakhstan (some of Mongolia shows), so Russia doesn't fill it. The whole-Asia maps
                    reach 13.5 deg S for Christmas Island and the Cocos (Keeling) Islands, and 26 deg E for Russia's and
                    Türkiye's western borders (so most of Egypt shows too).
      variants      the seven maps of the Asia package (edugame.json lists each, with "scope": 'un' or 'all'). The
@@ -52,7 +53,7 @@
       blurb: 'Find the 9 countries of North and Central Asia',
       orientation: 'horizontal',
       credit: 'Boundaries and capitals: Natural Earth (public domain, naturalearthdata.com), as on the World map. Borders follow Natural Earth\'s de facto lines. Regions: ESCAP\'s North and Central Asia, ASEAN, SAARC and the UN\'s M49. Small countries and islands are marked with circles. Russia is cut off in the north and east.',
-      view: [26, 30, 150, 62],
+      view: [26, 30, 92, 62],
       in_game: [
         'Armenia', 'Azerbaijan', 'Georgia', 'Kazakhstan', 'Kyrgyzstan', 'Russia', 'Tajikistan', 'Turkmenistan',
         'Uzbekistan'
