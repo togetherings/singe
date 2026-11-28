@@ -6,7 +6,8 @@ Reads Natural Earth "Admin 0 - Countries" (10 m, public domain) and writes the S
 world map. Names, capitals and options live in maps/world/settings.js (see world_settings.py,
 which writes the first version of that file).
 
-  python3 world.py ne_10m_admin_0_countries.geojson --lakes ne_10m_lakes.geojson --out ../maps/world/shapes.js
+  python3 world.py ne_10m_admin_0_countries.geojson --lakes ne_10m_lakes.geojson \
+      --disputed ne_10m_admin_0_disputed_areas.geojson --out ../maps/world/shapes.js
   (Natural Earth 5.1.2: data/natural_earth/, unzipped)
 
 What it does
@@ -136,6 +137,16 @@ DECOR = [
 # continent, sub-region). In UN mode they are grey (not in the game).
 BREAKAWAY = [
     ('RUS', 'Crimea', box(32.4, 36.7, 44.3, 46.3), 'Europe', 'Eastern Europe'),
+]
+
+# BREAKAWAY_CUT: breakaway states that Natural Earth draws inside their country in the countries file, and only in the
+# Admin 0 - Disputed Areas file (--disputed). Each is cut out of its country along the line in that file, and becomes a
+# region of its own like Crimea (grey in UN mode): (BRK_NAME in the disputed-areas file, parent code, new code,
+# continent, sub-region; None = the parent's).
+BREAKAWAY_CUT = [
+    ('Transnistria',  'MDA', 'XTR', None, None),
+    ('Abkhazia',      'GEO', 'XAB', None, None),
+    ('South Ossetia', 'GEO', 'XSO', None, None),
 ]
 
 # COMBINE: two places drawn as ONE region on the map (the game keeps a separate entry for each, see maps/world/settings.js):
@@ -362,6 +373,8 @@ def main():
     ap.add_argument('--out', required=True)
     ap.add_argument('--tolerance', type=float, default=TOLERANCE)
     ap.add_argument('--lakes', help='Natural Earth ne_10m_lakes.geojson (optional): draws the lakes that cross borders and the Great Lakes')
+    ap.add_argument('--disputed', required=True,
+                    help='Natural Earth ne_10m_admin_0_disputed_areas.geojson: the lines of the breakaway states in BREAKAWAY_CUT')
     args = ap.parse_args()
 
     feats = read_features(args.input)
@@ -552,6 +565,58 @@ def main():
         regions[new_name]['un'] = False
         regions[new_name]['pieces'] = moved
         print('  breakaway %-22s %3d polygon(s) from %s' % (new_name, len(moved), parent['name']))
+
+    # ---- 2a'. breakaway states cut out of their country along the disputed-areas file's line ----
+    # Natural Earth draws each of them with the same vertices as its country along the country's outside border (one
+    # unbroken stretch), and its own new vertices along the line inside the country. The country's ring keeps its
+    # other stretch and takes the inside line instead; the breakaway state gets its ring from the disputed-areas file.
+    # Both then share the inside line vertex for vertex, so the simplifier draws it once for both.
+    disputed = {f['properties'].get('BRK_NAME'): f for f in read_features(args.disputed)}
+    vkey = Simplifier.key
+    for brk_name, parent_code, new_code, cont, sub in BREAKAWAY_CUT:
+        if brk_name not in disputed:
+            sys.exit('breakaway %s is not in %s' % (brk_name, args.disputed))
+        bpolys = polys(disputed[brk_name]['geometry'])
+        if len(bpolys) != 1 or len(bpolys[0]) != 1:
+            sys.exit('breakaway %s: expected one polygon without holes' % brk_name)
+        bring = [tuple(p[:2]) for p in bpolys[0][0]]
+        if bring[0] == bring[-1]:
+            bring = bring[:-1]
+        parent = regions[parent_of_code[parent_code]]
+        bset = {vkey(p) for p in bring}
+        pc = max(parent['pieces'], key=lambda pc: sum(vkey(p) in bset for p in pc['poly'][0]))
+        pring = [tuple(p[:2]) for p in pc['poly'][0]]
+        if pring[0] == pring[-1]:
+            pring = pring[:-1]
+        pidx = {vkey(p): i for i, p in enumerate(pring)}
+        shared = [vkey(p) in pidx for p in bring]
+        starts = [i for i in range(len(bring)) if shared[i] and not shared[i - 1]]
+        if len(starts) != 1:
+            sys.exit('breakaway %s: expected one stretch of border shared with %s, found %d' % (brk_name, parent['name'], len(starts)))
+        nb = len(bring)
+        bring = bring[starts[0]:] + bring[:starts[0]]                  # the shared stretch first, then the inside line
+        shared = shared[starts[0]:] + shared[:starts[0]]
+        m = shared.index(False)
+        stretch, inside = bring[:m], bring[m:]                         # inside runs from the stretch's end back to its start
+        a, b = pidx[vkey(stretch[0])], pidx[vkey(stretch[-1])]
+        n_ = len(pring)
+
+        def parc(i, j):                                                # the parent's ring from vertex i forward to vertex j
+            return [pring[k % n_] for k in range(i, j + (n_ if j < i else 0) + 1)]
+        sk = [vkey(p) for p in stretch]
+        if [vkey(p) for p in parc(a, b)] == sk:
+            rest = parc(b, a)                                          # from the stretch's end round to its start
+        elif [vkey(p) for p in parc(b, a)] == sk[::-1]:
+            rest = parc(a, b)                                          # from the stretch's start round to its end
+        else:
+            sys.exit('breakaway %s: the shared border is not one stretch of %s\'s outline' % (brk_name, parent['name']))
+        # close the parent's ring along the inside line (inside goes from the stretch's end to its start)
+        new_ring = rest + (inside if vkey(rest[-1]) == vkey(stretch[-1]) else inside[::-1])
+        pc['poly'][0] = new_ring + [new_ring[0]]
+        new_region(brk_name, new_code, {}, 'partial', cont=cont or parent['cont'], sub=sub or parent['sub'])
+        regions[brk_name]['un'] = False
+        regions[brk_name]['pieces'] = [{'poly': [bring + [bring[0]]], 'src': new_code}]
+        print('  breakaway %-22s cut out of %s (%d of %d vertices on its inside line)' % (brk_name, parent['name'], len(inside), nb))
 
     # ---- 2b. decor: pieces drawn without being part of the game ----
     for parent_code, new_name, test in DECOR:

@@ -2,7 +2,7 @@
   "format": 1,
   "type": "scored",
   "id": "org.togetherings.singe",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "languages": [
     "en",
     "fr"

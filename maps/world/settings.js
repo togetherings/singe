@@ -31,7 +31,8 @@
    Region settings: only regions with a capital are listed. A capital is { name, lat, lon, info }.
    Capitals are Natural Earth populated places. Where a country has several capitals, the most populated
    city was used, except where it was wrong or the capital moved (South Africa -> Pretoria, not Johannesburg); a
-   country's info names its other capitals. Change any of them here. Territories have no capital unless another state recognises them as sovereign.
+   country's info names its other capitals. Change any of them here. Territories have no capital unless another state recognises them as sovereign
+   (one exception, the owner's choice: Transnistria, recognised only by Abkhazia and South Ossetia, has Tiraspol).
    Capitals are real latitude/longitude. Anything left empty ('') is not shown.
    Combined places: Saint Martin + Sint Maarten and Sint Eustatius + Saba are ONE region and ONE circle on the
    map (they are next to each other), but each keeps its own entry here (capital, info, flag) and its own question
@@ -1266,6 +1267,21 @@
     'Crimea': {
       info: 'A peninsula on the Black Sea, part of Ukraine; Russia has occupied it since 2014 and claims it. Its flag is used under both claims.',
       flag: 'maps/world/flags/ua-43.svg'
+    },
+    'Transnistria': {
+      capital: { name: 'Tiraspol', lat: 46.8531, lon: 29.6400, info: '' },
+      info: 'A strip of land along the Dniester river, part of Moldova. It broke away in 1990-1992 and has governed itself since, with Russian troops based there. No UN member recognises it; most countries count it as part of Moldova.',
+      flag: 'maps/world/flags/transnistria.svg'
+    },
+    'Abkhazia': {
+      capital: { name: 'Sukhumi', lat: 43.0200, lon: 41.0200, info: '' },
+      info: 'On the Black Sea coast, part of Georgia. It broke away after a war in 1992-1993 and governs itself with Russia\'s support. Russia and a few other countries have recognised it as independent since 2008; most countries count it as part of Georgia.',
+      flag: 'maps/world/flags/abkhazia.svg'
+    },
+    'South Ossetia': {
+      capital: { name: 'Tskhinvali', lat: 42.2325, lon: 43.9750, info: '' },
+      info: 'In the Caucasus mountains, part of Georgia. It broke away in 1991-1992 and governs itself with Russia\'s support. Russia and a few other countries have recognised it as independent since 2008; most countries count it as part of Georgia.',
+      flag: 'maps/world/flags/south-ossetia.svg'
     },
     'Kaliningrad': {
       info: '',
