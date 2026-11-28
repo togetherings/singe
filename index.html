@@ -36,13 +36,14 @@
     --header-bg: #000000; --header-text: #ffffff;
     --frame-bg: rgba(255,255,255,.55);   /* the outlined page area */
     --box-bg: transparent;               /* boxes around moved regions (Alaska etc.): the sea shows, as on the main map */
-    --inbox-bg: var(--sea);              /* the boxes under a world map: the main map's sea (solid, so the map never shows through) */
+    --map-sea: #edf5fb;                  /* the sea as it shows on the map: --sea under the frame's --frame-bg (keep the two in step) */
+    --inbox-bg: var(--map-sea);          /* the boxes under a world map: the main map's sea (solid, so the map never shows through) */
     --hint-pulse: #ffd7c2;               /* the hinted region pulses between vermillion and this */
     --ring-fill: var(--land); --ring-line: var(--line); --dot: var(--line);   /* circles: small countries and capitals */
     --tip-bg: #000000; --tip-text: #ffffff;                                     /* name label */
     --backdrop: rgba(0,0,0,.55);                                                /* behind pop-ups */
     --bar-bg: rgba(214,233,245,.92);   /* world map: the see-through chips of the game bar laid over the map */
-    --water: #d6e9f5;    /* lakes: the colour of the sea */
+    --water: var(--map-sea);   /* lakes, and the back of the boxes round moved regions (Alaska): the map's sea */
     --off: #e4e4e4; --off-line: #a8a8a8;   /* regions that are not part of the game: pale, so they stay in the background */
     --pageW: 760px;      /* page width; wider for horizontal maps (body.wide) */
   }
@@ -54,7 +55,7 @@
     --card: #17314a; --accent: #2f7f9f; --accent-strong: #24657f; --accent-tint: rgba(47,127,159,.3); --met-bg: #00382a; --met-line: #2fd3a0;
     --header-bg: #000000; --header-text: #ffffff;
     --frame-bg: rgba(255,255,255,.04);
-    --hint-pulse: #5a2a12; --bar-bg: rgba(11,29,46,.92); --water: #0b1d2e;
+    --hint-pulse: #5a2a12; --bar-bg: rgba(11,29,46,.92); --map-sea: #152636;
     --off: #34404c; --off-line: #4b5a69;   /* blue-grey: clearly not the sea, but calm */
     --tip-bg: #ffffff; --tip-text: #000000; --backdrop: rgba(0,0,0,.65);
   }

@@ -7,8 +7,8 @@
    named in "in_game" are asked about. Every other region is drawn grey.
    Settings that are specific to this map:
      insets        false: no boxes under the map (the World map's Caribbean and Pacific Islands)
-     merge         in 'un' scope, more parts put into a country (Somaliland into Somalia), as Alaska is put into
-                   the United States. In 'all' scope they are places of their own.
+     merge         in 'un' scope, more parts put into a country, with no border between them (Somaliland into
+                   Somalia), as Alaska is put into the United States. In 'all' scope they are places of their own.
      view_pad      room around the regions in the game, as a share of their box's longer side (0.04 = 4%): the map
                    opens on that box and can't be zoomed out or dragged beyond it
      variants      the seven maps of the Africa package (edugame.json lists each with its id, and "scope": 'un' for

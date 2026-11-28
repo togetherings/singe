@@ -145,7 +145,8 @@
     src.forEach(function (r) {
       var o = by[r.name], into = r.part_of || (scope === 'un' && merge[r.name]), p = into && by[into];
       if (scope === 'un' && p) {                          // merge into the country
-        if (p.s || o.s) p.s = (p.s || p.d) + (o.s || o.d);       // outlines (see tools/world.py) follow the shapes
+        if (!r.part_of && merge[r.name]) p.s = joinOutline((p.s || p.d) + (o.s || o.d));   // one country: no border between them
+        else if (p.s || o.s) p.s = (p.s || p.d) + (o.s || o.d);  // outlines (see tools/world.py) follow the shapes
         p.d += o.d;
         if (o.sz > p.sz || !p.mk) { p.sz = Math.max(p.sz, o.sz); p.small = o.small; p.mk = o.mk || p.mk; }
         Object.keys(o.ins).forEach(function (k) { p.ins[k] = (p.ins[k] || []).concat(o.ins[k]); });
@@ -157,6 +158,49 @@
       out.push(o);
     });
     return out.filter(function (o) { return o.d || o.mk; });
+  }
+  // The outline of shapes put together (a "merge": Somaliland into Somalia): every edge of their paths except the ones
+  // they share, which are drawn twice, once by each (tools/world.py simplifies a shared border once, so both have the
+  // same points). Returns an outline path for "s" (see addRegion). Paths use M m L l H h V v Z z, as the shapes files do.
+  function joinOutline(d) {
+    var edges = [], count = {}, x = 0, y = 0, sx = 0, sy = 0, cmd = '', m, re = /([MmLlHhVvZz])|(-?\d*\.?\d+(?:e-?\d+)?)/g, nums = [];
+    function key(a, b, c, e) { return a < c || (a === c && b < e) ? a + ',' + b + ',' + c + ',' + e : c + ',' + e + ',' + a + ',' + b; }
+    function edge(nx, ny) {
+      if (nx !== x || ny !== y) { var k = key(x, y, nx, ny); count[k] = (count[k] || 0) + 1; edges.push([x, y, nx, ny, k]); }
+      x = nx; y = ny;
+    }
+    function run() {                                   // the numbers after a command
+      var step = /[HhVv]/.test(cmd) ? 1 : 2;
+      for (var i = 0; i + step <= nums.length; i += step) {
+        var a = nums[i], b = nums[i + 1];
+        if (cmd === 'M' || cmd === 'm') {
+          if (i === 0) { x = cmd === 'M' ? a : x + a; y = cmd === 'M' ? b : y + b; sx = x; sy = y; }
+          else edge(cmd === 'M' ? a : x + a, cmd === 'M' ? b : y + b);   // (more pairs after M are lines)
+        }
+        else if (cmd === 'L') edge(a, b);
+        else if (cmd === 'l') edge(x + a, y + b);
+        else if (cmd === 'H') edge(a, y);
+        else if (cmd === 'h') edge(x + a, y);
+        else if (cmd === 'V') edge(x, a);
+        else if (cmd === 'v') edge(x, y + a);
+      }
+      nums = [];
+    }
+    while ((m = re.exec(d))) {
+      if (m[1]) {
+        run(); cmd = m[1];
+        if (cmd === 'Z' || cmd === 'z') { edge(sx, sy); }
+      } else nums.push(parseFloat(m[2]));
+    }
+    run();
+    var out = '', lastX = null, lastY = null;
+    edges.forEach(function (e) {
+      if (count[e[4]] > 1) return;                     // shared: inside the joined shape
+      if (e[0] !== lastX || e[1] !== lastY) out += 'M' + e[0] + ',' + e[1];
+      out += 'L' + e[2] + ',' + e[3];
+      lastX = e[2]; lastY = e[3];
+    });
+    return out;
   }
   // Titles of the boxes under a world map: the shapes file's, overridden by the settings file's "insets".
   function mergeInsets(shapeInsets, settingsInsets) {
@@ -1389,6 +1433,8 @@
           } else {
             c = el.cloneNode(false);
             c.removeAttribute('style');
+            var nx = el.nextElementSibling;              // a region with an outline of its own: the pointer follows that
+            if (el.classList.contains('nostroke') && nx && nx.classList.contains('rstroke')) c.setAttribute('d', nx.getAttribute('d'));
           }
           c.setAttribute('class', cls + (cls.indexOf('band') > 0 ? cls0 : ''));
           c.setAttribute('aria-hidden', 'true');

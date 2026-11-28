@@ -24,6 +24,8 @@
      marker_px         a country smaller than this many screen pixels gets a circle, so it can be found and clicked
                        (it disappears as you zoom in and the shape gets bigger)
      insets            the fixed boxes under the map, which do not scroll or zoom: title of each box
+     merge             in 'un' scope, more parts put into a country, with no border between them (Somaliland into
+                       Somalia, as on the Africa maps). In 'all' scope they are places of their own.
      variants          the map is listed twice in edugame.json's packages ("world" and "world_all"), with a
                        different scope; each variant's name and blurb (translations: maps/world/lang/<code>.json)
    Region settings: only regions with a capital are listed. A capital is { name, lat, lon, info }.
@@ -46,6 +48,7 @@
   blurb: 'Find the countries of the world',
   credit: 'Boundaries and capitals: Natural Earth (public domain, naturalearthdata.com). Borders follow Natural Earth\'s de facto lines. Small countries are marked with circles, and the Caribbean and the Pacific Islands are shown enlarged in the boxes below the map.',
   orientation: 'horizontal',
+  merge: { 'Somaliland': 'Somalia' },
   scope: 'all',
   infinite_scroll: true,
   page_width: 2000,
