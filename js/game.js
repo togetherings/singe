@@ -1140,6 +1140,17 @@
     return null;
   }
 
+  // The panels over the page (information, list of keys, big flag): the kit's EduGame.dialog holds the keyboard
+  // while one is open (Tab stays inside, Escape, its × or a click outside closes it). Closed in a game, the keyboard
+  // goes back to the map; on the menu, to the button that opened it.
+  function panel(back, card, close) {
+    return EduGame.dialog($(back), { card: $(card), close: $(close),
+      show: function (el) { el.classList.remove('hidden'); }, hide: function (el) { el.classList.add('hidden'); },
+      onClose: function () { if (!onMenu()) focusMap(); } });
+  }
+  var infoPanel = panel('infoBack', 'infoCard', 'infoClose'), keysPanel = panel('keysBack', 'keysCard', 'keysClose'),
+      flagPanel = panel('flagBack', 'flagCard', 'flagClose');
+
   function openInfo(item) {
     hideTip();
     $('infoTitle').textContent = item.title;
@@ -1148,10 +1159,9 @@
     img.classList.toggle('hidden', !item.flag);
     if (item.flag) { img.src = item.flag; img.alt = tr('info.flag_of', { name: item.title }); }
     $('infoText').textContent = item.text || '';       // plain text (line breaks are kept)
-    $('infoBack').classList.remove('hidden');
-    $('infoClose').focus();
+    infoPanel.open();
   }
-  function closeInfo() { var was = !$('infoBack').classList.contains('hidden'); $('infoBack').classList.add('hidden'); if (was) focusMap(); }
+  function closeInfo() { infoPanel.close(); }
 
   function onMapClick(e) {
     var t = e.target;
@@ -1584,64 +1594,28 @@
     clearTimeout(kb.hintTimer);
     kb.hintTimer = setTimeout(function () { $('kbdHint').classList.add('hidden'); }, 8000);
   }
-  // Arrow keys on the menu: the nearest button in that direction (its middle mostly along the arrow, a little across).
-  function nearestButton(from, list, dx, dy) {
-    var a = from.getBoundingClientRect(), ax = a.left + a.width / 2, ay = a.top + a.height / 2, best = null, bestScore = 1e9;
-    for (var i = 0; i < list.length; i++) {
-      if (list[i] === from) continue;
-      var c = list[i].getBoundingClientRect(), x = c.left + c.width / 2 - ax, y = c.top + c.height / 2 - ay;
-      var along = x * dx + y * dy, across = Math.abs(x * dy) + Math.abs(y * dx);
-      if (along < 4) continue;
-      var score = along + 2 * across;
-      if (score < bestScore) { bestScore = score; best = list[i]; }
-    }
-    return best;
-  }
   // The list of keys. Opened on the menu it has the menu's keys first, then the map's; in a game only the map's.
-  var keysOpener = null;
   function isFlagKey(e) { var c = String(e.key).toLowerCase(); return c === 'f' || c === 'd'; }   // F for flag, D for drapeau
   function onMenu() { return !$('menu').classList.contains('hidden'); }
   function openKeys() {
     hideTip();
-    keysOpener = document.activeElement;
     $('keysCard').classList.toggle('onMenu', onMenu());
     $('keysCard').classList.toggle('flagMode', !onMenu() && g.mode === 'flags');
-    $('keysBack').classList.remove('hidden'); $('keysClose').focus();
+    keysPanel.open();
   }
-  function closeKeys() {
-    $('keysBack').classList.add('hidden');
-    if (onMenu()) { if (keysOpener && keysOpener.focus && document.body.contains(keysOpener)) keysOpener.focus(); }
-    else focusMap();
-  }
+  function closeKeys() { keysPanel.close(); }
 
   document.addEventListener('keydown', function (e) {
-    if (e.defaultPrevented) return;                  // (the kit's Options panel took it: its Escape, its Tab)
-    if (e.key === 'Escape') {                        // a panel first, then the game itself
-      if (!$('keysBack').classList.contains('hidden')) { closeKeys(); return; }
-      if (!$('infoBack').classList.contains('hidden')) { closeInfo(); return; }
-      if (!$('flagBack').classList.contains('hidden')) { closeFlag(); return; }
-    }
-    if (e.ctrlKey || e.metaKey || e.altKey) return;
-    if ($('game').classList.contains('hidden')) {    // the menu (or the results)
-      var mt = e.target;
-      if (!$('keysBack').classList.contains('hidden')) { if (e.key === 'Tab') e.preventDefault(); return; }
-      if (!onMenu() || (mt && mt.closest && mt.closest('.eg-overlay')) || (mt && /^(INPUT|SELECT|TEXTAREA)$/.test(mt.tagName))) return;
-      if (e.key === '?' || e.key === '/') { e.preventDefault(); openKeys(); return; }
-      var mk = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
-      var btns = $('menuList').querySelectorAll('.modeBtn');
-      if (!btns.length || (!mk && e.key !== 'Home' && e.key !== 'End')) return;
-      e.preventDefault();
-      var cur = document.activeElement, inList = cur && cur.classList && cur.classList.contains('modeBtn');
-      if (e.key === 'Home') btns[0].focus();
-      else if (e.key === 'End') btns[btns.length - 1].focus();
-      else if (!inList) btns[0].focus();
-      else { var to = nearestButton(cur, btns, mk[0], mk[1]); if (to) to.focus(); }
+    // (A panel's Escape and Tab are the kit's EduGame.dialog's, and the Options panel's are its own: both come first.)
+    if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (keysPanel.isOpen() || infoPanel.isOpen() || flagPanel.isOpen()) {
+      if (isFlagKey(e) && flagPanel.isOpen()) { e.preventDefault(); closeFlag(); }   // F (D) again closes the big flag
       return;
     }
-    if (!$('keysBack').classList.contains('hidden') || !$('infoBack').classList.contains('hidden') ||
-        !$('flagBack').classList.contains('hidden')) {             // a panel has the keyboard (its one button: Close)
-      if (e.key === 'Tab') e.preventDefault();
-      if (isFlagKey(e) && !$('flagBack').classList.contains('hidden')) { e.preventDefault(); closeFlag(); }   // F (D) again
+    if ($('game').classList.contains('hidden')) {    // the menu (its arrow keys: EduGame.arrowNav, below) or the results
+      var mt = e.target;
+      if (!onMenu() || (mt && mt.closest && mt.closest('.eg-overlay')) || (mt && /^(INPUT|SELECT|TEXTAREA)$/.test(mt.tagName))) return;
+      if (e.key === '?' || e.key === '/') { e.preventDefault(); openKeys(); }
       return;
     }
     var t = e.target, tag = t && t.tagName;
@@ -1685,8 +1659,8 @@
   $('mapBox').addEventListener('pointerdown', function () { kbClear(); });
   $('keysBtn').onclick = openKeys;
   $('menuKeys').onclick = openKeys;
-  $('keysClose').onclick = closeKeys;
-  $('keysBack').onclick = function (e) { if (e.target === this) closeKeys(); };
+  // The menu's arrow keys: the nearest mode button that way, Home and End the first and last (the kit's).
+  EduGame.arrowNav($('menuList'), '.modeBtn');
 
   /* =====================================================================
      6. START UP
@@ -1734,7 +1708,6 @@
   $('rotateOk').onclick = function () { rotateDismissed = true; checkRotate(); };
   window.addEventListener('scroll', function () { if (kb.key) kbRing(); }, { passive: true });
   window.addEventListener('resize', function () { if (kb.key) setTimeout(kbRing, 50); checkRotate(); if (g.svg && !$('game').classList.contains('hidden')) { fitWorld(); sizeCircles(); } });
-  $('infoClose').onclick = closeInfo;
 
   // ---- Full Screen button (in the header; hidden where the browser does not allow it) ----
   var fsRoot = document.documentElement;
@@ -1753,7 +1726,6 @@
     document.addEventListener('fullscreenchange', function () { fsLabel(); setTimeout(function () { fitWorld(); sizeCircles(); }, 100); });
     document.addEventListener('webkitfullscreenchange', function () { fsLabel(); setTimeout(function () { fitWorld(); sizeCircles(); }, 100); });
   }
-  $('infoBack').onclick = function (e) { if (e.target === this) closeInfo(); };   // click outside the card
   $('skipNext').onclick = skipPrompt;
   $('skipPrev').onclick = backPrompt;
   $('backBtn').onclick = leaveGame;
@@ -1765,14 +1737,12 @@
     var src = $('promptFlag').getAttribute('src');
     if (!src) return;
     $('flagBig').src = src;
-    $('flagBack').classList.remove('hidden');
-    $('flagClose').focus();
+    flagPanel.open();
   }
-  function closeFlag() { var was = !$('flagBack').classList.contains('hidden'); $('flagBack').classList.add('hidden'); if (was) focusMap(); }
+  function closeFlag() { flagPanel.close(); }
   $('promptFlag').onclick = openFlag;
   $('promptFlag').onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openFlag(); } };
-  $('flagBack').onclick = closeFlag;                 // click anywhere to close
-  $('flagClose').onclick = closeFlag;
+  $('flagCard').onclick = closeFlag;                 // a click on the flag closes it too
 
   // ---- Another language chosen in Options (the kit's panel). Appearance is the kit's too: the page gets
   // data-theme="light" or "dark", and the colours at the top of index.html follow it. ----
