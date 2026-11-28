@@ -18,22 +18,23 @@
      blindness. (The light theme's yellow is the one exception: a real yellow can't be dark enough for 3:1 on white.) */
   :root {
     --sea: #d6e9f5;      /* page background and sea */
-    --land: #ffffff;     /* unanswered region */
+    --land: #f5f3ec;     /* unanswered region: a warm off-white */
     --text: #000000;     /* text */
     --line: #000000;     /* borders and outlines */
-    --good: #117733;     /* answered on the first try (Tol's dark green) */
+    --good: #009E73;     /* answered on the first try (Okabe-Ito bluish green) */
     --retry: #F0E442;    /* answered on a later try (Okabe-Ito yellow) */
     --bad: #D55E00;      /* wrong-click flash, the hint, needed the hint (Okabe-Ito vermillion) */
     --done-line: var(--line);   /* borders of answered regions */
     --point: #ffffff;    /* the pointer outline (hover and keyboard): a band of this, edged with --line */
-    --shade: .85;        /* hover and keyboard: what's under the pointer gets this much darker (or lighter, dark theme) */
+    --shade: 1.15;       /* hover and keyboard: an answered place gets this much lighter */
+    --land-hover: #ffffff;   /* hover and keyboard: an unanswered place (and an unanswered circle) */
     --card: #ffffff;     /* menu cards, information panel, buttons */
     --accent: #0b5394;   /* button hover */
     --met-bg: #d7f0e1; --met-line: #117733;   /* mode button once its accuracy goal is reached */
     --header-bg: #000000; --header-text: #ffffff;
     --frame-bg: rgba(255,255,255,.55);   /* the outlined page area */
-    --box-bg: rgba(255,255,255,.55);     /* boxes around moved regions (Alaska etc.) */
-    --inbox-bg: #eef6fb;                 /* the boxes under a world map: solid, so the map never shows through them */
+    --box-bg: transparent;               /* boxes around moved regions (Alaska etc.): the sea shows, as on the main map */
+    --inbox-bg: var(--sea);              /* the boxes under a world map: the main map's sea (solid, so the map never shows through) */
     --hint-pulse: #ffd7c2;               /* the hinted region pulses between vermillion and this */
     --ring-fill: var(--land); --ring-line: var(--line); --dot: var(--line);   /* circles: small countries and capitals */
     --tip-bg: #000000; --tip-text: #ffffff;                                     /* name label */
@@ -46,13 +47,13 @@
   html[data-theme="dark"] {
     color-scheme: dark;
     --sea: #0b1d2e; --land: #2a2a2a; --text: #ffffff; --line: #ffffff; --done-line: #ffffff;
-    --good: #009E73; --retry: #F0E442; --bad: #D55E00;   /* Okabe-Ito green, yellow, vermillion */
-    --point: #000000; --shade: 1.22;
-    --card: #21446a; --accent: #0072B2; --met-bg: #00382a; --met-line: #2fd3a0;
+    --good: #009E73; --retry: #F0E442; --bad: #D55E00;   /* the same Okabe-Ito green, yellow and vermillion */
+    --point: #000000; --land-hover: #3d3d3d;
+    --card: #17314a; --accent: #0072B2; --met-bg: #00382a; --met-line: #2fd3a0;
     --header-bg: #000000; --header-text: #ffffff;
-    --frame-bg: rgba(255,255,255,.04); --box-bg: rgba(255,255,255,.04); --inbox-bg: #21446a;
+    --frame-bg: rgba(255,255,255,.04);
     --hint-pulse: #5a2a12; --bar-bg: rgba(11,29,46,.92); --water: #0b1d2e;
-    --off: #16283a; --off-line: #2f4356;
+    --off: #34404c; --off-line: #4b5a69;   /* blue-grey: clearly not the sea, but calm */
     --tip-bg: #ffffff; --tip-text: #000000; --backdrop: rgba(0,0,0,.65);
   }
   * { box-sizing: border-box; }
@@ -121,45 +122,58 @@
      (on a see-through chip); everywhere else the map underneath does. The frame and credit are made tighter too. */
   body.overlay #frame { margin: 6px auto; padding: 6px; }
   body.overlay #game { position: relative; }
-  body.overlay #bar { position: absolute; top: 4px; left: 4px; right: 4px; z-index: 4; pointer-events: none; row-gap: 4px; }
-  body.overlay #bar > * { pointer-events: auto; background: var(--bar-bg); border-radius: 6px; padding: 1px 8px; }
-  body.overlay #bar > #promptFlag { padding: 0; background: none; }
-  body.overlay #prompt { justify-self: start; }
-  body.overlay #feedback { min-height: 0; justify-self: start; grid-column: 1 / -1; }
-  body.overlay #feedback:empty { padding: 0; background: none; }
-  body.overlay #zoomBtns, body.overlay #skipBtns { padding: 2px 6px; }
   body.overlay .credit { margin-top: 3px; font-size: .75rem; line-height: 1.25; }
-  #bar { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-         column-gap: 8px; row-gap: 8px; align-items: start; }
-  #bar.practice #prompt { grid-column: 1 / -1; }        /* Practice: the description may use the whole width... */
-  #bar.practice #backBtn { grid-row: 2; }               /* ...because Back to menu moves down to row 2 */
-  /* Practice: how many regions and capitals the map has, set out like Time / Found in the other modes */
-  #totals { grid-row: 2; grid-column: 2; justify-self: center; display: none; grid-template-columns: auto auto;
-            column-gap: 14px; line-height: 1.3; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  #totals .num { min-width: 3.2em; text-align: end; }
-  #bar.practice #totals { display: grid; }
-  #totals.noCaps .capRow { display: none; }
-  #prompt { grid-row: 1; grid-column: 1 / 3; min-width: 0; font-size: 1.5rem; font-weight: bold; }
-  #bar.flagMode #prompt { grid-column: 1; }            /* Flags: the middle of the top rows belongs to the flag */
-  #bar.practice #stats { display: none; }              /* Practice has no timer or score */
-  #promptFlag { grid-row: 1 / span 2; grid-column: 2; justify-self: center; display: block; max-height: 110px; max-width: 220px;
-                cursor: zoom-in; }          /* (no border: flags that are not rectangles, like Nepal's, would look odd) */
-  #promptFlag.hidden { display: none; }
-  #backBtn { grid-row: 1; grid-column: 3; justify-self: end; }
+  /* The bar: line 1 = Back and the keys button (left), Skip back / Skip (middle), Time and Found or Practice's totals
+     (right); line 2 = what to find, alone in the middle (the flag in Flags mode); line 3 = the feedback.
+     Each line is either above the map (#bar) or laid over its top (#mapTop), as the map's "overlay" setting says. */
+  #bar { display: flex; flex-direction: column; gap: 6px; }
+  #bar:empty { display: none; }
+  #row1 { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); column-gap: 8px; align-items: start; }
+  #topBtns { grid-column: 1; justify-self: start; display: flex; gap: 6px; }
+  #keysBtn { min-width: 2.4em; padding: 6px 10px; font-weight: bold; }
+  #skipBtns { grid-column: 2; justify-self: center; display: flex; gap: 6px; }
+  #skipBtns.hidden { display: none; }
+  #skipBtns button { min-width: 2.4em; padding: 6px 10px; font-weight: bold; }
+  #skipBtns button:disabled { opacity: .35; cursor: default; background: var(--card); color: var(--text); }
   /* Time and Found: the labels line up on the left, the numbers line up on the right */
-  #stats { grid-row: 2; grid-column: 3; justify-self: end; display: grid; grid-template-columns: auto auto;
+  #stats { grid-column: 3; justify-self: end; display: grid; grid-template-columns: auto auto;
            column-gap: 14px; line-height: 1.3; font-variant-numeric: tabular-nums; white-space: nowrap; }
   #stats .num { min-width: 3.2em; text-align: end; }
-  #skipBtns { grid-row: 2; grid-column: 2; justify-self: center; display: flex; gap: 6px; }
-  #bar.flagMode #skipBtns { grid-row: 3; }
-  #skipBtns.hidden { display: none; }
-  #zoomBtns { grid-row: 2; grid-column: 1; justify-self: start; display: flex; gap: 6px; }
-  #feedback { grid-row: 3; grid-column: 1 / -1; min-height: 1.5em; }
-  #bar.flagMode #feedback { grid-row: 4; }
-  #zoomBtns button, #skipBtns button { min-width: 2.4em; padding: 6px 10px; font-weight: bold; }
-  #skipBtns button:disabled { opacity: .35; cursor: default; background: var(--card); color: var(--text); }
+  #game.practice #stats { display: none; }             /* Practice has no timer or score... */
+  #totals { grid-column: 3; justify-self: end; display: none; grid-template-columns: auto auto;   /* ...but totals */
+            column-gap: 14px; line-height: 1.3; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  #totals .num { min-width: 3.2em; text-align: end; }
+  #game.practice #totals { display: grid; }
+  #totals.noCaps .capRow { display: none; }
+  #row2 { display: flex; justify-content: center; }
+  #prompt { text-align: center; min-width: 0; font-size: 1.5rem; font-weight: bold; }
+  #game.flagMode #prompt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }   /* (for screen readers: the flag says it) */
+  #promptFlag { display: block; max-height: 110px; max-width: 220px; cursor: zoom-in; }   /* (no border: flags that are not rectangles, like Nepal's, would look odd) */
+  #promptFlag.hidden { display: none; }
+  #feedback { text-align: center; min-height: 1.5em; }
   @media (max-width: 600px) { #promptFlag { max-height: 70px; max-width: 34vw; } #prompt { font-size: 1.25rem; } }
-  @media (max-width: 480px) { #bar button { padding: 6px 8px; font-size: .85rem; min-width: 0; } #stats .num { min-width: 2.2em; } #stats { column-gap: 8px; } }
+  @media (max-width: 480px) { #row1 button { padding: 6px 8px; font-size: .85rem; min-width: 0; } #stats .num { min-width: 2.2em; } #stats { column-gap: 8px; } }
+
+  /* Lines laid over the map: only the buttons and text take clicks (on a see-through chip); the map underneath
+     takes the rest */
+  #mapWrap { position: relative; }
+  #mapTop { position: absolute; top: 4px; left: 4px; right: 4px; z-index: 4; display: flex; flex-direction: column;
+            align-items: stretch; gap: 4px; pointer-events: none; }
+  #mapTop #row1 > *, #mapTop #prompt, #mapTop #feedback { pointer-events: auto; background: var(--bar-bg); border-radius: 6px; padding: 1px 8px; }
+  #mapTop #topBtns, #mapTop #skipBtns { padding: 2px 6px; }
+  #mapTop #promptFlag { pointer-events: auto; }
+  #mapTop #feedback { align-self: center; min-height: 0; }
+  #mapTop #feedback:empty { display: none; }
+
+  /* Zoom: the whole map (⌂) over + over -, at the top right of the map (under any lines laid over it), or beside
+     the map (the "overlay" setting's zoom: false) */
+  #zoomBtns { display: flex; flex-direction: column; gap: 4px; }
+  #mapWrap.zoomOver #zoomBtns { position: absolute; z-index: 3; top: calc(var(--topH, 0px) + 8px); right: 8px; }
+  #mapWrap:not(.zoomOver) { display: flex; align-items: flex-start; gap: 6px; }
+  #mapWrap:not(.zoomOver) #mapBox { flex: 1; min-width: 0; }
+  #mapWrap:not(.zoomOver) #zoomBtns { order: 2; }
+  #zoomBtns button { width: 2.2em; height: 2.2em; padding: 0; font-weight: bold; font-size: 1.1rem; line-height: 1;
+                     box-shadow: 0 1px 3px rgba(0,0,0,.25); }
 
   /* ---------- Map ---------- */
   #mapBox { position: relative; }
@@ -183,8 +197,7 @@
   .region.notmain, .mk.notmain { fill: var(--retry); }   /* a part of the country was clicked, not its main area: flashes yellow */
   /* The hint and the wrong-part flash also get a thick dashed outline, so they never look like an answered place
      (even when the pulse is off for people who ask for less motion) */
-  .region.hint, .region.notmain, .mk.hint, .mk.notmain, .cap.hint .ring { stroke: var(--line); stroke-width: 4px; stroke-dasharray: 8 5; }
-  .mk.hint, .mk.notmain, .cap.hint .ring { stroke-width: 2.6px; stroke-dasharray: 3 2; }
+  /* (they also get the pointer outline, see "Pointer": the hint's flashes with it) */
   .region.done.hinted { fill: var(--bad); }
   .region.wrong { fill: var(--bad); }
   .region.hint { fill: var(--bad); animation: pulse .8s ease-in-out infinite alternate; }   /* hint flashes red */
@@ -267,21 +280,28 @@
   #flagClose { position: absolute; top: -14px; right: -14px; width: 2em; padding: 2px 0; font-size: 1.1rem; line-height: 1; }
 
   /* ---------- Pointer (hover and keyboard) ---------- */
-  /* What the mouse or the keyboard points at gets a shade darker (lighter in dark), and an outline drawn on top of
+  /* What the mouse or the keyboard points at changes colour (unanswered: --land-hover; answered: --shade lighter), and an outline drawn on top of
      everything: a band of --point edged with --line (on a circle, a ring round it, so its colour still shows).
      game.js draws the outline (drawPointers). */
-  .region.hover:not(.inactive), .region.kbd, .mk.hover, .mk.kbd, .cap.hover .ring, .cap.kbd .ring { filter: brightness(var(--shade)); }
-  .capitals .region.hover { filter: none; }
+  .region.hover:not(.inactive):not(.done):not(.hint):not(.wrong):not(.notmain), .region.kbd:not(.done):not(.hint):not(.wrong):not(.notmain),
+  .mk.hover:not(.done):not(.hint):not(.wrong):not(.notmain), .mk.kbd:not(.done):not(.hint):not(.wrong):not(.notmain),
+  .cap.hover:not(.found):not(.hint) .ring, .cap.kbd:not(.found):not(.hint) .ring { fill: var(--land-hover); }
+  .region.done.hover, .region.done.kbd, .mk.done.hover, .mk.done.kbd, .cap.found.hover .ring, .cap.found.kbd .ring { filter: brightness(var(--shade)); }
+  .capitals .region.hover:not(.off), .capitals .region.kbd { fill: var(--land) !important; filter: none; }
   .ptr { fill: none; pointer-events: none; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
-  .ptr-edge { stroke: var(--line); stroke-width: 9px; }
-  .ptr-band { stroke: var(--point); stroke-width: 5px; }
+  .ptr-edge { stroke: var(--line); stroke-width: 6px; }
+  .ptr-band { stroke: var(--point); stroke-width: 3px; }
+  /* The hint's outline flashes with its colour: light band while the place is orange, orange while it's pale */
+  .ptr-band.ptr-flash { animation: ptrFlash .8s ease-in-out infinite alternate; }
+  @keyframes ptrFlash { to { stroke: var(--bad); } }
+  @media (prefers-reduced-motion: reduce) { .ptr-band.ptr-flash { animation: none; } }
   #mapBox:focus { outline: none; }
   #kbdRing { position: fixed; z-index: 3; pointer-events: none; border-radius: 50%; border: 4px solid var(--point);
              box-shadow: 0 0 0 2px var(--line), inset 0 0 0 2px var(--line); }
   #kbdRing.hidden { display: none; }                 /* the highlight shows where the keyboard is */
   #kbdHint { position: fixed; z-index: 6; bottom: 12px; left: 50%; transform: translateX(-50%); pointer-events: none;
              padding: 4px 12px; border-radius: 4px; background: var(--tip-bg); color: var(--tip-text); font-size: .95rem;
-             max-width: calc(100vw - 24px); text-align: center; }
+             width: max-content; max-width: calc(100vw - 24px); text-align: center; white-space: pre-wrap; }   /* (keeps the spaces round the dots) */
   #kbdHint.hidden { display: none; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .keysLine { font-size: .9rem; opacity: .85; }
@@ -322,32 +342,42 @@
 
   <!-- ======================= GAME PAGE ======================= -->
   <div id="game" class="hidden">
+    <!-- The bar: three lines, each above the map or laid over its top (a map's "overlay" setting; game.js applyLayout) -->
     <div id="bar">
-      <div id="prompt" aria-live="polite"></div>
-      <img id="promptFlag" class="hidden" tabindex="0" role="button" data-t-attr="alt:flag.alt,title:flag.hint">
-      <div id="stats">
-        <span data-t="game.time"></span><span id="time" class="num">0:00</span>
-        <span data-t="game.found"></span><span class="num"><span id="found">0</span>/<span id="total">0</span></span>
+      <div id="row1">
+        <span id="topBtns">
+          <button id="backBtn" data-t="game.back" data-t-attr="title:game.back_hint,aria-label:game.back_hint"></button>
+          <button id="keysBtn" data-t-attr="title:keys.button,aria-label:keys.button" aria-haspopup="dialog">&#x2328;&#xFE0E;</button>
+        </span>
+        <span id="skipBtns" class="hidden">
+          <button id="skipPrev" data-t="skip.prev_icon" data-t-attr="title:skip.prev,aria-label:skip.prev"></button>
+          <button id="skipNext" data-t="skip.next_icon" data-t-attr="title:skip.next,aria-label:skip.next"></button>
+        </span>
+        <div id="stats">
+          <span data-t="game.time"></span><span id="time" class="num">0:00</span>
+          <span data-t="game.found"></span><span class="num"><span id="found">0</span>/<span id="total">0</span></span>
+        </div>
+        <div id="totals">
+          <span id="totRegLabel"></span><span id="totReg" class="num"></span>
+          <span id="totCapLabel" class="capRow"></span><span id="totCap" class="num capRow"></span>
+        </div>
       </div>
-      <div id="totals">
-        <span id="totRegLabel"></span><span id="totReg" class="num"></span>
-        <span id="totCapLabel" class="capRow"></span><span id="totCap" class="num capRow"></span>
+      <div id="row2">
+        <div id="prompt" aria-live="polite"></div>
+        <img id="promptFlag" class="hidden" tabindex="0" role="button" data-t-attr="alt:flag.alt,title:flag.hint">
       </div>
-      <span id="skipBtns" class="hidden">
-        <button id="skipPrev" data-t="skip.prev_icon" data-t-attr="title:skip.prev,aria-label:skip.prev"></button>
-        <button id="skipNext" data-t="skip.next_icon" data-t-attr="title:skip.next,aria-label:skip.next"></button>
-      </span>
-      <span id="zoomBtns">
-        <button id="zoomOut" data-t-attr="title:zoom.out,aria-label:zoom.out">&minus;</button>
-        <button id="zoomFull" data-t="zoom.full" data-t-attr="title:zoom.full_hint,aria-label:zoom.full_hint"></button>
-        <button id="zoomIn" data-t-attr="title:zoom.in,aria-label:zoom.in">+</button>
-        <button id="keysBtn" data-t-attr="title:keys.button,aria-label:keys.button" aria-haspopup="dialog">&#x2328;&#xFE0E;</button>
-      </span>
-      <button id="backBtn" data-t="game.back"></button>
       <div id="feedback" aria-live="polite"></div>
     </div>
     <div id="kbdHint" class="hidden" data-t="keys.hint"></div>
-    <div id="mapBox" tabindex="-1" role="application" data-t-attr="aria-label:keys.map"></div>
+    <div id="mapWrap">
+      <div id="mapTop"></div>   <!-- the bar's lines that lie over the map -->
+      <span id="zoomBtns">
+        <button id="zoomFull" data-t-attr="title:zoom.full_hint,aria-label:zoom.full_hint">&#x2302;&#xFE0E;</button>
+        <button id="zoomIn" data-t-attr="title:zoom.in,aria-label:zoom.in">+</button>
+        <button id="zoomOut" data-t-attr="title:zoom.out,aria-label:zoom.out">&minus;</button>
+      </span>
+      <div id="mapBox" tabindex="-1" role="application" data-t-attr="aria-label:keys.map"></div>
+    </div>
     <div id="kbdSay" class="sr" aria-live="polite"></div>
     <div id="stripBox"></div>   <!-- world map: the fixed boxes under the map (Caribbean, Pacific) -->
     <div id="gameCredit" class="credit"></div>
@@ -394,6 +424,7 @@
       <dt data-t="keys.k_choose"></dt><dd data-t="keys.t_choose"></dd>
       <dt data-t="keys.k_pan"></dt><dd data-t="keys.t_pan"></dd>
       <dt data-t="keys.k_zoom"></dt><dd data-t="keys.t_zoom"></dd>
+      <dt data-t="keys.k_zoomout"></dt><dd data-t="keys.t_zoomout"></dd>
       <dt data-t="keys.k_full"></dt><dd data-t="keys.t_full"></dd>
       <dt data-t="keys.k_skip"></dt><dd data-t="keys.t_skip"></dd>
       <dt data-t="keys.k_back"></dt><dd data-t="keys.t_back"></dd>

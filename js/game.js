@@ -338,10 +338,27 @@
     }
     return a;
   }
+  // Which lines of the bar, and the zoom buttons, lie over the map: the map's "overlay" setting, e.g.
+  // overlay: { buttons: false, prompt: false, feedback: true, zoom: true } (the default). A world map (not a window)
+  // lays everything over its top, where there is little but sea and ice.
+  function overlayOf(map) {
+    var o = map.overlay || {}, world = !!map.wrap && !map.window;
+    function pick(k, d) { return typeof o[k] === 'boolean' ? o[k] : d; }
+    return { buttons: pick('buttons', world), prompt: pick('prompt', world), feedback: pick('feedback', true), zoom: pick('zoom', true) };
+  }
+  function applyLayout(map) {
+    var o = overlayOf(map);
+    [['row1', o.buttons], ['row2', o.prompt], ['feedback', o.feedback]].forEach(function (r) {
+      (r[1] ? $('mapTop') : $('bar')).appendChild($(r[0]));      // (in order, so the lines keep their order)
+    });
+    $('mapWrap').classList.toggle('zoomOver', o.zoom);
+    placeZoom();
+  }
   function show(screenId) {
     ['menu', 'game', 'results'].forEach(function (id) { $(id).classList.toggle('hidden', id !== screenId); });
     // maps with orientation: 'horizontal' use a wider page while being played
     var inGame = screenId === 'game' && !!g.map;
+    if (inGame) applyLayout(g.map);
     document.body.classList.toggle('wide', inGame && g.map.orientation === 'horizontal');
     // a world map: the game bar is laid over the top of the map (nothing much is up there) to save height
     document.body.classList.toggle('overlay', inGame && !!g.map.wrap && !g.map.window);   // (a window's top edge has land: the bar stays above it)
@@ -891,8 +908,8 @@
     if (mode === 'capitals' || practice || wrap) addCapitals(svg, map);   // practice shows capitals too; world maps add markers
     if (mode !== 'capitals' && !wrap) addHalos(svg, map);
     $('promptFlag').classList.add('hidden');
-    $('bar').classList.toggle('flagMode', mode === 'flags');     // layout: the flag takes the middle of row 1
-    $('bar').classList.toggle('practice', practice);             // Practice has no timer or prompts
+    $('game').classList.toggle('flagMode', mode === 'flags');    // layout: the flag alone on line 2
+    $('game').classList.toggle('practice', practice);            // Practice has no timer or prompts
     var c = setupZoom(svg, map);
     c.onZoom = function (ratio) { g.ratio = ratio; sizeCircles(); kbRing(); drawPointers(); };
     sizeCircles();
@@ -979,6 +996,7 @@
     var left = MAX_TRIES - g.tries;
     $('feedback').textContent = !g.tries ? '' : left > 0 ? tr('feedback.retry', { n: left }) : tr('feedback.hint');
     if (g.tries && left <= 0) addCls(shapeEls(g.target), 'hint');   // the answer was shown before: show it again
+    drawPointers();
     $('found').textContent = g.found;
   }
 
@@ -1082,8 +1100,8 @@
     // answer, but it is not a mistake either: it flashes yellow, is not counted, and the player is told what to click.
     var pickedR = g.map.regions[picked], askedR = g.map.regions[g.target];
     if (g.mode !== 'capitals' && pickedR.part_of && pickedR.part_of === askedR.name) {
-      addCls(shape, 'notmain');
-      setTimeout(function () { remCls(shape, 'notmain'); }, 700);
+      addCls(shape, 'notmain'); drawPointers();
+      setTimeout(function () { remCls(shape, 'notmain'); drawPointers(); }, 700);
       $('feedback').textContent = tr('feedback.not_main', { name: regionStr(g.map, askedR, 'name') });
       return;
     }
@@ -1093,7 +1111,7 @@
       // ---- correct ----
       var wasHinted = g.tries >= MAX_TRIES, usedRetry = g.tries > 0;
       var target = shapeEls(g.target);
-      remCls(target, 'hint');
+      remCls(target, 'hint'); drawPointers();
       g.done[g.target] = true;
       g.grade[g.target] = wasHinted ? 2 : usedRetry ? 1 : 0;
       if (groupDone(picked)) {                           // colour the shape by the worst result of its entries:
@@ -1121,6 +1139,7 @@
       } else {
         $('feedback').textContent = tr('feedback.hint');
         addCls(shapeEls(g.target), 'hint');   // reveal the answer
+        drawPointers();
       }
     }
   }
@@ -1313,10 +1332,14 @@
     if (!g.root) return;
     var old = g.root.querySelectorAll('.ptr'), k;
     for (k = 0; k < old.length; k++) old[k].parentNode.removeChild(old[k]);
-    [ptrMouse, kb.key].forEach(function (key, n) {
+    // the hint and the wrong-part flash too (the hint's outline flashes, index.html)
+    var flash = g.root.querySelectorAll('#mapBox .hint, #stripBox .hint, #mapBox .notmain, #stripBox .notmain');
+    [ptrMouse, kb.key, flash].forEach(function (key, n) {
       if (!key || (n === 1 && key === ptrMouse)) return;
-      var els = kbEls(key);
+      var els = n === 2 ? key : kbEls(key);
       for (var e = 0; e < els.length; e++) {
+        if (n < 2 && (els[e].classList.contains('hint') || els[e].classList.contains('notmain'))) continue;   // drawn below
+        var cls0 = n === 2 && els[e].classList.contains('hint') ? ' ptr-flash' : '';
         var el = els[e].classList.contains('cap') ? els[e].querySelector('.ring') : els[e];
         if (!el || el.style.display === 'none' || (els[e].style && els[e].style.display === 'none')) continue;
         if (el.classList.contains('region') && !el.getAttribute('d')) continue;
@@ -1326,12 +1349,12 @@
             var m = el.getScreenCTM(), px = m ? Math.abs(m.a) || 1 : 1;
             c = document.createElementNS(SVG_NS, 'circle');
             c.setAttribute('cx', el.getAttribute('cx')); c.setAttribute('cy', el.getAttribute('cy'));
-            c.setAttribute('r', +el.getAttribute('r') + 5 / px);                       // a ring round it, 5 pixels out
+            c.setAttribute('r', +el.getAttribute('r') + 4 / px);                       // a ring round it, 4 pixels out
           } else {
             c = el.cloneNode(false);
             c.removeAttribute('style');
           }
-          c.setAttribute('class', cls);
+          c.setAttribute('class', cls + (cls.indexOf('band') > 0 ? cls0 : ''));
           c.setAttribute('aria-hidden', 'true');
           (el.tagName === 'circle' && els[e].classList.contains('cap') ? els[e].parentNode : el.parentNode).appendChild(c);
         });
@@ -1413,16 +1436,25 @@
     if (label && r) showTip(label, r.left + r.width / 2, r.top + r.height / 2); else hideTip();
     $('kbdSay').textContent = label || tr('keys.unknown');
   }
-  function kbStep(dir) {                             // Tab: reading order
+  // Answered already: a region or circle found, or a capital found (in a game Tab passes over these)
+  function kbDone(t) {
+    var e = t.el, c = e.parentNode;
+    return e.classList.contains('done') || !!(c && c.classList && c.classList.contains('cap') && c.classList.contains('found'));
+  }
+  function kbStep(dir) {                             // Tab: reading order (in a game, only places not answered yet)
     var list = kbTargets(); if (!list.length) return;
     var row = (zc ? zc.base.h : 1) / 14;
     list.sort(function (a, b) {
       var ra = Math.floor(a.y / row), rb = Math.floor(b.y / row);
       return ra !== rb ? ra - rb : a.x - b.x;
     });
-    var at = -1;
-    for (var k = 0; k < list.length; k++) if (list[k].key === kb.key) at = k;
-    kbSet(list[at < 0 ? (dir > 0 ? 0 : list.length - 1) : (at + dir + list.length) % list.length]);
+    var at = -1, n = list.length, all = g.mode === 'practice';
+    for (var k = 0; k < n; k++) if (list[k].key === kb.key) at = k;
+    if (at < 0) at = dir > 0 ? -1 : n;               // nothing highlighted: start from the first (or the last)
+    for (var step = 1; step <= n; step++) {          // the next one that may be chosen (from where the highlight is,
+      var t = list[(at + dir * step + 2 * n) % n];   // even if that place has just been answered)
+      if (all || !kbDone(t)) return kbSet(t);
+    }
   }
   function kbMove(dx, dy) {                          // arrows: the nearest place in that direction
     var list = kbTargets(); if (!list.length) return;
@@ -1511,7 +1543,16 @@
   });
   // A button clicked with the mouse gives the keyboard back to the map; so does a click on the map, which also
   // drops the keyboard highlight (the mouse is in charge then).
-  $('bar').addEventListener('click', function (e) { if (e.target.closest('button') && e.target.id !== 'backBtn') focusMap(); });
+  $('row1').addEventListener('click', function (e) { if (e.target.closest('button') && e.target.id !== 'backBtn') focusMap(); });
+  $('zoomBtns').addEventListener('click', function () { focusMap(); });
+  // The zoom buttons go just under the button and prompt lines laid over the map (index.html, --topH). The feedback
+  // line is centred and narrow, so they don't move when a message comes and goes.
+  function placeZoom() {
+    var h = 0, top = $('mapTop');
+    ['row1', 'row2'].forEach(function (id) { var el = $(id); if (el.parentNode === top) h = Math.max(h, el.offsetTop + el.offsetHeight); });
+    $('mapWrap').style.setProperty('--topH', h + 'px');
+  }
+  if (window.ResizeObserver) new ResizeObserver(placeZoom).observe($('mapTop'));
   $('mapBox').addEventListener('pointerdown', function () { kbClear(); });
   $('keysBtn').onclick = openKeys;
   $('keysClose').onclick = closeKeys;

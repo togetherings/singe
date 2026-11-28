@@ -1,29 +1,39 @@
-/* The menu (menu.html). Light and dark themes: the kit puts data-theme on <html>. Change it to match the game. */
-:root { --m-bg: #eef2f6; --m-card: #fff; --m-ink: #1f2a36; --m-muted: #5b6875; --m-line: #c9d3dc;
-        --m-accent: var(--eg-accent, #3b6e8f); --m-done: #2e7d4f; --m-next: #fff3c4; }
-:root[data-theme="dark"] { --m-bg: #12171d; --m-card: #1d242c; --m-ink: #e9edf1; --m-muted: #a3afba; --m-line: #3a4652;
-                           --m-done: #7fd19b; --m-next: #3d3518; }
-body { margin: 0; background: var(--m-bg); color: var(--m-ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
-.eg-menu { max-width: 52rem; margin: 0 auto; padding: 1rem; }
-.eg-menu-card { background: var(--m-card); border: 1px solid var(--m-line); border-radius: 14px; padding: 1.1rem 1.25rem; margin-bottom: 1rem; }
-.eg-menu-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .3rem 1rem; margin-bottom: .8rem; }
-.eg-menu-top h2, .eg-menu-get h2 { margin: 0; font-size: 1.25rem; }
-#egMenuDone { color: var(--m-muted); font-weight: bold; }
-.eg-menu-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: .6rem; }
-@media (min-width: 46rem) { .eg-menu-list { grid-template-columns: 1fr 1fr; } }
+/* The site's menu of map packages (menu.html), styled like the game's own map menu (index.html): the same colours,
+   font, outlined frame and cards, in light and dark (the kit puts data-theme on <html>). Keep the colours in step
+   with index.html's. */
+:root { --sea: #d6e9f5; --text: #000000; --line: #000000; --card: #ffffff; --accent: #0b5394; --good: #009E73;
+        --frame-bg: rgba(255,255,255,.55); --muted: #3d4650; --next-bg: #fffbe0; }
+:root[data-theme="dark"] { --sea: #0b1d2e; --text: #ffffff; --line: #ffffff; --card: #17314a; --accent: #0072B2; --good: #009E73;
+                           --frame-bg: rgba(255,255,255,.04); --muted: #c6d0da; --next-bg: #1f3d5c; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--sea); color: var(--text); font: 16px/1.5 Georgia, "Times New Roman", serif; }
+.eg-menu { max-width: 760px; margin: 16px auto; padding: 16px; border: 2px solid var(--line); border-radius: 8px;
+           background: var(--frame-bg); }
+.eg-menu-card { background: var(--card); border: 2px solid var(--line); border-radius: 8px; padding: 12px 16px 16px; margin-bottom: 14px; }
+.eg-menu-card:last-child { margin-bottom: 0; }
+.eg-menu-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .3rem 1rem; margin-bottom: 10px; }
+.eg-menu-top h2, .eg-menu-get h2 { margin: 0; font-size: 1.6rem; }
+#egMenuDone { opacity: .8; font-weight: bold; }
+.eg-menu-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 10px; }
+@media (min-width: 640px) { .eg-menu-list { grid-template-columns: 1fr 1fr; } }
 .eg-menu-list li.wide { grid-column: 1 / -1; }
-.eg-menu-item { width: 100%; height: 100%; display: flex; align-items: center; gap: .8rem; text-align: left; font: inherit;
-                color: inherit; background: var(--m-card); border: 2px solid var(--m-line); border-radius: 999px;
-                padding: .5rem 1.2rem .5rem .5rem; min-height: 4rem; cursor: pointer; }
-.eg-menu-item:hover, .eg-menu-item:focus-visible { border-color: var(--m-accent); }
-.eg-menu-item.next { background: var(--m-next); border-color: var(--m-accent); }
-.eg-menu-mark { flex: none; width: 2.6rem; height: 2.6rem; border-radius: 50%; display: flex; align-items: center;
-                justify-content: center; font-weight: bold; font-size: 1.15rem; border: 2px solid var(--m-accent); }
-.eg-menu-item.done .eg-menu-mark { background: var(--m-done); border-color: var(--m-done); color: #fff; }
-.eg-menu-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
-.eg-menu-name { font-weight: bold; }
-.eg-menu-about { font-size: .88rem; color: var(--m-muted); }
-.eg-menu-tag { display: inline-block; padding: 0 .5rem; border-radius: 999px; font-size: .75rem; background: var(--m-accent); color: #fff; }
-#egMenuMore { margin: .9rem 0 0; color: var(--m-muted); }
+/* each package: a button like the game's mode buttons */
+.eg-menu-item { width: 100%; height: 100%; display: flex; align-items: center; gap: 12px; text-align: start; font: inherit;
+                color: var(--text); background: var(--card); border: 2px solid var(--line); border-radius: 6px;
+                padding: 10px 12px; min-height: 4rem; cursor: pointer; }
+.eg-menu-item:hover, .eg-menu-item:focus-visible { background: var(--accent); color: #fff; outline: none; }
+.eg-menu-item:hover .eg-menu-about, .eg-menu-item:focus-visible .eg-menu-about { color: #fff; }
+.eg-menu-item.next { background: var(--next-bg); }
+.eg-menu-item.next:hover, .eg-menu-item.next:focus-visible { background: var(--accent); }
+.eg-menu-mark { flex: none; width: 2.4rem; height: 2.4rem; border-radius: 50%; display: flex; align-items: center;
+                justify-content: center; font-weight: bold; font-size: 1.1rem; border: 2px solid currentColor; }
+.eg-menu-item.done .eg-menu-mark { background: var(--good); border-color: var(--line); color: #fff; }
+.eg-menu-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }
+.eg-menu-name { font-weight: bold; font-size: 1.15rem; }
+.eg-menu-about { font-size: .9rem; color: var(--muted); }
+.eg-menu-tag { display: inline-block; padding: 0 .5rem; border-radius: 4px; font-size: .75rem; font-weight: normal;
+               background: var(--accent); color: #fff; vertical-align: middle; }
+.eg-menu-item:hover .eg-menu-tag, .eg-menu-item:focus-visible .eg-menu-tag { background: #fff; color: var(--accent); }
+#egMenuMore { margin: 10px 0 0; opacity: .8; }
 .eg-menu-get p, .eg-menu-get li { margin: .3rem 0; }
-.eg-menu-get a { color: var(--m-accent); font-weight: bold; }
+.eg-menu-get a { color: var(--text); font-weight: bold; text-decoration-thickness: 2px; }
