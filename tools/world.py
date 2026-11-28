@@ -6,7 +6,8 @@ Reads Natural Earth "Admin 0 - Countries" (10 m, public domain) and writes the S
 world map. Names, capitals and options live in maps/world/settings.js (see world_settings.py,
 which writes the first version of that file).
 
-  python3 world.py ne_10m_admin_0_countries.geojson --lakes ne_10m_lakes.geojson --out ../maps/world/shapes.js
+  python3 world.py ne_10m_admin_0_countries.geojson --lakes ne_10m_lakes.geojson \
+      --disputed ne_10m_admin_0_disputed_areas.geojson --out ../maps/world/shapes.js
   (Natural Earth 5.1.2: data/natural_earth/, unzipped)
 
 What it does
@@ -119,12 +120,15 @@ def box(lon0, lon1, lat0, lat1):
     return lambda lon, lat: lon0 <= lon <= lon1 and lat0 <= lat <= lat1
 
 # PIECE_DROPS: single islands that are removed from their country (uninhabited): (parent source code, test, what it is).
-# The test receives the centre of each piece of the parent, like SPLITS below.
+# The test receives the centre of each piece of the parent, like SPLITS below. A test can also be a name (BRK_NAME) in
+# Natural Earth's Admin 0 - Disputed Areas file (--disputed): then the pieces with exactly that file's outline are
+# taken (here, in SPLITS and in BREAKAWAY).
 PIECE_DROPS = [
     ('NOR', box(-10, -7, 70.5, 71.5),   'Jan Mayen'),
     ('NOR', box(3, 4, -54.8, -54.2),    'Bouvet Island'),
     ('ZAF', box(37, 39, -47.5, -46),    'Marion Island and Prince Edward Islands'),
     ('SHN', box(-15, -14, -8.5, -7.5),  'Ascension Island'),
+    ('ESP', 'Isla del Perejil',         'Isla del Perejil'),    # (Parsley Island, off Morocco next to Ceuta)
 ]
 
 # DECOR: pieces that are drawn but are NOT part of the game (no highlight, no click, no circle): (parent code, name, test).
@@ -135,7 +139,17 @@ DECOR = [
 # BREAKAWAY: disputed pieces that become a region of their own (not a part of any country): (parent code, name, test,
 # continent, sub-region). In UN mode they are grey (not in the game).
 BREAKAWAY = [
-    ('RUS', 'Crimea', box(32.4, 36.7, 44.3, 46.3), 'Europe', 'Eastern Europe'),
+    ('RUS', 'Crimea', 'Crimea', 'Europe', 'Eastern Europe'),
+]
+
+# BREAKAWAY_CUT: breakaway states that Natural Earth draws inside their country in the countries file, and only in the
+# Admin 0 - Disputed Areas file (--disputed). Each is cut out of its country along the line in that file, and becomes a
+# region of its own like Crimea (grey in UN mode): (BRK_NAME in the disputed-areas file, parent code, new code,
+# continent, sub-region; None = the parent's).
+BREAKAWAY_CUT = [
+    ('Transnistria',  'MDA', 'XTR', None, None),
+    ('Abkhazia',      'GEO', 'XAB', None, None),
+    ('South Ossetia', 'GEO', 'XSO', None, None),
 ]
 
 # COMBINE: two places drawn as ONE region on the map (the game keeps a separate entry for each, see maps/world/settings.js):
@@ -187,8 +201,8 @@ SPLITS = [
     ('ESP', 'Balearic Islands',        box(1.0, 4.5, 38.5, 40.3),      'Europe', 'Southern Europe'),
     ('PRT', 'Azores',                  box(-31.5, -24.8, 36.8, 39.9),  'Europe', 'Southern Europe'),
     ('PRT', 'Madeira',                 box(-17.4, -15.8, 29.9, 33.3),  'Africa', 'Northern Africa'),
-    ('ESP', 'Ceuta',                   box(-5.45, -5.25, 35.84, 35.93), 'Africa', 'Northern Africa'),
-    ('ESP', 'Melilla',                 box(-3.0, -2.9, 35.25, 35.33),  'Africa', 'Northern Africa'),
+    ('ESP', 'Ceuta',                   'Ceuta',                        'Africa', 'Northern Africa'),
+    ('ESP', 'Melilla',                 'Melilla',                      'Africa', 'Northern Africa'),
     ('RUS', 'Sakhalin',                box(141.5, 144.9, 45.8, 54.6),  'Asia', 'Eastern Asia'),
     ('SHN', 'Saint Helena',            box(-6.3, -5.4, -16.3, -15.7),  'Africa', 'Western Africa'),
     ('SHN', 'Tristan da Cunha',       box(-13, -9, -41, -36),         'Africa', 'Western Africa'),
@@ -362,9 +376,66 @@ def main():
     ap.add_argument('--out', required=True)
     ap.add_argument('--tolerance', type=float, default=TOLERANCE)
     ap.add_argument('--lakes', help='Natural Earth ne_10m_lakes.geojson (optional): draws the lakes that cross borders and the Great Lakes')
+    ap.add_argument('--disputed', required=True,
+                    help='Natural Earth ne_10m_admin_0_disputed_areas.geojson: the lines of the breakaway states in BREAKAWAY_CUT')
     args = ap.parse_args()
 
     feats = read_features(args.input)
+    disputed = {}                                 # BRK_NAME and BRK_A3 -> feature (a name used twice -> None: use the code)
+    for f in read_features(args.disputed):
+        p = f['properties']
+        disputed[p['BRK_NAME']] = None if p['BRK_NAME'] in disputed else f
+        disputed[p['BRK_A3']] = f
+    vkey = Simplifier.key
+
+    def picks(parent, test, what):
+        """The parent's pieces that a test picks: a test(lon, lat) of each piece's centre, or a name in the
+        disputed-areas file (the pieces whose outline is exactly one of that entry's polygons: all must be found)."""
+        if callable(test):
+            return [pc for pc in parent['pieces'] if test(*ring_centroid(pc['poly'][0]))]
+        if not disputed.get(test):
+            sys.exit('%s: %s is not in %s (or the name is used twice: use its BRK_A3)' % (what, test, args.disputed))
+        want = [frozenset(vkey(q) for q in poly[0]) for poly in polys(disputed[test]['geometry'])]
+        found = [pc for pc in parent['pieces'] if frozenset(vkey(q) for q in pc['poly'][0]) in want]
+        if len(found) != len(want):
+            sys.exit('%s: %d of the %d polygons of %s in the disputed-areas file are not pieces of %s'
+                     % (what, len(want) - len(found), len(want), test, parent['name']))
+        return found
+
+    def cut_out(pc, ring, what):
+        """Cut a piece in two along a line inside it. ring is an outline (from the disputed-areas file) that has the
+        same vertices as the piece along one unbroken stretch of the piece's outline, and its own new vertices along
+        the line inside. Returns (the rest of the piece's outline, ring), both closed and sharing the inside line
+        vertex for vertex, so the simplifier draws it once for both."""
+        bring = [tuple(q[:2]) for q in ring]
+        if bring[0] == bring[-1]:
+            bring = bring[:-1]
+        pring = [tuple(q[:2]) for q in pc['poly'][0]]
+        if pring[0] == pring[-1]:
+            pring = pring[:-1]
+        pidx = {vkey(q): i for i, q in enumerate(pring)}
+        shared = [vkey(q) in pidx for q in bring]
+        starts = [i for i in range(len(bring)) if shared[i] and not shared[i - 1]]
+        if len(starts) != 1:
+            sys.exit('%s: expected one stretch of border shared with the piece it is cut from, found %d' % (what, len(starts)))
+        bring = bring[starts[0]:] + bring[:starts[0]]                  # the shared stretch first, then the inside line
+        shared = shared[starts[0]:] + shared[:starts[0]]
+        m = shared.index(False)
+        stretch, inside = bring[:m], bring[m:]                         # inside runs from the stretch's end back to its start
+        a, b = pidx[vkey(stretch[0])], pidx[vkey(stretch[-1])]
+        n = len(pring)
+
+        def parc(i, j):                                                # the piece's outline from vertex i forward to vertex j
+            return [pring[k % n] for k in range(i, j + (n if j < i else 0) + 1)]
+        sk = [vkey(q) for q in stretch]
+        if [vkey(q) for q in parc(a, b)] == sk:
+            rest = parc(b, a)                                          # from the stretch's end round to its start
+        elif [vkey(q) for q in parc(b, a)] == sk[::-1]:
+            rest = parc(a, b)                                          # from the stretch's start round to its end
+        else:
+            sys.exit('%s: the shared border is not one stretch of the outline it is cut from' % what)
+        rest = rest + (inside if vkey(rest[-1]) == vkey(stretch[-1]) else inside[::-1])
+        return rest + [rest[0]], bring + [bring[0]]
     by_code = {f['properties']['ADM0_A3']: f for f in feats}
 
     # ---- 1. regions and their pieces (a piece = one polygon with its holes) ----
@@ -420,7 +491,8 @@ def main():
     # ---- 1b. uninhabited islands removed from their country ----
     for parent_code, test, what in PIECE_DROPS:
         parent = regions[parent_of_code[parent_code]]
-        keep = [pc for pc in parent['pieces'] if not test(*ring_centroid(pc['poly'][0]))]
+        gone = picks(parent, test, 'piece drop ' + what)
+        keep = [pc for pc in parent['pieces'] if pc not in gone]
         if len(keep) == len(parent['pieces']):
             sys.exit('piece drop %s found no polygons in %s' % (what, parent['name']))
         print('  removed %-40s %3d polygon(s) from %s' % (what, len(parent['pieces']) - len(keep), parent['name']))
@@ -431,30 +503,15 @@ def main():
         ring = [tuple(p[:2]) for p in ring]
         return ring if ring[0] == ring[-1] else ring + [ring[0]]
 
-    def nearest_index(ring, pt):
-        k = min(range(len(ring)), key=lambda i: math.hypot(ring[i][0] - pt[0], ring[i][1] - pt[1]))
-        if math.hypot(ring[k][0] - pt[0], ring[k][1] - pt[1]) > 1e-4:
-            sys.exit('border fix: no vertex near %s' % (pt,))
-        return k
-
-    # WESTERN SAHARA: the part that Morocco controls (Natural Earth draws it as Morocco, see "Morocco - Admin. by Morocco;
-    # claimed by W. Sahara" in the disputed-areas file) is cut off Morocco along the border at 27 deg 40' N and added to
-    # Western Sahara. In UN mode all of it is grey (Western Sahara is not a member state).
+    # WESTERN SAHARA: the part that Morocco controls (Natural Earth draws it as Morocco) is cut off Morocco along the
+    # line at 27 deg 40' N in the disputed-areas file (B19, "W. Sahara: Admin. by Morocco; Claimed by Western Sahara")
+    # and added to Western Sahara. In UN mode all of it is grey (Western Sahara is not a member state).
     mar, sah = regions['Morocco'], regions['Western Sahara']
     mpc = max(mar['pieces'], key=lambda pc: len(pc['poly'][0]))
-    mring = closed(mpc['poly'][0])[:-1]
-    i_e, i_w = nearest_index(mring, (-8.682385, 27.661439)), nearest_index(mring, (-13.178254, 27.662491))
-    n_ = len(mring)
-
-    def arc(i, j):                                                     # the ring from vertex i forward to vertex j
-        return [mring[k % n_] for k in range(i, j + (n_ if j < i else 0) + 1)]
-    a1, a2 = arc(i_e, i_w), arc(i_w, i_e)
-    # the two arcs between the border's ends: the one further south is the part Morocco administers in Western Sahara
-    # (this works whichever way round the ring is drawn: Natural Earth 5.1 draws them the other way from 4.0)
-    south, north = (a1, a2) if sum(p[1] for p in a1) / len(a1) < sum(p[1] for p in a2) / len(a2) else (a2, a1)
+    north, south = cut_out(mpc, polys(disputed['B19']['geometry'])[0][0], 'Western Sahara')
     mar['pieces'].remove(mpc)
-    mar['pieces'].append({'poly': [closed(north)] + mpc['poly'][1:], 'src': 'MAR'})
-    sah['pieces'].append({'poly': [closed(south)], 'src': 'MAR'})
+    mar['pieces'].append({'poly': [north] + mpc['poly'][1:], 'src': 'MAR'})
+    sah['pieces'].append({'poly': [south], 'src': 'MAR'})
     print('  Western Sahara: %d vertices taken over from Morocco' % len(south))
 
     # BOSNIA AND HERZEGOVINA: Natural Earth's outline leaves out a big part of Republika Srpska (an enclosed gap of about
@@ -528,11 +585,7 @@ def main():
     # ---- 2. splits ----
     for parent_code, new_name, test, cont, sub in SPLITS:
         parent = regions[parent_of_code[parent_code]]
-        moved = []
-        for pc in parent['pieces']:
-            lon, lat = ring_centroid(pc['poly'][0])
-            if test(lon, lat):
-                moved.append(pc)
+        moved = picks(parent, test, 'split ' + new_name)
         if not moved:
             sys.exit('split %s found no polygons in %s' % (new_name, parent['name']))
         parent['pieces'] = [pc for pc in parent['pieces'] if pc not in moved]
@@ -544,7 +597,7 @@ def main():
     # ---- 2a. breakaway: disputed pieces that become regions of their own ----
     for parent_code, new_name, test, cont, sub in BREAKAWAY:
         parent = regions[parent_of_code[parent_code]]
-        moved = [pc for pc in parent['pieces'] if test(*ring_centroid(pc['poly'][0]))]
+        moved = picks(parent, test, 'breakaway ' + new_name)
         if not moved:
             sys.exit('breakaway %s found no polygons in %s' % (new_name, parent['name']))
         parent['pieces'] = [pc for pc in parent['pieces'] if pc not in moved]
@@ -552,6 +605,23 @@ def main():
         regions[new_name]['un'] = False
         regions[new_name]['pieces'] = moved
         print('  breakaway %-22s %3d polygon(s) from %s' % (new_name, len(moved), parent['name']))
+
+    # ---- 2a'. breakaway states cut out of their country along the disputed-areas file's line (cut_out) ----
+    for brk_name, parent_code, new_code, cont, sub in BREAKAWAY_CUT:
+        if not disputed.get(brk_name):
+            sys.exit('breakaway %s is not in %s' % (brk_name, args.disputed))
+        bpolys = polys(disputed[brk_name]['geometry'])
+        if len(bpolys) != 1 or len(bpolys[0]) != 1:
+            sys.exit('breakaway %s: expected one polygon without holes' % brk_name)
+        parent = regions[parent_of_code[parent_code]]
+        bset = {vkey(q) for q in bpolys[0][0]}
+        pc = max(parent['pieces'], key=lambda pc: sum(vkey(q) in bset for q in pc['poly'][0]))
+        rest, ring = cut_out(pc, bpolys[0][0], 'breakaway ' + brk_name)
+        pc['poly'][0] = rest
+        new_region(brk_name, new_code, {}, 'partial', cont=cont or parent['cont'], sub=sub or parent['sub'])
+        regions[brk_name]['un'] = False
+        regions[brk_name]['pieces'] = [{'poly': [ring], 'src': new_code}]
+        print('  breakaway %-22s cut out of %s' % (brk_name, parent['name']))
 
     # ---- 2b. decor: pieces drawn without being part of the game ----
     for parent_code, new_name, test in DECOR:

@@ -9,6 +9,7 @@ game's zips (`data/*` is in `exclude` in edugame.json). Unzip them before use.
 | File | Used by |
 |---|---|
 | `ne_10m_admin_0_countries.geojson.zip` | `tools/world.py`: every border and island of `maps/world/shapes.js` (the World and Africa maps) |
+| `ne_10m_admin_0_disputed_areas.geojson.zip` | `tools/world.py --disputed`: *Admin 0 – Disputed Areas* (the whole file): the lines inside Moldova and Georgia along which Transnistria, Abkhazia and South Ossetia are cut out (`BREAKAWAY_CUT`), the line along which Western Sahara is cut off Morocco, and the outlines that pick Crimea, Ceuta, Melilla and Isla del Perejil out of Russia and Spain |
 | `ne_10m_lakes.geojson.zip` | `tools/world.py --lakes`: the lakes that cross borders, and the Great Lakes |
 | `ne_10m_admin_0_map_units_british_isles.geojson.zip` | `tools/british_isles.py`: Natural Earth's *Admin 0 – Map Units* (the UK as England, Scotland, Wales and N. Ireland), only the 17 units that reach the British Isles map's area |
 | `ne_10m_admin_1_cornwall.geojson.zip` | `tools/british_isles.py`: Cornwall alone, from *Admin 1 – States, Provinces* |
@@ -17,7 +18,8 @@ game's zips (`data/*` is in `exclude` in edugame.json). Unzip them before use.
 
 Rebuild the World map's shapes (from the repository's top folder, after unzipping into `/tmp/ne`):
 
-    python3 tools/world.py /tmp/ne/ne_10m_admin_0_countries.geojson --lakes /tmp/ne/ne_10m_lakes.geojson --out maps/world/shapes.js
+    python3 tools/world.py /tmp/ne/ne_10m_admin_0_countries.geojson --lakes /tmp/ne/ne_10m_lakes.geojson \
+        --disputed /tmp/ne/ne_10m_admin_0_disputed_areas.geojson --out maps/world/shapes.js
 
 Rebuild the British Isles map's shapes (needs `pip install shapely`):
 
@@ -35,7 +37,6 @@ admin-1 feature named Cornwall, and for France every admin-1 feature of France p
 longitude -13 to 19, latitude 35.5 to 56 (Suriname and Brazil: -58.5 to -49, 0 to 7.5). The full files give the same
 maps.
 
-Not kept here, because no tool reads them: *Admin 0 – Disputed Areas* (only consulted for the Western Sahara border:
-see the comment in `tools/world.py`) and *Rivers and Lake Centerlines* (river lines, not drawn).
+Not kept here, because no tool reads it: *Rivers and Lake Centerlines* (river lines, not drawn).
 
 Before November 2026 the World map was built from Natural Earth 4.0.0 (2017).

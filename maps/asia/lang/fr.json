@@ -1,0 +1,249 @@
+{
+  "name": "Asie",
+  "blurb": "Trouvez les pays d'Asie",
+  "credit": "Limites et capitales : Natural Earth (domaine public, naturalearthdata.com), comme sur la carte du monde. Les frontières suivent les lignes de fait de Natural Earth. Régions : l'Asie du Nord et centrale de la CESAP, l'ASEAN, l'ASACR et la classification M49 de l'ONU. Les petits pays et les îles sont marqués par des cercles.",
+  "variants": {
+    "asia_north_central": {
+      "name": "Asie du Nord et centrale",
+      "blurb": "Trouvez les 9 pays d'Asie du Nord et centrale",
+      "credit": "Limites et capitales : Natural Earth (domaine public, naturalearthdata.com), comme sur la carte du monde. Les frontières suivent les lignes de fait de Natural Earth. Régions : l'Asie du Nord et centrale de la CESAP, l'ASEAN, l'ASACR et la classification M49 de l'ONU. Les petits pays et les îles sont marqués par des cercles. La Russie est coupée au nord et à l'est."
+    },
+    "asia_east": {
+      "name": "Asie de l'Est",
+      "blurb": "Trouvez les 5 pays d'Asie de l'Est"
+    },
+    "asia_southeast": {
+      "name": "Asie du Sud-Est",
+      "blurb": "Trouvez les 11 pays d'Asie du Sud-Est"
+    },
+    "asia_south": {
+      "name": "Asie du Sud",
+      "blurb": "Trouvez les 8 pays d'Asie du Sud"
+    },
+    "asia_west": {
+      "name": "Asie de l'Ouest",
+      "blurb": "Trouvez les 17 pays d'Asie de l'Ouest (le Moyen-Orient)"
+    },
+    "asia": {
+      "name": "Asie : pays de l'ONU",
+      "blurb": "Trouvez les 50 pays d'Asie (49 membres de l'ONU et la Palestine)",
+      "credit": "Limites et capitales : Natural Earth (domaine public, naturalearthdata.com), comme sur la carte du monde. Les frontières suivent les lignes de fait de Natural Earth. Régions : l'Asie du Nord et centrale de la CESAP, l'ASEAN, l'ASACR et la classification M49 de l'ONU. Les petits pays et les îles sont marqués par des cercles. La Russie est coupée au nord et à l'est."
+    },
+    "asia_all": {
+      "name": "Asie : tous les pays et territoires",
+      "blurb": "Trouvez chaque pays et territoire d'Asie",
+      "credit": "Limites et capitales : Natural Earth (domaine public, naturalearthdata.com), comme sur la carte du monde. Les frontières suivent les lignes de fait de Natural Earth. Régions : l'Asie du Nord et centrale de la CESAP, l'ASEAN, l'ASACR et la classification M49 de l'ONU. Les petits pays et les îles sont marqués par des cercles. La Russie est coupée au nord et à l'est."
+    }
+  },
+  "regions": {
+    "Abkhazia": {
+      "name": "Abkhazie",
+      "capital": "Soukhoumi",
+      "info": "Sur la côte de la mer Noire, une partie de la Géorgie. Elle a fait sécession après une guerre en 1992-1993 et se gouverne elle-même avec le soutien de la Russie. La Russie et quelques autres pays la reconnaissent comme indépendante depuis 2008 ; la plupart des pays la considèrent comme une partie de la Géorgie. Comme la Géorgie, elle est généralement comptée en Asie, et souvent aussi en Europe."
+    },
+    "Afghanistan": {
+      "capital": "Kaboul"
+    },
+    "Armenia": {
+      "name": "Arménie",
+      "capital": "Erevan",
+      "info": "Toute l'Arménie se trouve au sud des montagnes du Caucase, donc en Asie, mais elle est membre du Conseil de l'Europe et souvent comptée aussi en Europe."
+    },
+    "Azerbaijan": {
+      "name": "Azerbaïdjan",
+      "capital": "Bakou",
+      "info": "L'Azerbaïdjan est entre l'Europe et l'Asie. La plus grande partie se trouve au sud de la ligne de crête du Caucase, souvent prise comme limite entre les deux, donc il est généralement compté en Asie ; un peu du nord se trouve au-delà. Il est membre du Conseil de l'Europe et souvent compté aussi en Europe."
+    },
+    "Bahrain": {
+      "name": "Bahreïn"
+    },
+    "Bangladesh": {
+      "capital": "Dacca",
+      "info": "Anciennement le Pakistan oriental (jusqu'en 1971)."
+    },
+    "Bhutan": {
+      "name": "Bhoutan",
+      "capital": "Thimphou"
+    },
+    "Cambodia": {
+      "name": "Cambodge",
+      "info": "Appelé Kampuchéa de 1975 à 1989."
+    },
+    "China": {
+      "name": "Chine",
+      "capital": "Pékin"
+    },
+    "Christmas Island": {
+      "name": "Île Christmas",
+      "info": "Un territoire australien dans l'océan Indien, au sud de Java. Elle est du côté asiatique de la ligne Wallace (entre Bali et Lombok), donc elle est sur les cartes de l'Asie, bien qu'elle soit souvent rangée avec l'Australie en Océanie."
+    },
+    "Cocos (Keeling) Islands": {
+      "name": "Îles Cocos (Keeling)",
+      "info": "Un territoire australien dans l'océan Indien, au sud-ouest de Sumatra. Elles sont du côté asiatique de la ligne Wallace (entre Bali et Lombok), donc elles sont sur les cartes de l'Asie, bien qu'elles soient souvent rangées avec l'Australie en Océanie."
+    },
+    "Cyprus": {
+      "name": "Chypre",
+      "capital": "Nicosie",
+      "info": "L'île de Chypre est en Asie, au sud de la Turquie, mais Chypre est membre de l'Union européenne et généralement comptée aussi en Europe."
+    },
+    "Egypt": {
+      "name": "Égypte",
+      "capital": "Le Caire",
+      "info": "Le Caire est la capitale. Une Nouvelle Capitale est en construction à l'est du Caire, et une grande partie du gouvernement s'y est installée. L'Égypte est à la fois en Afrique et en Asie : la plus grande partie est en Afrique, mais la péninsule du Sinaï, à l'est du canal de Suez, est en Asie."
+    },
+    "Georgia": {
+      "name": "Géorgie",
+      "capital": "Tbilissi",
+      "info": "La Géorgie est entre l'Europe et l'Asie. La plus grande partie se trouve au sud de la ligne de crête du Caucase, souvent prise comme limite entre les deux, donc elle est généralement comptée en Asie ; un peu se trouve au nord. Elle est membre du Conseil de l'Europe et souvent comptée aussi en Europe."
+    },
+    "India": {
+      "name": "Inde"
+    },
+    "Indonesia": {
+      "name": "Indonésie",
+      "info": "Jakarta est la capitale. Une nouvelle capitale, Nusantara, est en construction à Bornéo ; le transfert est prévu mais n'a pas encore eu lieu. L'Indonésie est à la fois en Asie et en Océanie : la Nouvelle-Guinée occidentale (ses provinces de Papouasie), sur l'île de Nouvelle-Guinée, est généralement comptée en Océanie."
+    },
+    "Iran": {
+      "capital": "Téhéran",
+      "info": "Appelé Perse en anglais jusqu'en 1935. Téhéran est la capitale ; le gouvernement a proposé de la déplacer sur la côte du Makran, dans le sud, mais rien n'a commencé."
+    },
+    "Iraq": {
+      "name": "Irak",
+      "capital": "Bagdad"
+    },
+    "Israel": {
+      "name": "Israël",
+      "info": "Israël considère Jérusalem comme sa capitale, et son gouvernement et son parlement y siègent ; son statut est contesté, et la plupart des pays ont leur ambassade à Tel Aviv."
+    },
+    "Japan": {
+      "name": "Japon"
+    },
+    "Jordan": {
+      "name": "Jordanie"
+    },
+    "Kazakhstan": {
+      "info": "Astana est la capitale depuis 1997 (avant, c'était Almaty) ; elle s'est appelée Noursoultan de 2019 à 2022. Le Kazakhstan est à la fois en Asie et en Europe : une petite partie, à l'ouest du fleuve Oural, est comptée en Europe."
+    },
+    "Kuwait": {
+      "name": "Koweït",
+      "capital": "Koweït"
+    },
+    "Kyrgyzstan": {
+      "name": "Kirghizistan",
+      "capital": "Bichkek",
+      "info": "Anciennement appelé Kirghizie (jusqu'en 1991)."
+    },
+    "Lebanon": {
+      "name": "Liban",
+      "capital": "Beyrouth"
+    },
+    "Macau": {
+      "name": "Macao"
+    },
+    "Malaysia": {
+      "name": "Malaisie",
+      "info": "Kuala Lumpur est la capitale ; la plus grande partie du gouvernement s'est installée à Putrajaya, tout près."
+    },
+    "Mongolia": {
+      "name": "Mongolie",
+      "capital": "Oulan-Bator"
+    },
+    "Myanmar": {
+      "info": "Anciennement appelé Birmanie (le nom a changé en 1989, et certains pays l'utilisent encore). Naypyidaw est la capitale depuis 2005 ; avant, c'était Yangon (Rangoun), la plus grande ville."
+    },
+    "Nepal": {
+      "name": "Népal",
+      "capital": "Katmandou"
+    },
+    "North Korea": {
+      "name": "Corée du Nord"
+    },
+    "Northern Cyprus": {
+      "name": "Chypre du Nord",
+      "capital": "Nicosie-Nord",
+      "info": "L'île de Chypre est en Asie, au sud de la Turquie, mais elle est généralement comptée aussi en Europe."
+    },
+    "Okinawa Islands": {
+      "name": "Îles d'Okinawa"
+    },
+    "Oman": {
+      "capital": "Mascate"
+    },
+    "Palestine": {
+      "info": "La Palestine proclame Jérusalem-Est comme sa capitale ; le gouvernement de l'Autorité palestinienne travaille à Ramallah."
+    },
+    "Philippines": {
+      "capital": "Manille"
+    },
+    "Russia": {
+      "name": "Russie",
+      "capital": "Moscou",
+      "info": "La Russie est à la fois en Europe et en Asie. Sa partie asiatique, la Sibérie, à l'est de l'Oural, fait environ les trois quarts de son territoire, mais la plupart des Russes vivent dans sa partie européenne, à l'ouest de l'Oural, où se trouve Moscou. Cette carte est coupée au nord et à l'est : le nord de la Sibérie, le Kamtchatka et la Tchoukotka n'y figurent pas."
+    },
+    "Sakhalin": {
+      "name": "Sakhaline"
+    },
+    "Saudi Arabia": {
+      "name": "Arabie saoudite",
+      "capital": "Riyad"
+    },
+    "Singapore": {
+      "name": "Singapour",
+      "capital": "Singapour"
+    },
+    "South Korea": {
+      "name": "Corée du Sud",
+      "capital": "Séoul",
+      "info": "Séoul est la capitale. De nombreux ministères se sont installés à Sejong, une ville construite pour être la capitale administrative."
+    },
+    "South Ossetia": {
+      "name": "Ossétie du Sud",
+      "info": "Dans les montagnes du Caucase, une partie de la Géorgie. Elle a fait sécession en 1991-1992 et se gouverne elle-même avec le soutien de la Russie. La Russie et quelques autres pays la reconnaissent comme indépendante depuis 2008 ; la plupart des pays la considèrent comme une partie de la Géorgie. Comme la Géorgie, elle est généralement comptée en Asie, et souvent aussi en Europe."
+    },
+    "Sri Lanka": {
+      "info": "Anciennement appelé Ceylan (jusqu'en 1972). Sri Jayawardenepura Kotte est la capitale officielle, où siège le parlement ; Colombo, juste à côté, est la plus grande ville et le siège de la plupart des services du gouvernement."
+    },
+    "Syria": {
+      "name": "Syrie",
+      "capital": "Damas"
+    },
+    "Taiwan": {
+      "name": "Taïwan"
+    },
+    "Tajikistan": {
+      "name": "Tadjikistan",
+      "capital": "Douchanbé"
+    },
+    "Thailand": {
+      "name": "Thaïlande",
+      "info": "Anciennement appelée Siam (jusqu'en 1939)."
+    },
+    "Timor-Leste": {
+      "name": "Timor oriental",
+      "info": "Aussi appelé Timor-Leste."
+    },
+    "Turkmenistan": {
+      "name": "Turkménistan",
+      "capital": "Achgabat"
+    },
+    "Türkiye": {
+      "name": "Turquie",
+      "info": "Aussi appelée Türkiye, le nom que le pays a demandé en 2022 et que l'ONU utilise. La Turquie est à la fois en Asie et en Europe : la plus grande partie est l'Anatolie, en Asie ; la petite partie à l'ouest du Bosphore, avec une partie d'Istanbul, est en Europe."
+    },
+    "United Arab Emirates": {
+      "name": "Émirats arabes unis",
+      "capital": "Abou Dabi"
+    },
+    "Uzbekistan": {
+      "name": "Ouzbékistan",
+      "capital": "Tachkent"
+    },
+    "Vietnam": {
+      "name": "Viêt Nam",
+      "capital": "Hanoï"
+    },
+    "Yemen": {
+      "name": "Yémen"
+    }
+  }
+}

@@ -2,7 +2,7 @@
 Play steps for EduGame Kit's real-Kolibri test (the "Real Kolibri" job in
 .github/workflows/build.yml; on your own computer: edugame kolibri-test .).
 
-The kit sets up a throwaway Kolibri, adds each package's zip (countries, world) to a channel of
+The kit sets up a throwaway Kolibri, adds each package's zip (countries, africa, asia, world) to a channel of
 its own and opens it in Learn as a learner. It checks the save reaches Kolibri, fits SCORM 1.2
 and comes back next time; these steps play so there's something to save, in each package:
 

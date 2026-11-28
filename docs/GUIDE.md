@@ -135,6 +135,23 @@ those regions (plus `view_pad`) and can't be zoomed out or dragged beyond it; th
 Somaliland into Somalia in 'un' scope. Capitals, info and flags are the map's own, in `regions`. Another continent
 can be made the same way (a folder with a settings file and its package in edugame.json).
 
+## Asia maps
+Seven more windows on the World map (`maps/asia/settings.js`, `maps/asia/lang/fr.json`), made like the Africa maps.
+The regions: North and Central Asia (ESCAP's: Russia, Georgia, Armenia, Azerbaijan and the five Central Asian
+countries), East Asia (M49's Eastern Asia), Southeast Asia (ASEAN, 11 with Timor-Leste), South Asia (SAARC: with
+Afghanistan, without Iran) and West Asia (M49's Western Asia without the Caucasus, plus Iran and Egypt). The regional
+maps have UN countries only (and Palestine); "Asia: all" adds Taiwan, Hong Kong, Macau, Northern Cyprus, Abkhazia,
+South Ossetia, Sakhalin, the Okinawa Islands, Christmas Island and the Cocos (Keeling) Islands (Australian, but on the
+Asian side of the Wallace Line).
+- **`view`** (`[west, south, east, north]` in degrees) sets a window's box by hand instead of fitting it to the places
+  in the game. The two whole-Asia maps (`[26, -13.5, 150, 62]`) use it to cut Russia off at 62 deg N and 150 deg E:
+  the World map's projection stretches the far north, and the whole of Siberia would fill most of the map. North and
+  Central Asia (`[26, 30, 92, 62]`) is cut at 62 deg N and a little past Kazakhstan, with some of Mongolia showing. Places can reach beyond the box; they are still clicked where they show.
+- **Places in two continents** have a note saying so (Practice mode): Russia, Türkiye and Kazakhstan (Asia and
+  Europe), Georgia, Azerbaijan and Armenia (in Asia by the Caucasus's main ridge, often counted in Europe), Cyprus and
+  Northern Cyprus, Egypt (Sinai is in Asia) and Indonesia (Western New Guinea is in Oceania). They can be on the
+  other continents' maps too.
+
 ## World map (and later continent maps)
 `maps/world.js` is generated from Natural Earth data (public domain: ne_10m_admin_0_countries) by `tools/world.py`;
 `maps/world/settings.js` (capitals and options) was first written by `tools/world_settings.py` from Natural Earth's
@@ -170,7 +187,7 @@ Data licence: Natural Earth is in the public domain; borders are its de facto li
 - **Boxes**: the Pacific box sits under South Africa and western Australia (`PACIFIC_RIGHT_LON`), the Caribbean box on the same line over the south-east Pacific (`CARIBBEAN_RIGHT_LON`); a few small islands off Chile/Argentina may be under it.
 - **More parts split off** (All mode only; in UN mode they stay in their country, like Alaska): Easter Island, Galapagos, Tasmania, Newfoundland, Baffin Island, Okinawa Islands, Orkney, Shetland, Hebrides, Corsica, Crete, Sardinia, Sicily, Canary Islands, Balearic Islands, Azores, Madeira, Sakhalin (`SPLITS` in `tools/world.py`; add a line to split off another).
 - **Clicking a part for its country** (Regions and Flags games, All mode): when the country is asked for and a far-away part of it is clicked, the part flashes yellow, is not counted, and a message says to click the main area (`feedback.not_main` in lang/*.json).
-- **Crimea** is a region of its own (`BREAKAWAY`): grey in UN mode. **Western Sahara** is the whole territory (the part Morocco controls was cut off Morocco along 27 deg 40' N; grey in UN mode). **Bosnia and Herzegovina**'s east border was moved out over the gap Natural Earth leaves for Republika Srpska (`fill_bosnia`). **Turkey** is called Tuerkiye (Türkiye).
+- **Crimea** is a region of its own (`BREAKAWAY`, its outline from Natural Earth's *Admin 0 – Disputed Areas*, `--disputed`): grey in UN mode. **Transnistria**, **Abkhazia** and **South Ossetia** are too (`BREAKAWAY_CUT`: cut out of Moldova and Georgia along the lines in the disputed-areas file), with capitals (Tiraspol, Sukhumi, Tskhinvali) and flags; grey in UN mode. Nagorno-Karabakh (now held by Azerbaijan) and Natural Earth's 2022 Donetsk and Luhansk lines are left out. **Western Sahara** is the whole territory (the part Morocco controls is cut off Morocco along 27 deg 40' N, the line in the disputed-areas file; grey in UN mode). **Bosnia and Herzegovina**'s east border was moved out over the gap Natural Earth leaves for Republika Srpska (`fill_bosnia`). **Turkey** is called Tuerkiye (Türkiye).
 - **Nudges** only apply on the most zoomed-out levels: `nudge_zoom_levels` (default 2) in the map settings. Zoomed in further, circles are back at their real places (capitals: `nudge: [lat, lon]` next to the real `lat`/`lon`; region circles: `mkn` in the shapes file). The boxes never zoom, so their circles stay moved.
 - **Flags**: `tools/world_settings.py --flags <folder with xx.svg>` links `maps/world/flags/<iso2>.svg` to every region that has one (a few parts use their country's neighbour file: `FLAG_FILE`). Regions without a flag are left out of the Flags game; the script prints the list. The flag has no border, so non-rectangular flags look right.
 - **Default scope** of the world map is now `'all'` (set `scope: 'un'` in maps/world/settings.js for the UN game).
@@ -179,7 +196,7 @@ Data licence: Natural Earth is in the public domain; borders are its de facto li
 ## World map notes (v023)
 - **Size**: no height cap any more (`max_map_height` is optional). The map is as big as the window allows; with `fit_all_min_height: 800` the map AND the boxes fit a 1080p window together, on shorter windows the map alone fits.
 - **Boxes (insets)**: the Pacific box sits under Africa and Australia, the Caribbean box under the south-east Pacific, both starting on the same line just under the lowest land above the Pacific box (`tools/world.py`: `PACIFIC_RIGHT_LON`, `CARIBBEAN_RIGHT_LON`, `CARIBBEAN_HEIGHT`). They overlap the bottom of the map. Inside a box everything is solid (the map underneath cannot be seen or clicked); around the boxes the map shows and works as usual.
-- **Removed (uninhabited)**: U.S. Minor Outlying Islands, Heard & McDonald, Clipperton, South Georgia & S. Sandwich, French Southern & Antarctic Lands, Coral Sea Islands, British Indian Ocean Territory, Ashmore & Cartier (`DROP`), Jan Mayen, Bouvet, Marion & Prince Edward, Ascension (`PIECE_DROPS`). Akrotiri and Dhekelia are merged into Cyprus (`MERGE_INTO`). Saint Helena and Tristan da Cunha are separate regions (`SPLITS`).
+- **Removed (uninhabited)**: U.S. Minor Outlying Islands, Heard & McDonald, Clipperton, South Georgia & S. Sandwich, French Southern & Antarctic Lands, Coral Sea Islands, British Indian Ocean Territory, Ashmore & Cartier (`DROP`), Jan Mayen, Bouvet, Marion & Prince Edward, Ascension, Isla del Perejil (`PIECE_DROPS`). Akrotiri and Dhekelia are merged into Cyprus (`MERGE_INTO`). Saint Helena and Tristan da Cunha are separate regions (`SPLITS`).
 - **Annobon** is drawn but is not part of Equatorial Guinea's highlight (`DECOR`: drawn, never highlighted or clicked).
 - **Combined places** (`COMBINE` in `tools/world.py`): Saint Martin + Sint Maarten and Sint Eustatius + Saba are one shape and one circle, but each keeps its own entry (capital, info, flag) and its own question in every mode. The shape changes colour once both are answered; the hover label shows the answered ones. In the shapes file the second place has `twin: '<first place>'`. Their capitals and info notes are in `tools/world_settings.py` (`CAPITAL_EXTRA`, `INFO`).
 - **Nudges**: circles of close neighbours are moved apart: capitals in `NUDGE` (`tools/world_settings.py`) and region circles in `NUDGE_MARKER` (`tools/world.py`): Hong Kong/Macau, Qatar/Bahrain, Samoa/American Samoa, Congo, Cyprus.

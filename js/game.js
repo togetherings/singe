@@ -285,7 +285,7 @@
                   zoom_levels: s.zoom_levels, zoom_step: s.zoom_step, orientation: s.orientation,
                   pass_accuracy: s.pass_accuracy, skip: s.skip, modes: s.modes, regions: regions,
                   wrap: shape.wrap, strip: insets.length ? shape.strip : null, strip_y: insets.length ? shape.strip_y : null,
-                  total: insets.length ? shape.total : null, lakes: shape.lakes, window: !!inGame, view_pad: s.view_pad,
+                  total: insets.length ? shape.total : null, lakes: shape.lakes, window: !!inGame, view_pad: s.view_pad, view: s.view,
                   insets: insets, scope: scope, max_map_height: s.max_map_height,
                   infinite_scroll: s.infinite_scroll, page_width: s.page_width, fit_all_min_height: s.fit_all_min_height,
                   circle_ratio: s.circle_ratio, marker_px: s.marker_px, nudge_zoom_levels: s.nudge_zoom_levels });
@@ -835,18 +835,23 @@
   }
   // Lakes on a map with grey regions: the shore is grey, and the stretches of it inside a region in the game are drawn
   // again in the game's colour (a copy of the outline clipped to those regions: a region's shape covers its share of
-  // the lake). So a lake shared with a grey country is grey on that country's side. Needs the map on the page.
+  // the lake). So a lake shared with a grey country is grey on that country's side. Needs the map on the page and
+  // visible (it measures the shapes: hidden, every box was empty, so every lake was clipped to every region).
   function greyLakes(tile) {
     var lakes = tile.querySelectorAll('.lake'), regs = tile.querySelectorAll('.region:not(.off)');
     if (!lakes.length || !tile.querySelector('.region.off')) return;
     var boxes = [];
     for (var j = 0; j < regs.length; j++) boxes.push(regs[j].getBBox());
     for (var i = 0; i < lakes.length; i++) {
-      var lake = lakes[i], lb = lake.getBBox(), clip = null;
+      var lake = lakes[i], lb = lake.getBBox(), clip = null, shore = lakeShore(lake);
       lake.classList.add('off');
       for (j = 0; j < regs.length; j++) {
         var bx = boxes[j];
         if (bx.x > lb.x + lb.width || bx.x + bx.width < lb.x || bx.y > lb.y + lb.height || bx.y + bx.height < lb.y) continue;
+        // A big country's box (Russia's, China's) overlaps most lakes near it: only a region the shore actually lies in
+        // gets a copy in the clip. (Every clip with Russia's whole outline in it took the browser seconds to draw on the
+        // Asia maps: 18 seconds on North and Central Asia.)
+        if (shore && !shore.some(function (pt) { return regs[j].isPointInFill(pt); })) continue;
         if (!clip) clip = svgEl('clipPath', { id: 'lakeIn' + i });
         clip.appendChild(svgEl('path', { d: regs[j].getAttribute('d') }));
       }
@@ -854,6 +859,17 @@
       lake.parentNode.insertBefore(clip, lake.nextSibling);
       lake.parentNode.insertBefore(svgEl('path', { d: lake.getAttribute('d'), 'class': 'lakeline', 'clip-path': 'url(#lakeIn' + i + ')' }), clip.nextSibling);
     }
+  }
+  // Points along a lake's outline (its shore), to test which regions it lies in (a region's shape covers its share of
+  // the lake). null where the browser can't do it: then every region whose box overlaps the lake's is used.
+  function lakeShore(lake) {
+    if (!lake.isPointInFill || !lake.getTotalLength || !window.DOMPoint) return null;
+    var len = lake.getTotalLength(), n = 48, pts = [];
+    for (var k = 0; k < n; k++) {
+      var p = lake.getPointAtLength(len * k / n);
+      pts.push(new DOMPoint(p.x, p.y));
+    }
+    return pts;
   }
   function buildStrip(map) {
     var svg = svgEl('svg', { viewBox: '0 0 ' + map.strip[0] + ' ' + map.strip[1] });
@@ -897,7 +913,15 @@
   // A WINDOW on a world map (settings "in_game", the Africa maps): the view is the box around the regions in the game,
   // with some room around it ("view_pad", a share of the box's longer side) so the grey neighbours show. The map
   // can't be zoomed out or dragged beyond it. Needs the map to be visible, because it measures the shapes.
+  // "view": [west, south, east, north] in degrees sets the box by hand instead (the Asia maps: it cuts Russia off, so
+  // northern Siberia, Kamchatka and Chukotka don't take up most of the map). Places in the game may reach beyond it.
   function fitWindow(svg) {
+    if (g.map.view) {
+      var v = g.map.view, a = toXY(g.map, null, v[0], v[3]), b = toXY(g.map, null, v[2], v[1]);
+      g.view = { x: a[0], y: a[1], w: b[0] - a[0], h: b[1] - a[1] };
+      svg.setAttribute('viewBox', [g.view.x, g.view.y, g.view.w, g.view.h].join(' '));
+      return;
+    }
     var x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, items = svg.querySelectorAll('.region:not(.inactive)');
     for (var i = 0; i < items.length; i++) {
       var b = items[i].getBBox();
@@ -965,7 +989,6 @@
       v.addEventListener('pointerout',  function (e) { hoverHalo(e, false); });
     });
     $('mapBox').appendChild(svg);
-    if (wrap) greyLakes(g.tile);
     if (g.strip) {                                   // the fixed boxes: no zoom, but they have name labels too
       $('stripBox').appendChild(g.strip);
       g.strip.addEventListener('pointermove', function (e) {
@@ -982,6 +1005,7 @@
     } catch (e) {}
     if (wrap && map.window) fitWindow(svg);         // (before fitWorld: the view decides the map's shape)
     if (!wrap) fitView(svg); else fitWorld();
+    if (wrap) greyLakes(g.tile);                     // (after show: it measures the shapes)
     if (mode === 'capitals' || practice || wrap) addCapitals(svg, map);   // practice shows capitals too; world maps add markers
     if (mode !== 'capitals' && !wrap) addHalos(svg, map);
     $('promptFlag').classList.add('hidden');
