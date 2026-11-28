@@ -29,6 +29,7 @@
       if (opts.count !== false) { counted++; if (pkg.done) { done++; } }
       var b = make("button", "eg-menu-item" + (pkg.done ? " done" : "") + (opts.wide ? " wide" : ""));
       b.type = "button";
+      if (!opts.mark) { b.setAttribute("data-number", String(n)); }   // (its number key: 1-9)
       var mark = make("span", "eg-menu-mark", pkg.done ? "✓" : (opts.mark || String(n)));
       mark.setAttribute("aria-hidden", "true");
       var text = make("span", "eg-menu-text");
@@ -53,6 +54,18 @@
     el("egMenuMore").hidden = !more.length;
     el("egMenuMore").textContent = t("kit.menu_more", { names: more.map(function (l) { return l.name; }).join(", ") });
   }
+
+  // The list of keys: the kit's (EduGame.addKeys) puts a ⌨ button beside Options and opens the list with it, ? and /.
+  EduGame.addKeys({ id: "menu", keys: [
+    { keys: ["Tab", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"], label: "keys.k_tab_menu", does: "keys.t_tab_menu" },
+    { keys: ["Home", "End"], label: "keys.k_ends", does: "keys.t_ends" },
+    { keys: ["Enter", " "], label: "keys.k_choose", does: "keys.t_choose_menu" },
+    { keys: ["1", "2", "3", "4", "5", "6", "7", "8", "9"], label: "keys.k_number", does: "keys.t_number" },
+    { help: true }
+  ] });
+  // The arrow keys go to the nearest set of maps that way (from nowhere: to "Next"), Home and End to the first and
+  // last, and 1-9 open the one with that number.
+  EduGame.arrowNav(el("egMenuList"), ".eg-menu-item", { numbers: true, start: ".next" });
 
   if (!site) { return; }                     // only on the website and in the offline copy
   EduGame.ready().then(render);

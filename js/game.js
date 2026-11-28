@@ -145,7 +145,8 @@
     src.forEach(function (r) {
       var o = by[r.name], into = r.part_of || (scope === 'un' && merge[r.name]), p = into && by[into];
       if (scope === 'un' && p) {                          // merge into the country
-        if (p.s || o.s) p.s = (p.s || p.d) + (o.s || o.d);       // outlines (see tools/world.py) follow the shapes
+        if (!r.part_of && merge[r.name]) p.s = joinOutline((p.s || p.d) + (o.s || o.d));   // one country: no border between them
+        else if (p.s || o.s) p.s = (p.s || p.d) + (o.s || o.d);  // outlines (see tools/world.py) follow the shapes
         p.d += o.d;
         if (o.sz > p.sz || !p.mk) { p.sz = Math.max(p.sz, o.sz); p.small = o.small; p.mk = o.mk || p.mk; }
         Object.keys(o.ins).forEach(function (k) { p.ins[k] = (p.ins[k] || []).concat(o.ins[k]); });
@@ -157,6 +158,49 @@
       out.push(o);
     });
     return out.filter(function (o) { return o.d || o.mk; });
+  }
+  // The outline of shapes put together (a "merge": Somaliland into Somalia): every edge of their paths except the ones
+  // they share, which are drawn twice, once by each (tools/world.py simplifies a shared border once, so both have the
+  // same points). Returns an outline path for "s" (see addRegion). Paths use M m L l H h V v Z z, as the shapes files do.
+  function joinOutline(d) {
+    var edges = [], count = {}, x = 0, y = 0, sx = 0, sy = 0, cmd = '', m, re = /([MmLlHhVvZz])|(-?\d*\.?\d+(?:e-?\d+)?)/g, nums = [];
+    function key(a, b, c, e) { return a < c || (a === c && b < e) ? a + ',' + b + ',' + c + ',' + e : c + ',' + e + ',' + a + ',' + b; }
+    function edge(nx, ny) {
+      if (nx !== x || ny !== y) { var k = key(x, y, nx, ny); count[k] = (count[k] || 0) + 1; edges.push([x, y, nx, ny, k]); }
+      x = nx; y = ny;
+    }
+    function run() {                                   // the numbers after a command
+      var step = /[HhVv]/.test(cmd) ? 1 : 2;
+      for (var i = 0; i + step <= nums.length; i += step) {
+        var a = nums[i], b = nums[i + 1];
+        if (cmd === 'M' || cmd === 'm') {
+          if (i === 0) { x = cmd === 'M' ? a : x + a; y = cmd === 'M' ? b : y + b; sx = x; sy = y; }
+          else edge(cmd === 'M' ? a : x + a, cmd === 'M' ? b : y + b);   // (more pairs after M are lines)
+        }
+        else if (cmd === 'L') edge(a, b);
+        else if (cmd === 'l') edge(x + a, y + b);
+        else if (cmd === 'H') edge(a, y);
+        else if (cmd === 'h') edge(x + a, y);
+        else if (cmd === 'V') edge(x, a);
+        else if (cmd === 'v') edge(x, y + a);
+      }
+      nums = [];
+    }
+    while ((m = re.exec(d))) {
+      if (m[1]) {
+        run(); cmd = m[1];
+        if (cmd === 'Z' || cmd === 'z') { edge(sx, sy); }
+      } else nums.push(parseFloat(m[2]));
+    }
+    run();
+    var out = '', lastX = null, lastY = null;
+    edges.forEach(function (e) {
+      if (count[e[4]] > 1) return;                     // shared: inside the joined shape
+      if (e[0] !== lastX || e[1] !== lastY) out += 'M' + e[0] + ',' + e[1];
+      out += 'L' + e[2] + ',' + e[3];
+      lastX = e[2]; lastY = e[3];
+    });
+    return out;
   }
   // Titles of the boxes under a world map: the shapes file's, overridden by the settings file's "insets".
   function mergeInsets(shapeInsets, settingsInsets) {
@@ -419,6 +463,7 @@
       list.textContent = tr('menu.no_maps');
     }
     loadErrors.forEach(function (src) { list.appendChild(el('p', 'credit', tr('menu.load_error', { file: src }))); });
+    var done = 0, total = 0;                          // "3 of 40 done": game modes (not Practice) whose goal is met
     MAPS.forEach(function (map) {
       var card = el('div', 'mapCard');
       if (map.image) {                                // optional picture, floated right (see .mapImg in index.html)
@@ -439,6 +484,7 @@
       var row = el('div', 'modes');
       modesFor(map).forEach(function (mode) {
         var b = el('button', 'modeBtn');
+        b.setAttribute('data-map', map.id); b.setAttribute('data-mode', mode);
         b.appendChild(el('b', '', modeLabel(mode)));
         if (mode === 'practice') {
           b.appendChild(el('small', '', tr('menu.practice_hint')));
@@ -448,6 +494,8 @@
           b.appendChild(el('small', '', bestLine(saveId(map, mode))));
           if (s && s[2]) b.appendChild(el('small', '', tr('menu.completed', { n: s[2] })));
           if (goal && s && s[0] >= goal) { b.classList.add('met'); b.title = tr('menu.goal_met'); }
+          total++;
+          if (s && (!goal || s[0] >= goal)) done++;  // (a mode with no goal is done once played)
         }
         b.onclick = function () { startGame(map, mode); };
         row.appendChild(b);
@@ -455,6 +503,7 @@
       card.appendChild(row);
       list.appendChild(card);
     });
+    $('menuDone').textContent = total ? tr('menu.done', { n: done, total: total }) : '';
   }
 
   /* =====================================================================
@@ -765,19 +814,46 @@
   function addRegion(parent, r, i, d, s) {
     var cls = r.inactive ? (r.off ? 'region inactive off' : 'region inactive') : 'region';
     parent.appendChild(svgEl('path', { d: d, 'class': s ? cls + ' nostroke' : cls, 'data-name': r.name, 'data-i': i }));
-    if (s) parent.appendChild(svgEl('path', { d: s, 'class': 'rstroke' }));
+    if (s) parent.appendChild(svgEl('path', { d: s, 'class': r.off ? 'rstroke off' : 'rstroke' }));   // (grey for a grey region: Cyprus)
+  }
+  // Grey regions first, so a border shared by a grey region and one in the game is drawn in the game's colour.
+  function inOrder(map, each) {
+    map.regions.forEach(function (r, i) { if (r.off) each(r, i); });
+    map.regions.forEach(function (r, i) { if (!r.off) each(r, i); });
   }
   function buildWorld(map) {
     var svg = svgEl('svg', { viewBox: '0 0 ' + map.size[0] + ' ' + map.size[1] });
     var tile = svgEl('g', { 'class': 'tile' });
     // (No wide invisible "halo" outlines on a world map: the circles of tiny regions do that job, and a halo several
     // times bigger than a tiny island overlapped its neighbours - Wallis and Futuna next to Samoa, for one.)
-    map.regions.forEach(function (r, i) { if (r.d) addRegion(tile, r, i, r.d, r.s); });
+    inOrder(map, function (r, i) { if (r.d) addRegion(tile, r, i, r.d, r.s); });
     // big lakes that cross borders (Great Lakes, Victoria, Malawi...) are drawn as water on top of the land
     (map.lakes || []).forEach(function (l) { tile.appendChild(svgEl('path', { d: l.d, 'class': 'lake' })); });
     svg.appendChild(tile);
     g.tile = tile;
     return svg;
+  }
+  // Lakes on a map with grey regions: the shore is grey, and the stretches of it inside a region in the game are drawn
+  // again in the game's colour (a copy of the outline clipped to those regions: a region's shape covers its share of
+  // the lake). So a lake shared with a grey country is grey on that country's side. Needs the map on the page.
+  function greyLakes(tile) {
+    var lakes = tile.querySelectorAll('.lake'), regs = tile.querySelectorAll('.region:not(.off)');
+    if (!lakes.length || !tile.querySelector('.region.off')) return;
+    var boxes = [];
+    for (var j = 0; j < regs.length; j++) boxes.push(regs[j].getBBox());
+    for (var i = 0; i < lakes.length; i++) {
+      var lake = lakes[i], lb = lake.getBBox(), clip = null;
+      lake.classList.add('off');
+      for (j = 0; j < regs.length; j++) {
+        var bx = boxes[j];
+        if (bx.x > lb.x + lb.width || bx.x + bx.width < lb.x || bx.y > lb.y + lb.height || bx.y + bx.height < lb.y) continue;
+        if (!clip) clip = svgEl('clipPath', { id: 'lakeIn' + i });
+        clip.appendChild(svgEl('path', { d: regs[j].getAttribute('d') }));
+      }
+      if (!clip) continue;
+      lake.parentNode.insertBefore(clip, lake.nextSibling);
+      lake.parentNode.insertBefore(svgEl('path', { d: lake.getAttribute('d'), 'class': 'lakeline', 'clip-path': 'url(#lakeIn' + i + ')' }), clip.nextSibling);
+    }
   }
   function buildStrip(map) {
     var svg = svgEl('svg', { viewBox: '0 0 ' + map.strip[0] + ' ' + map.strip[1] });
@@ -787,7 +863,7 @@
       svg.appendChild(clip);
       svg.appendChild(svgEl('rect', { 'class': 'inbox', x: ins.x, y: ins.y, width: ins.w, height: ins.h }));
       var grp = svgEl('g', { 'clip-path': 'url(#clip_' + ins.id + ')' });
-      map.regions.forEach(function (r, i) {
+      inOrder(map, function (r, i) {
         ((r.ins && r.ins[ins.id]) || []).forEach(function (p) { if (p.d) addRegion(grp, r, i, p.d, p.s); });
       });
       svg.appendChild(grp);
@@ -889,6 +965,7 @@
       v.addEventListener('pointerout',  function (e) { hoverHalo(e, false); });
     });
     $('mapBox').appendChild(svg);
+    if (wrap) greyLakes(g.tile);
     if (g.strip) {                                   // the fixed boxes: no zoom, but they have name labels too
       $('stripBox').appendChild(g.strip);
       g.strip.addEventListener('pointermove', function (e) {
@@ -928,7 +1005,7 @@
     focusMap();
     if (practice) {
       showPrompt();
-      $('feedback').textContent = '';
+      setFeedback('');
     } else {
       g.target = undefined;
       nextTarget();
@@ -994,19 +1071,22 @@
     }
     showPrompt();
     var left = MAX_TRIES - g.tries;
-    $('feedback').textContent = !g.tries ? '' : left > 0 ? tr('feedback.retry', { n: left }) : tr('feedback.hint');
+    setFeedback(!g.tries ? '' : left > 0 ? tr('feedback.retry', { n: left }) : tr('feedback.hint'));
     if (g.tries && left <= 0) addCls(shapeEls(g.target), 'hint');   // the answer was shown before: show it again
     drawPointers();
     $('found').textContent = g.found;
   }
 
   // The prompt's words (made again when the learner chooses another language in Options).
+  // The right/wrong line under the prompt; screen readers read it out (the kit's EduGame.say)
+  function setFeedback(text) { $('feedback').textContent = text; if (text) EduGame.say(text); }
   function showPrompt() {
     if (g.mode === 'practice') $('prompt').textContent = tr('prompt.practice');
     else if (g.mode === 'flags') $('prompt').textContent = tr('prompt.flag');
     else if (g.target !== undefined) {
       $('prompt').textContent = tr('prompt.find', { name: regionStr(g.map, g.map.regions[g.target], g.mode === 'capitals' ? 'capital' : 'name') });
     }
+    EduGame.say($('prompt').textContent);               // (in Flags mode the question is only for screen readers)
   }
 
   // Text for the hover label of an element, or null if it has none right now. A shape shared by combined places
@@ -1063,6 +1143,16 @@
     return null;
   }
 
+  // The panels over the page (information, list of keys, big flag): the kit's EduGame.dialog holds the keyboard
+  // while one is open (Tab stays inside, Escape, its × or a click outside closes it). Closed in a game, the keyboard
+  // goes back to the map; on the menu, to the button that opened it.
+  function panel(back, card, close) {
+    return EduGame.dialog($(back), { card: $(card), close: $(close),
+      show: function (el) { el.classList.remove('hidden'); }, hide: function (el) { el.classList.add('hidden'); },
+      onClose: function () { if (!onMenu()) focusMap(); } });
+  }
+  var infoPanel = panel('infoBack', 'infoCard', 'infoClose'), flagPanel = panel('flagBack', 'flagCard', 'flagClose');
+
   function openInfo(item) {
     hideTip();
     $('infoTitle').textContent = item.title;
@@ -1071,10 +1161,9 @@
     img.classList.toggle('hidden', !item.flag);
     if (item.flag) { img.src = item.flag; img.alt = tr('info.flag_of', { name: item.title }); }
     $('infoText').textContent = item.text || '';       // plain text (line breaks are kept)
-    $('infoBack').classList.remove('hidden');
-    $('infoClose').focus();
+    infoPanel.open();
   }
-  function closeInfo() { var was = !$('infoBack').classList.contains('hidden'); $('infoBack').classList.add('hidden'); if (was) focusMap(); }
+  function closeInfo() { infoPanel.close(); }
 
   function onMapClick(e) {
     var t = e.target;
@@ -1102,7 +1191,7 @@
     if (g.mode !== 'capitals' && pickedR.part_of && pickedR.part_of === askedR.name) {
       addCls(shape, 'notmain'); drawPointers();
       setTimeout(function () { remCls(shape, 'notmain'); drawPointers(); }, 700);
-      $('feedback').textContent = tr('feedback.not_main', { name: regionStr(g.map, askedR, 'name') });
+      setFeedback(tr('feedback.not_main', { name: regionStr(g.map, askedR, 'name') }));
       return;
     }
 
@@ -1135,9 +1224,9 @@
       setTimeout(function () { remCls(shape, 'wrong'); }, 350);
       var left = MAX_TRIES - g.tries;
       if (left > 0) {
-        $('feedback').textContent = tr('feedback.retry', { n: left });
+        setFeedback(tr('feedback.retry', { n: left }));
       } else {
-        $('feedback').textContent = tr('feedback.hint');
+        setFeedback(tr('feedback.hint'));
         addCls(shapeEls(g.target), 'hint');   // reveal the answer
         drawPointers();
       }
@@ -1180,12 +1269,14 @@
   function leaveGame() {
     if (g.timer) clearInterval(g.timer);
     kbClear();
-    $('kbdHint').classList.add('hidden');
     $('stripBox').style.marginTop = '';
     hideTip();
     closeInfo();
     buildMenu();
     show('menu');
+    // the keyboard goes back to the button of the game just left (and the page scrolls to it)
+    var mb = g.map && $('menuList').querySelector('.modeBtn[data-map="' + g.map.id + '"][data-mode="' + g.mode + '"]');
+    if (mb) mb.focus();
   }
 
   /* =====================================================================
@@ -1353,6 +1444,8 @@
           } else {
             c = el.cloneNode(false);
             c.removeAttribute('style');
+            var nx = el.nextElementSibling;              // a region with an outline of its own: the pointer follows that
+            if (el.classList.contains('nostroke') && nx && nx.classList.contains('rstroke')) c.setAttribute('d', nx.getAttribute('d'));
           }
           c.setAttribute('class', cls + (cls.indexOf('band') > 0 ? cls0 : ''));
           c.setAttribute('aria-hidden', 'true');
@@ -1434,7 +1527,7 @@
     var el = kbFind(kbTargets(), t.key), r = el ? el.el.getBoundingClientRect() : null;
     var label = el ? labelFor(el.el) : null;
     if (label && r) showTip(label, r.left + r.width / 2, r.top + r.height / 2); else hideTip();
-    $('kbdSay').textContent = label || tr('keys.unknown');
+    EduGame.say(label || tr('keys.unknown'));       // never the name of a place not found yet
   }
   // Answered already: a region or circle found, or a capital found (in a game Tab passes over these)
   function kbDone(t) {
@@ -1482,7 +1575,7 @@
     onMapClick({ target: t.el, currentTarget: null, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 });
     if (kb.key && g.mode !== 'practice') {           // say how it went, and the place's name once it's found
       var lab = labelFor(t.el);
-      $('kbdSay').textContent = lab || '';
+      if (lab) EduGame.say(lab);
     }
   }
   function kbZoom(f) {
@@ -1495,27 +1588,50 @@
     if ($('game').classList.contains('hidden')) return;
     try { $('mapBox').focus({ preventScroll: true }); } catch (e) {}
   }
-  function kbShowHint() {
-    if (kb.used) return;
-    kb.used = true;
-    $('kbdHint').classList.remove('hidden');
-    clearTimeout(kb.hintTimer);
-    kb.hintTimer = setTimeout(function () { $('kbdHint').classList.add('hidden'); }, 8000);
+  function isFlagKey(e) { var c = String(e.key).toLowerCase(); return c === 'f' || c === 'd'; }   // F for flag, D for drapeau
+  function onMenu() { return !$('menu').classList.contains('hidden'); }
+  function inGame() { return !$('game').classList.contains('hidden'); }
+
+  // The list of keys: the kit's (EduGame.addKeys) puts a ⌨ button beside Options and opens the list with it, ? and /.
+  // On the menu it has the menu's keys, then the map's; in a game only the map's (F only in Flags mode). The game
+  // handles these keys itself (below); the kit shows the hint the first time a key is used in a game.
+  function row(k, does, more) {
+    var r = { keys: more && more.keys || [], label: 'keys.k_' + k, does: 'keys.t_' + (does || k) };
+    if (more) Object.keys(more).forEach(function (n) { if (n !== 'keys') r[n] = more[n]; });
+    return r;
   }
-  function openKeys() { hideTip(); $('keysBack').classList.remove('hidden'); $('keysClose').focus(); }
-  function closeKeys() { $('keysBack').classList.add('hidden'); focusMap(); }
+  EduGame.addKeys({ id: 'menu', title: 'keys.on_menu', when: onMenu, keys: [
+    row('tab_menu', null, { keys: ['Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'] }),
+    row('ends', null, { keys: ['Home', 'End'] }),
+    row('choose', 'choose_menu', { keys: ['Enter', ' '] }),
+    { help: true }
+  ] });
+  EduGame.addKeys({ id: 'map', title: 'keys.on_map', when: function () { return onMenu() || inGame(); },
+    hint: function () { return inGame() ? 'keys.hint' : ''; }, keys: [
+    row('tab', null, { keys: ['Tab'] }),
+    row('arrows', null, { keys: ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'] }),
+    row('choose', null, { keys: ['Enter', ' '] }),
+    row('pan'),
+    row('zoom', null, { keys: ['+', '=', 'PageUp'] }),
+    row('zoomout', null, { keys: ['-', '_', 'PageDown'] }),
+    row('full', null, { keys: ['Home', '0'] }),
+    row('skip', null, { keys: ['.', '>', ';'] }),
+    row('back', null, { keys: [',', '<'] }),
+    row('flag', null, { keys: ['f', 'd'], hint: false, when: function () { return inGame() && g.mode === 'flags'; } }),
+    { help: true },
+    row('menu', null, { keys: ['Escape'], hint: false })
+  ] });
 
   document.addEventListener('keydown', function (e) {
-    if (e.defaultPrevented) return;                  // (the kit's Options panel took it: its Escape, its Tab)
-    if (e.key === 'Escape') {                        // a panel first, then the game itself
-      if (!$('keysBack').classList.contains('hidden')) { closeKeys(); return; }
-      if (!$('infoBack').classList.contains('hidden')) { closeInfo(); return; }
-      if (!$('flagBack').classList.contains('hidden')) { closeFlag(); return; }
+    // (A panel's Escape and Tab are the kit's EduGame.dialog's, and the Options panel's are its own: both come first.)
+    if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (EduGame.keysOpen() || infoPanel.isOpen() || flagPanel.isOpen()) {
+      if (isFlagKey(e) && flagPanel.isOpen()) { e.preventDefault(); closeFlag(); }   // F (D) again closes the big flag
+      return;
     }
-    if ($('game').classList.contains('hidden') || e.ctrlKey || e.metaKey || e.altKey) return;
-    if (!$('keysBack').classList.contains('hidden') || !$('infoBack').classList.contains('hidden') ||
-        !$('flagBack').classList.contains('hidden')) {             // a panel has the keyboard (its one button: Close)
-      if (e.key === 'Tab') e.preventDefault();
+    if ($('game').classList.contains('hidden')) {    // the menu (its arrow keys: EduGame.arrowNav, below) or the results
+      var mt = e.target;
+      if (!onMenu() || (mt && mt.closest && mt.closest('.eg-overlay')) || (mt && /^(INPUT|SELECT|TEXTAREA)$/.test(mt.tagName))) return;
       return;
     }
     var t = e.target, tag = t && t.tagName;
@@ -1531,15 +1647,17 @@
     else if ((k === 'Enter' || k === ' ') && !onButton) kbChoose();
     else if (k === '+' || k === '=' || k === 'PageUp') kbZoom(step);
     else if (k === '-' || k === '_' || k === 'PageDown') kbZoom(1 / step);
-    else if (k === 'Home' || k === '0') { if (zc) zc.reset(); }
-    else if (k === '.' || k === '>') { if (!$('skipBtns').classList.contains('hidden')) skipPrompt(); }
+    // (0 by the key's place, so the 0 key works on a French keyboard too, where it types à without Shift)
+    else if (k === 'Home' || k === '0' || e.code === 'Digit0' || e.code === 'Numpad0') { if (zc) zc.reset(); }
+    // (; too: next to , on a French keyboard, where . needs Shift)
+    else if (k === '.' || k === '>' || k === ';') { if (!$('skipBtns').classList.contains('hidden')) skipPrompt(); }
     else if (k === ',' || k === '<') { if (!$('skipBtns').classList.contains('hidden')) backPrompt(); }
-    else if (k === '?') openKeys();
+    else if (isFlagKey(e)) { if (g.mode === 'flags') openFlag(); else done = false; }
     else if (k === 'Escape') leaveGame();
     else done = false;
     if (!done) return;
     e.preventDefault();
-    if (k !== 'Escape' && k !== '?') { kbShowHint(); if (document.activeElement !== $('mapBox')) focusMap(); }
+    if (k !== 'Escape' && !isFlagKey(e)) { kb.used = true; if (document.activeElement !== $('mapBox')) focusMap(); }
   });
   // A button clicked with the mouse gives the keyboard back to the map; so does a click on the map, which also
   // drops the keyboard highlight (the mouse is in charge then).
@@ -1554,9 +1672,8 @@
   }
   if (window.ResizeObserver) new ResizeObserver(placeZoom).observe($('mapTop'));
   $('mapBox').addEventListener('pointerdown', function () { kbClear(); });
-  $('keysBtn').onclick = openKeys;
-  $('keysClose').onclick = closeKeys;
-  $('keysBack').onclick = function (e) { if (e.target === this) closeKeys(); };
+  // The menu's arrow keys: the nearest mode button that way, Home and End the first and last (the kit's).
+  EduGame.arrowNav($('menuList'), '.modeBtn');
 
   /* =====================================================================
      6. START UP
@@ -1604,7 +1721,6 @@
   $('rotateOk').onclick = function () { rotateDismissed = true; checkRotate(); };
   window.addEventListener('scroll', function () { if (kb.key) kbRing(); }, { passive: true });
   window.addEventListener('resize', function () { if (kb.key) setTimeout(kbRing, 50); checkRotate(); if (g.svg && !$('game').classList.contains('hidden')) { fitWorld(); sizeCircles(); } });
-  $('infoClose').onclick = closeInfo;
 
   // ---- Full Screen button (in the header; hidden where the browser does not allow it) ----
   var fsRoot = document.documentElement;
@@ -1623,7 +1739,6 @@
     document.addEventListener('fullscreenchange', function () { fsLabel(); setTimeout(function () { fitWorld(); sizeCircles(); }, 100); });
     document.addEventListener('webkitfullscreenchange', function () { fsLabel(); setTimeout(function () { fitWorld(); sizeCircles(); }, 100); });
   }
-  $('infoBack').onclick = function (e) { if (e.target === this) closeInfo(); };   // click outside the card
   $('skipNext').onclick = skipPrompt;
   $('skipPrev').onclick = backPrompt;
   $('backBtn').onclick = leaveGame;
@@ -1635,14 +1750,12 @@
     var src = $('promptFlag').getAttribute('src');
     if (!src) return;
     $('flagBig').src = src;
-    $('flagBack').classList.remove('hidden');
-    $('flagClose').focus();
+    flagPanel.open();
   }
-  function closeFlag() { var was = !$('flagBack').classList.contains('hidden'); $('flagBack').classList.add('hidden'); if (was) focusMap(); }
+  function closeFlag() { flagPanel.close(); }
   $('promptFlag').onclick = openFlag;
   $('promptFlag').onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openFlag(); } };
-  $('flagBack').onclick = closeFlag;                 // click anywhere to close
-  $('flagClose').onclick = closeFlag;
+  $('flagCard').onclick = closeFlag;                 // a click on the flag closes it too
 
   // ---- Another language chosen in Options (the kit's panel). Appearance is the kit's too: the page gets
   // data-theme="light" or "dark", and the colours at the top of index.html follow it. ----
