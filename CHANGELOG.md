@@ -6,6 +6,7 @@ SINGE uses `major.minor.patch` version numbers. Builds made before versioning (v
 ### Transnistria, Abkhazia and South Ossetia
 - **Three new places on the World "all" map:** Transnistria (capital Tiraspol), Abkhazia (Sukhumi) and South Ossetia (Tskhinvali), in every mode, with their flags (from Wikipedia, public domain) and a note in Practice mode. On the World (UN countries) map they are grey, like Crimea and Kosovo. The World "all" map now asks about 275 places (was 272); the UN map and the Africa maps are unchanged.
 - `tools/world.py` cuts them out of Moldova and Georgia along the lines in Natural Earth 5.1.2's *Admin 0 – Disputed Areas* (`BREAKAWAY_CUT`, new required option `--disputed`), now kept in `data/natural_earth/`. Only the shapes around them change: Moldova, Georgia, and Ukraine's and Russia's borders with the new places (simplified in new pieces, so the shared borders still match).
+- `tools/world.py` takes Crimea, Ceuta and Melilla by their outlines in the disputed-areas file instead of a box drawn round each, and cuts Western Sahara off Morocco along the file's line instead of between two points written into the tool. The map looks the same (one more point on Morocco's border, on the same straight line). Isla del Perejil (an uninhabited islet next to Ceuta, which the Ceuta box used to catch; too small to show) is now left out (`PIECE_DROPS`).
 - The capital rule has one exception: Transnistria gets Tiraspol, though only Abkhazia and South Ossetia recognise it.
 
 ## 0.4.0
