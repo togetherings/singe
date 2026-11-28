@@ -5,7 +5,8 @@
    WINDOW map (in_game, insets: false, view_pad): the map opens on the regions in "in_game", and every other region
    of the shapes file (France, Belgium, the Netherlands, Norway, the Faroe Islands...) is drawn grey.
    The shapes are cut from Natural Earth 5.1.2: the UK's four nations, Ireland, the Isle of Man, Jersey and Guernsey,
-   with Cornwall (and the Isles of Scilly) cut out of England, and the Hebrides, Orkney and Shetland out of Scotland.
+   with Cornwall (and the Isles of Scilly) and the Isle of Wight cut out of England, and the Hebrides, Orkney and Shetland
+   out of Scotland. (The Isle of Wight is separate only on this map: the World and Europe maps keep it in the UK.)
    Flags: the World map's folder (maps/world/flags/), so the Countries package lists each one it uses.
    ========================================================================== */
 (window.GeoMapSettings = window.GeoMapSettings || []).push({
@@ -28,7 +29,8 @@
   nudge_zoom_levels: 2,
   modes: { practice: true, regions: true, capitals: true, flags: true },
   in_game: [
-    'England', 'Scotland', 'Wales', 'Northern Ireland', 'Ireland', 'Isle of Man', 'Jersey', 'Guernsey', 'Cornwall', 'Hebrides', 'Orkney Islands', 'Shetland Islands'
+    'England', 'Scotland', 'Wales', 'Northern Ireland', 'Ireland', 'Isle of Man', 'Jersey', 'Guernsey', 'Cornwall', 'Isle of Wight',
+    'Hebrides', 'Orkney Islands', 'Shetland Islands'
   ],
 
   regions: {
@@ -76,6 +78,11 @@
       capital: { name: 'Truro', lat: 50.2632, lon: -5.051, info: '' },
       info: 'A county of England, with the Isles of Scilly. The Cornish were recognised as a national minority in 2014, and Cornwall has its own language and flag (Saint Piran\'s cross).',
       flag: 'maps/world/flags/gb-con.svg'
+    },
+    'Isle of Wight': {
+      capital: { name: 'Newport', lat: 50.7004, lon: -1.2930, info: '' },
+      info: 'A ceremonial county of England, and the largest island in England.',
+      flag: 'maps/world/flags/gb-iow.svg'
     },
     'Hebrides': {
       capital: { name: 'Stornoway', lat: 58.209, lon: -6.387, info: '' },

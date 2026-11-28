@@ -207,6 +207,7 @@ SPLITS = [
     ('SHN', 'Saint Helena',            box(-6.3, -5.4, -16.3, -15.7),  'Africa', 'Western Africa'),
     ('SHN', 'Tristan da Cunha',       box(-13, -9, -41, -36),         'Africa', 'Western Africa'),
     ('RUS', 'Kaliningrad',             box(19, 23, 54, 55.8),          'Europe', 'Eastern Europe'),
+    ('AZE', 'Nakhchivan',              box(44.7, 46.3, 38.8, 39.9),    'Asia', 'Western Asia'),   # (Azerbaijan's exclave: an autonomous republic)
 ]
 
 # ---------------------------------------------------------------------------

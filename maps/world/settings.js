@@ -127,7 +127,7 @@
     },
     'Australia': {
       capital: { name: 'Canberra', lat: -35.283, lon: 149.129, info: '' },
-      info: '',
+      info: 'Christmas Island, Cocos (Keeling) Islands, Norfolk Island and Tasmania are separate places on the maps of all countries and territories.',
       flag: 'maps/world/flags/au.svg'
     },
     'Austria': {
@@ -137,7 +137,7 @@
     },
     'Azerbaijan': {
       capital: { name: 'Baku', lat: 40.3972, lon: 49.8603, info: '' },
-      info: '',
+      info: 'Nakhchivan is a separate place on the maps of all countries and territories.',
       flag: 'maps/world/flags/az.svg'
     },
     'Burundi': {
@@ -182,7 +182,7 @@
     },
     'Bosnia and Herzegovina': {
       capital: { name: 'Sarajevo', lat: 43.85, lon: 18.383, info: '' },
-      info: '',
+      info: 'The country is made of two parts (entities), each with its own government: the Federation of Bosnia and Herzegovina and Republika Srpska. The Brčko District belongs to both and governs itself.',
       flag: 'maps/world/flags/ba.svg'
     },
     'Saint Barthélemy': {
@@ -240,7 +240,7 @@
     },
     'Canada': {
       capital: { name: 'Ottawa', lat: 45.4186, lon: -75.702, info: '' },
-      info: '',
+      info: 'Baffin Island and Newfoundland are separate places on the maps of all countries and territories.',
       flag: 'maps/world/flags/ca.svg'
     },
     'Switzerland': {
@@ -250,12 +250,12 @@
     },
     'Chile': {
       capital: { name: 'Santiago', lat: -33.4402, lon: -70.6505, info: '' },
-      info: '',
+      info: 'Easter Island (Rapa Nui) is a separate place on the maps of all countries and territories.',
       flag: 'maps/world/flags/cl.svg'
     },
     'China': {
       capital: { name: 'Beijing', lat: 39.9017, lon: 116.3942, info: '' },
-      info: '',
+      info: 'Hong Kong and Macau are separate places on the maps of all countries and territories.',
       flag: 'maps/world/flags/cn.svg'
     },
     'Côte d\'Ivoire': {
@@ -347,7 +347,7 @@
     },
     'Denmark': {
       capital: { name: 'Copenhagen', lat: 55.6805, lon: 12.5615, info: '' },
-      info: '',
+      info: 'The Faroe Islands and Greenland are separate places on the maps of all countries and territories. Greenland, the largest island in the world, is part of the Kingdom of Denmark but governs itself; geographically it is part of North America. The Faroe Islands govern themselves too.',
       flag: 'maps/world/flags/dk.svg'
     },
     'Dominican Republic': {
@@ -362,7 +362,7 @@
     },
     'Ecuador': {
       capital: { name: 'Quito', lat: -0.213, lon: -78.502, info: '' },
-      info: '',
+      info: 'The Galápagos Islands are a separate place on the maps of all countries and territories.',
       flag: 'maps/world/flags/ec.svg'
     },
     'Egypt': {
@@ -377,7 +377,7 @@
     },
     'Spain': {
       capital: { name: 'Madrid', lat: 40.402, lon: -3.6853, info: '' },
-      info: '',
+      info: 'The Balearic Islands, the Canary Islands, Ceuta and Melilla are separate places on the maps of all countries and territories.',
       flag: 'maps/world/flags/es.svg'
     },
     'Estonia': {
@@ -392,7 +392,7 @@
     },
     'Finland': {
       capital: { name: 'Helsinki', lat: 60.1638, lon: 24.9325, info: '' },
-      info: '',
+      info: 'The Åland Islands are a separate place on the maps of all countries and territories.',
       flag: 'maps/world/flags/fi.svg'
     },
     'Fiji': {
@@ -406,7 +406,7 @@
     },
     'France': {
       capital: { name: 'Paris', lat: 48.8581, lon: 2.353, info: '' },
-      info: '',
+      info: 'Corsica, French Guiana, French Polynesia, Guadeloupe, Martinique, Mayotte, New Caledonia, Réunion, Saint Barthélemy, Saint Martin, Saint Pierre and Miquelon and Wallis and Futuna are separate places on the maps of all countries and territories.',
       flag: 'maps/world/flags/fr.svg'
     },
     'Faroe Islands': {
@@ -425,7 +425,7 @@
     },
     'United Kingdom': {
       capital: { name: 'London', lat: 51.5019, lon: -0.1187, info: '' },
-      info: '',
+      info: 'Anguilla, Bermuda, the British Virgin Islands, the Cayman Islands, the Falkland Islands, Gibraltar, Guernsey, the Hebrides, the Isle of Man, Jersey, Montserrat, the Orkney Islands, the Pitcairn Islands, Saint Helena, the Shetland Islands, Tristan da Cunha and the Turks and Caicos Islands are separate places on the maps of all countries and territories.',
       flag: 'maps/world/flags/gb.svg'
     },
     'Georgia': {
@@ -468,7 +468,7 @@
     },
     'Greece': {
       capital: { name: 'Athens', lat: 37.9853, lon: 23.7314, info: '' },
-      info: '',
+      info: 'Crete is a separate place on the maps of all countries and territories.',
       flag: 'maps/world/flags/gr.svg'
     },
     'Grenada': {
@@ -559,7 +559,7 @@
     },
     'Italy': {
       capital: { name: 'Rome', lat: 41.8979, lon: 12.4813, info: '', with: 'Vatican City' },
-      info: '',
+      info: 'Sardinia and Sicily are separate places on the maps of all countries and territories.',
       flag: 'maps/world/flags/it.svg'
     },
     'Jamaica': {
@@ -578,7 +578,7 @@
     },
     'Japan': {
       capital: { name: 'Tokyo', lat: 35.687, lon: 139.7495, info: '' },
-      info: '',
+      info: 'The Okinawa Islands are a separate place on the maps of all countries and territories.',
       flag: 'maps/world/flags/jp.svg'
     },
     'Kazakhstan': {
@@ -821,12 +821,12 @@
     },
     'Netherlands': {
       capital: { name: 'Amsterdam', lat: 52.3676, lon: 4.9041, info: '' },
-      info: 'Often called Holland, which is really the name of two of its provinces; since 2020 the government uses only "the Netherlands" for the whole country. Amsterdam is the capital; the government, the parliament and the king work in The Hague.',
+      info: 'Often called Holland, which is really the name of two of its provinces; since 2020 the government uses only "the Netherlands" for the whole country. Amsterdam is the capital; the government, the parliament and the king work in The Hague. Aruba, Bonaire, Curaçao, Saba, Sint Eustatius and Sint Maarten are separate places on the maps of all countries and territories.',
       flag: 'maps/world/flags/nl.svg'
     },
     'Norway': {
       capital: { name: 'Oslo', lat: 59.9186, lon: 10.748, info: '' },
-      info: '',
+      info: 'Svalbard is a separate place on the maps of all countries and territories.',
       flag: 'maps/world/flags/no.svg'
     },
     'Nepal': {
@@ -841,7 +841,7 @@
     },
     'New Zealand': {
       capital: { name: 'Wellington', lat: -41.2921, lon: 174.7772, info: '' },
-      info: '',
+      info: 'The Cook Islands, Niue and Tokelau are separate places on the maps of all countries and territories.',
       flag: 'maps/world/flags/nz.svg'
     },
     'Oman': {
@@ -899,7 +899,7 @@
     },
     'Portugal': {
       capital: { name: 'Lisbon', lat: 38.7247, lon: -9.1468, info: '' },
-      info: '',
+      info: 'The Azores and Madeira are separate places on the maps of all countries and territories.',
       flag: 'maps/world/flags/pt.svg'
     },
     'Paraguay': {
@@ -928,7 +928,7 @@
     },
     'Russia': {
       capital: { name: 'Moscow', lat: 55.7541, lon: 37.6136, info: '' },
-      info: '',
+      info: 'Kaliningrad and Sakhalin are separate places on the maps of all countries and territories.',
       flag: 'maps/world/flags/ru.svg'
     },
     'Rwanda': {
@@ -1126,7 +1126,7 @@
     },
     'United States': {
       capital: { name: 'Washington, D.C.', lat: 38.9015, lon: -77.0114, info: '' },
-      info: '',
+      info: 'Alaska, American Samoa, Guam, Hawaii, the Northern Mariana Islands, Puerto Rico and the U.S. Virgin Islands are separate places on the maps of all countries and territories.',
       flag: 'maps/world/flags/us.svg'
     },
     'Uzbekistan': {
@@ -1302,6 +1302,10 @@
     'Sakhalin': {
       info: '',
       flag: 'maps/world/flags/ru-sak.svg'
+    },
+    'Nakhchivan': {
+      info: 'An exclave of Azerbaijan: an autonomous republic, cut off from the rest of the country by Armenia. It has no official flag of its own.',
+      flag: ''
     },
     'Sardinia': {
       info: '',

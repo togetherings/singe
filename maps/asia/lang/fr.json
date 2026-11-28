@@ -52,7 +52,7 @@
     "Azerbaijan": {
       "name": "Azerbaïdjan",
       "capital": "Bakou",
-      "info": "L'Azerbaïdjan est entre l'Europe et l'Asie. La plus grande partie se trouve au sud de la ligne de crête du Caucase, souvent prise comme limite entre les deux, donc il est généralement compté en Asie ; un peu du nord se trouve au-delà. Il est membre du Conseil de l'Europe et souvent compté aussi en Europe."
+      "info": "L'Azerbaïdjan est entre l'Europe et l'Asie. La plus grande partie se trouve au sud de la ligne de crête du Caucase, souvent prise comme limite entre les deux, donc il est généralement compté en Asie ; un peu du nord se trouve au-delà. Il est membre du Conseil de l'Europe et souvent compté aussi en Europe. Le Nakhitchevan est un lieu à part sur les cartes de tous les pays et territoires."
     },
     "Bahrain": {
       "name": "Bahreïn"
@@ -71,7 +71,8 @@
     },
     "China": {
       "name": "Chine",
-      "capital": "Pékin"
+      "capital": "Pékin",
+      "info": "Hong Kong et Macao sont des lieux à part sur les cartes de tous les pays et territoires."
     },
     "Christmas Island": {
       "name": "Île Christmas",
@@ -116,7 +117,8 @@
       "info": "Israël considère Jérusalem comme sa capitale, et son gouvernement et son parlement y siègent ; son statut est contesté, et la plupart des pays ont leur ambassade à Tel Aviv."
     },
     "Japan": {
-      "name": "Japon"
+      "name": "Japon",
+      "info": "Les îles d'Okinawa forment un lieu à part sur les cartes de tous les pays et territoires."
     },
     "Jordan": {
       "name": "Jordanie"
@@ -151,6 +153,10 @@
     "Myanmar": {
       "info": "Anciennement appelé Birmanie (le nom a changé en 1989, et certains pays l'utilisent encore). Naypyidaw est la capitale depuis 2005 ; avant, c'était Yangon (Rangoun), la plus grande ville."
     },
+    "Nakhchivan": {
+      "name": "Nakhitchevan",
+      "info": "Une exclave de l'Azerbaïdjan : une république autonome, séparée du reste du pays par l'Arménie. Elle n'a pas de drapeau officiel. Comme l'Azerbaïdjan, elle est généralement comptée en Asie, et souvent aussi en Europe."
+    },
     "Nepal": {
       "name": "Népal",
       "capital": "Katmandou"
@@ -178,7 +184,7 @@
     "Russia": {
       "name": "Russie",
       "capital": "Moscou",
-      "info": "La Russie est à la fois en Europe et en Asie. Sa partie asiatique, la Sibérie, à l'est de l'Oural, fait environ les trois quarts de son territoire, mais la plupart des Russes vivent dans sa partie européenne, à l'ouest de l'Oural, où se trouve Moscou. Cette carte est coupée au nord et à l'est : le nord de la Sibérie, le Kamtchatka et la Tchoukotka n'y figurent pas."
+      "info": "La Russie est à la fois en Europe et en Asie. Sa partie asiatique, la Sibérie, à l'est de l'Oural, fait environ les trois quarts de son territoire, mais la plupart des Russes vivent dans sa partie européenne, à l'ouest de l'Oural, où se trouve Moscou. Cette carte est coupée au nord et à l'est : le nord de la Sibérie, le Kamtchatka et la Tchoukotka n'y figurent pas. Kaliningrad et Sakhaline sont des lieux à part sur les cartes de tous les pays et territoires."
     },
     "Sakhalin": {
       "name": "Sakhaline"

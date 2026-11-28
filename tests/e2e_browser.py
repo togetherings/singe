@@ -33,13 +33,19 @@ PACKAGES = {
                 "Africa: all countries and territories"], ["Afrique du Nord", "Afrique de l'Ouest"]),
     "asia": (["North and Central Asia", "East Asia", "Southeast Asia", "South Asia", "West Asia", "Asia: UN countries",
               "Asia: all countries and territories"], ["Asie du Nord et centrale", "Asie de l'Est"]),
+    "europe": (["Northern Europe", "Western Europe", "Central Europe", "Southern Europe", "Southeast Europe", "Eastern Europe",
+                "Europe: UN countries", "Europe: all countries and territories"], ["Europe du Nord", "Europe de l'Ouest"]),
     "world": (["World: UN countries", "World: all countries, territories and islands"], None),
 }
+# The Europe maps: how many places each asks about, the box set by hand (if any), and the cut-out boxes it has.
+EUROPE_MAPS = [(8, [-25, 53.5, 32.5, 71.5], ["svalbard"]), (6, [-11, 41.2, 10, 61], []), (8, None, []),
+               (11, [-20.5, 34, 45, 47.5], ["azores"]), (8, None, []), (9, [19, 38, 59, 70.5], []),
+               (50, [-25, 34, 59, 71.5], ["svalbard", "azores"]), (74, [-25, 34, 59, 71.5], ["svalbard", "azores"])]
 # The Africa maps (windows on the World map): how many places each asks about.
 AFRICA_TOTALS = [6, 15, 9, 14, 10, 54, 64]
 # The Asia maps: how many places each asks about, and the box set by hand ("view": west, south, east, north) if any.
 ASIA_MAPS = [(9, [26, 30, 92, 62]), (5, None), (11, None), (8, None), (17, None), (50, [26, -13.5, 150, 62]),
-             (60, [26, -13.5, 150, 62])]
+             (61, [26, -13.5, 150, 62])]
 
 
 def check(browser, package, shots):
@@ -76,6 +82,8 @@ def check(browser, package, shots):
             check_africa(game)
         if package == "asia":
             check_asia(game)
+        if package == "europe":
+            check_europe(game)
         page.close()
     finally:
         server.shutdown()
@@ -98,6 +106,31 @@ def check_asia(game):
                 assert el.count() == 1 and "inactive" not in el.get_attribute("class"), name
             elif name != "Sakhalin":                                     # (in UN scope Sakhalin is part of Russia)
                 assert el.count() == 0 or "inactive" in el.get_attribute("class"), (i, name)
+        game.locator("#backBtn").click()
+        game.locator("#menu .mapCard").first.wait_for()
+
+
+def check_europe(game):
+    """Each Europe map asks about the right number of places and shows its box; the cut-out boxes (Svalbard, the
+    Azores) hold copies of the places that are clickable like the real ones: Svalbard and the Azores on the "all"
+    map, Norway and Portugal (whose islands they are) on the UN maps."""
+    for i, (total, view, cuts) in enumerate(EUROPE_MAPS):
+        game.locator("#menu .mapCard").nth(i).locator(".modeBtn").nth(1).click()
+        game.locator("#prompt:not(:empty)").wait_for()
+        assert game.locator("#total").inner_text() == str(total), (i, game.locator("#total").inner_text())
+        if view:
+            box = [float(x) for x in game.locator("#mapBox svg").first.get_attribute("viewBox").split()]
+            assert abs(box[0] - (view[0] + 180) * 20.0) < 1 and abs(box[2] - (view[2] - view[0]) * 20.0) < 1, (i, box)
+        assert game.locator("#mapBox .cutout").count() == len(cuts), i
+        for cut in cuts:
+            assert game.locator("#mapBox clipPath#cut_%s" % cut).count() == 1, (i, cut)
+            name = {"svalbard": "Svalbard", "azores": "Azores"}[cut] if i == 7 else {"svalbard": "Norway", "azores": "Portugal"}[cut]
+            copies = game.locator('#mapBox .cutout .region[data-name="%s"]' % name)
+            assert copies.count() == 1 and "inactive" not in copies.first.get_attribute("class"), (i, name)
+            real = game.locator('#mapBox .tile > .region[data-name="%s"]' % name)
+            assert real.first.get_attribute("data-i") == copies.first.get_attribute("data-i"), (i, name)
+        if i == 7:                                                       # (in UN scope Svalbard is part of Norway)
+            assert game.locator('#mapBox .region[data-name="Kosovo"]:not(.inactive)').count() == 1
         game.locator("#backBtn").click()
         game.locator("#menu .mapCard").first.wait_for()
 
@@ -280,9 +313,9 @@ def check_site(browser, shots):
         page.locator(".eg-menu-item").first.wait_for()
         names = [t.strip() for t in page.locator(".eg-menu-name").all_inner_texts()]
         assert names[0].startswith("Studies In Geography: Countries") and "Next" in names[0], names
-        assert names[1:] == ["Studies In Geography: Africa", "Studies In Geography: Asia", "Studies In Geography: World"], names
+        assert names[1:] == ["Studies In Geography: Africa", "Studies In Geography: Asia", "Studies In Geography: Europe", "Studies In Geography: World"], names
         assert page.locator(".eg-menu-top h2").inner_text() == "Sets of maps"
-        assert page.locator("#egMenuDone").inner_text() == "0 of 4 done"
+        assert page.locator("#egMenuDone").inner_text() == "0 of 5 done"
         assert page.locator(".eg-menu-get").is_visible()                 # "Use it in your school"
         assert "singe-all-maps-" in page.locator(".eg-menu-get").inner_text()
         assert page.locator(".eg-menu-link").count() == 0                # no link to the menu on the menu
@@ -304,14 +337,14 @@ def check_site(browser, shots):
         page.wait_for_timeout(500)                                        # the save is written
 
         page.locator(".eg-menu-link").click()                             # back to the sets of maps
-        page.locator("#egMenuDone:has-text('1 of 4 done')").wait_for()
+        page.locator("#egMenuDone:has-text('1 of 5 done')").wait_for()
         assert "done" in page.locator(".eg-menu-item").first.get_attribute("class")
         assert "next" in page.locator(".eg-menu-item").nth(1).get_attribute("class")
         if shots:
             page.screenshot(path=os.path.join(shots, "site-menu-done.png"), full_page=True)
 
         page.goto(base + "fr/")                                           # the same save, in French
-        page.locator("#egMenuDone:has-text('1 sur 4 terminées')").wait_for()
+        page.locator("#egMenuDone:has-text('1 sur 5 terminées')").wait_for()
         assert page.locator(".eg-menu-top h2").inner_text() == "Séries de cartes"
         page.close()
     finally:
