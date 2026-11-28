@@ -114,7 +114,8 @@ package, and set `flags: true` in the map's `modes`. The game shows a flag and t
 command). It is a world-type map like the Africa maps (a window: `in_game`, `insets: false`), but with shapes of its
 own at 200 units per degree, ten times the World map's, and squeezed sideways (`x_scale: 0.8` in the projection) so
 Great Britain keeps its true shape. England, Scotland, Wales and Northern Ireland come from Natural Earth's map units;
-Cornwall (with the Isles of Scilly) is cut out of England along its admin-1 border; the Hebrides, Orkney and Shetland
+Cornwall (with the Isles of Scilly) is cut out of England along its admin-1 border, and the Isle of Wight is taken out of
+England (only on this map: the World and Europe maps keep it in the UK); the Hebrides, Orkney and Shetland
 are Scotland's islands in the World map's boxes; Rockall is left out. Everything else in the area (France, Belgium,
 the Netherlands, Norway, the Faroe Islands) is grey.
 
@@ -134,6 +135,26 @@ those regions (plus `view_pad`) and can't be zoomed out or dragged beyond it; th
 (`insets: false`) and no endless scrolling. `scope` works as on the World map ('un' or 'all'), and `merge` puts
 Somaliland into Somalia in 'un' scope. Capitals, info and flags are the map's own, in `regions`. Another continent
 can be made the same way (a folder with a settings file and its package in edugame.json).
+
+## Europe maps
+Eight more windows on the World map (`maps/europe/settings.js`, `maps/europe/lang/fr.json`). The regions are SINGE's
+own (the owner's choice): Northern Europe (the five Nordic and three Baltic countries), Western Europe (the UK, Ireland,
+Belgium, the Netherlands, Luxembourg, France), Central Europe (Germany, Switzerland, Liechtenstein, Austria, Hungary,
+Czechia, Slovakia, Poland), Southern Europe (Portugal, Spain, Andorra, Monaco, Italy, San Marino, Vatican City, Malta,
+Greece, Cyprus, Türkiye), Southeast Europe (the rest of the Balkans) and Eastern Europe (Russia, Kazakhstan, Belarus,
+Ukraine, Moldova, Romania, Georgia, Azerbaijan, Armenia). The regional maps have UN countries only (and Vatican City);
+"Europe: all" adds the World "all" map's places in Europe except those on the Africa maps (the Canary Islands,
+Madeira, Ceuta, Melilla).
+- The whole-Europe maps show 25 deg W to 59 deg E and 34 deg N to 71.5 deg N (`view`); Russia and Kazakhstan are cut
+  off at 59 deg E. The regional maps with places far from their country's mainland in UN scope (Norway, Portugal,
+  Spain, France, Russia) have a `view` too.
+- **`cutouts`**: boxes over the sea that show a place far off the map again, as copies of its shape that play like the
+  real one (same region number): Svalbard (between Norway and Iceland) and the Azores (west of Portugal, at about their
+  latitude), on the whole-Europe maps, Northern Europe (Svalbard) and Southern Europe (the Azores). `{ id, regions,
+  area, at, scale, title }` (see the settings file); a tiny place's circle moves into its box. In UN scope the box
+  shows the islands as Norway or Portugal.
+- Notes say which places are in two continents (as on the Asia maps), and each country with places that are separate
+  on the "all" maps names them (on the World, Asia and Europe maps too).
 
 ## Asia maps
 Seven more windows on the World map (`maps/asia/settings.js`, `maps/asia/lang/fr.json`), made like the Africa maps.
@@ -185,7 +206,7 @@ Data licence: Natural Earth is in the public domain; borders are its de facto li
 
 ## World map notes (v024 changes)
 - **Boxes**: the Pacific box sits under South Africa and western Australia (`PACIFIC_RIGHT_LON`), the Caribbean box on the same line over the south-east Pacific (`CARIBBEAN_RIGHT_LON`); a few small islands off Chile/Argentina may be under it.
-- **More parts split off** (All mode only; in UN mode they stay in their country, like Alaska): Easter Island, Galapagos, Tasmania, Newfoundland, Baffin Island, Okinawa Islands, Orkney, Shetland, Hebrides, Corsica, Crete, Sardinia, Sicily, Canary Islands, Balearic Islands, Azores, Madeira, Sakhalin (`SPLITS` in `tools/world.py`; add a line to split off another).
+- **More parts split off** (All mode only; in UN mode they stay in their country, like Alaska): Easter Island, Galapagos, Tasmania, Newfoundland, Baffin Island, Okinawa Islands, Nakhchivan (Azerbaijan's exclave), Orkney, Shetland, Hebrides, Corsica, Crete, Sardinia, Sicily, Canary Islands, Balearic Islands, Azores, Madeira, Sakhalin (`SPLITS` in `tools/world.py`; add a line to split off another).
 - **Clicking a part for its country** (Regions and Flags games, All mode): when the country is asked for and a far-away part of it is clicked, the part flashes yellow, is not counted, and a message says to click the main area (`feedback.not_main` in lang/*.json).
 - **Crimea** is a region of its own (`BREAKAWAY`, its outline from Natural Earth's *Admin 0 – Disputed Areas*, `--disputed`): grey in UN mode. **Transnistria**, **Abkhazia** and **South Ossetia** are too (`BREAKAWAY_CUT`: cut out of Moldova and Georgia along the lines in the disputed-areas file), with capitals (Tiraspol, Sukhumi, Tskhinvali) and flags; grey in UN mode. Nagorno-Karabakh (now held by Azerbaijan) and Natural Earth's 2022 Donetsk and Luhansk lines are left out. **Western Sahara** is the whole territory (the part Morocco controls is cut off Morocco along 27 deg 40' N, the line in the disputed-areas file; grey in UN mode). **Bosnia and Herzegovina**'s east border was moved out over the gap Natural Earth leaves for Republika Srpska (`fill_bosnia`). **Turkey** is called Tuerkiye (Türkiye).
 - **Nudges** only apply on the most zoomed-out levels: `nudge_zoom_levels` (default 2) in the map settings. Zoomed in further, circles are back at their real places (capitals: `nudge: [lat, lon]` next to the real `lat`/`lon`; region circles: `mkn` in the shapes file). The boxes never zoom, so their circles stay moved.

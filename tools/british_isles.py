@@ -14,7 +14,9 @@ The map is a world-type map (the game draws it like the Africa maps: a window, w
   1. The UK's four nations come from Natural Earth's map units (England, Scotland, Wales, N. Ireland), with Ireland,
      the Isle of Man, Jersey and Guernsey (with Alderney and Sark) and the neighbouring countries, cut to the area.
   2. Cornwall (with the Isles of Scilly) is cut out of England along its border in the admin-1 file
-     (the River Tamar); its coast is England's own, so the two fit exactly.
+     (the River Tamar); its coast is England's own, so the two fit exactly. The Isle of Wight is taken out of
+     England: every island whose middle lies in its box (only on this map; the World and Europe maps keep it in
+     the United Kingdom).
   3. Rockall (uninhabited) is left out. The Hebrides (Inner and Outer), the Orkney Islands and the Shetland Islands are taken out of Scotland: every
      island whose middle lies in their box, as on the World map (tools/world.py SPLITS).
   4. Borders are simplified once for both sides (tools/world.py's Simplifier), and the lakes of the area are drawn.
@@ -43,6 +45,7 @@ ISLANDS = [                                      # (name, lon0, lon1, lat0, lat1
     ('Hebrides', -8.9, -5.7, 55.3, 58.6),
 ]
 SCILLY = (-6.5, -6.2, 49.8, 50.05)               # the Isles of Scilly, in England's map unit: they go with Cornwall
+WIGHT = (-1.65, -1.05, 50.55, 50.8)              # lon0, lon1, lat0, lat1: the Isle of Wight, taken out of England
 LAKE_MIN = 0.08
 DROP_WEST_OF = -12.0                             # Rockall (an uninhabited rock in Scotland's map unit) is left out                                  # lakes smaller than this (degrees across) are not drawn
 
@@ -108,6 +111,15 @@ def main():
     regions['England']['geom'] = eng.difference(corn[0]).difference(scilly)
     add('Cornwall', cornwall, 'nation')
     print('Cornwall: %.3f sq. degrees (with the Isles of Scilly: %.4f)' % (cornwall.area, scilly.area))
+    eng, wight = [], []
+    for poly in to_polys(regions['England']['geom']):
+        cx, cy = ring_centroid(poly[0])
+        (wight if WIGHT[0] <= cx <= WIGHT[1] and WIGHT[2] <= cy <= WIGHT[3] else eng).append(poly)
+    if not wight:
+        sys.exit('no island for the Isle of Wight')
+    regions['England']['geom'] = MultiPolygon([Polygon(pl[0], pl[1:]) for pl in eng])
+    add('Isle of Wight', MultiPolygon([Polygon(pl[0], pl[1:]) for pl in wight]), 'nation')
+    print('Isle of Wight: %d island(s)' % len(wight))
 
     # ---- 3. Scotland's islands ----
     sco = [pl for pl in to_polys(regions['Scotland']['geom']) if ring_centroid(pl[0])[0] > DROP_WEST_OF]   # (not Rockall)

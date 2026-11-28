@@ -264,6 +264,20 @@
                        off: r.off, mk: r.mk, sz: r.sz, ins: r.ins, cont: r.cont, sub: r.sub, s: r.s, twin: r.twin, part_of: r.part_of, mkn: r.mkn,
                        province: rs.province, info: rs.info, flag: rs.flag, capital: capital });
       });
+      // CUT-OUT BOXES ("cutouts", windows only): a place shown in a box moved over the sea (Svalbard, the Azores) has its
+      // circle (marker) moved into the box too, and is that much bigger or smaller there.
+      if (shape.wrap && s.cutouts) {
+        s.cutouts.forEach(function (c) {
+          var t = cutTransform(c, shape);
+          regions.forEach(function (r) {
+            if (!r.mk || c.regions.indexOf(r.name) < 0) return;
+            if (r.mk[0] < t.x0 || r.mk[0] > t.x1 || r.mk[1] < t.y0 || r.mk[1] > t.y1) return;
+            r.mk = [t.ax + (r.mk[0] - t.x0) * t.s, t.ay + (r.mk[1] - t.y0) * t.s];
+            r.mkn = null;
+            r.sz = r.sz * t.s;
+          });
+        });
+      }
       // COMBINED PLACES: a "twin" (Sint Maarten) has no shape of its own: it shares the shape, circles and capital circle
       // of its "host" (Saint Martin) but is still a separate entry in every game mode. host = number of the region that
       // has the shape; members = numbers of everything that shares it (on the host).
@@ -286,6 +300,7 @@
                   pass_accuracy: s.pass_accuracy, skip: s.skip, modes: s.modes, regions: regions,
                   wrap: shape.wrap, strip: insets.length ? shape.strip : null, strip_y: insets.length ? shape.strip_y : null,
                   total: insets.length ? shape.total : null, lakes: shape.lakes, window: !!inGame, view_pad: s.view_pad, view: s.view,
+                  cutouts: shape.wrap ? s.cutouts : null,
                   insets: insets, scope: scope, max_map_height: s.max_map_height,
                   infinite_scroll: s.infinite_scroll, page_width: s.page_width, fit_all_min_height: s.fit_all_min_height,
                   circle_ratio: s.circle_ratio, marker_px: s.marker_px, nudge_zoom_levels: s.nudge_zoom_levels });
@@ -821,6 +836,44 @@
     map.regions.forEach(function (r, i) { if (r.off) each(r, i); });
     map.regions.forEach(function (r, i) { if (!r.off) each(r, i); });
   }
+  // CUT-OUT BOXES on a window ("cutouts" in the settings): a place far off the map's edge (Svalbard, the Azores) is
+  // shown again in a box over the sea: { id, regions: [names whose shapes are copied in], area: [west, south, east,
+  // north] (what the box shows), at: [lon, lat] (where its top left corner goes), scale, title }. The copies are
+  // ordinary regions (same data-i): clicking, colours and highlights work on them as on the real place. The title goes
+  // just above the box (title_size: its size in map units, 26 by default).
+  function cutTransform(c, shape) {
+    var k = shape.scale || 20, top = millerY(shape.projection.lat_top), xs = shape.projection.x_scale || 1;
+    function X(lon) { return (lon + 180) * k * xs; }
+    function Y(lat) { return (top - millerY(lat)) * k; }
+    return { x0: X(c.area[0]), x1: X(c.area[2]), y0: Y(c.area[3]), y1: Y(c.area[1]), ax: X(c.at[0]), ay: Y(c.at[1]), s: c.scale || 1 };
+  }
+  function addCutouts(map, tile) {
+    (map.cutouts || []).forEach(function (c) {
+      var t = cutTransform(c, map), w = (t.x1 - t.x0) * t.s, h = (t.y1 - t.y0) * t.s;
+      var box = svgEl('g', { 'class': 'cutout' });
+      box.appendChild(svgEl('rect', { 'class': 'frame-back', x: t.ax, y: t.ay, width: w, height: h }));
+      box.appendChild(svgEl('rect', { 'class': 'frame', x: t.ax, y: t.ay, width: w, height: h }));
+      var clip = svgEl('clipPath', { id: 'cut_' + c.id });
+      clip.appendChild(svgEl('rect', { x: t.x0, y: t.y0, width: t.x1 - t.x0, height: t.y1 - t.y0 }));
+      box.appendChild(clip);
+      var moved = svgEl('g', { transform: 'translate(' + t.ax + ',' + t.ay + ') scale(' + t.s + ') translate(' + (-t.x0) + ',' + (-t.y0) + ')' });
+      var inner = svgEl('g', { 'clip-path': 'url(#cut_' + c.id + ')' });
+      var paths = tile.querySelectorAll(':scope > .region');
+      for (var j = 0; j < paths.length; j++) {
+        if (c.regions.indexOf(paths[j].getAttribute('data-name')) < 0) continue;
+        inner.appendChild(paths[j].cloneNode(true));
+        var next = paths[j].nextSibling;              // (a region drawn without its own outline: the outline follows it)
+        if (paths[j].classList.contains('nostroke') && next && next.classList && next.classList.contains('rstroke')) inner.appendChild(next.cloneNode(true));
+      }
+      moved.appendChild(inner);
+      box.appendChild(moved);
+      var title = svgEl('text', { 'class': 'cuttitle', x: t.ax, y: t.ay - 6, 'font-size': c.title_size || 26 });   // (just above the box)
+      var m = mapTextFor(map);
+      title.textContent = (m && m.cutouts && m.cutouts[c.id]) || c.title || '';
+      box.appendChild(title);
+      tile.appendChild(box);
+    });
+  }
   function buildWorld(map) {
     var svg = svgEl('svg', { viewBox: '0 0 ' + map.size[0] + ' ' + map.size[1] });
     var tile = svgEl('g', { 'class': 'tile' });
@@ -829,6 +882,7 @@
     inOrder(map, function (r, i) { if (r.d) addRegion(tile, r, i, r.d, r.s); });
     // big lakes that cross borders (Great Lakes, Victoria, Malawi...) are drawn as water on top of the land
     (map.lakes || []).forEach(function (l) { tile.appendChild(svgEl('path', { d: l.d, 'class': 'lake' })); });
+    addCutouts(map, tile);                          // (in the tile: the circles of tiny places, added later, go on top)
     svg.appendChild(tile);
     g.tile = tile;
     return svg;

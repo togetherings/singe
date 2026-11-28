@@ -2,7 +2,7 @@
 
 A map game where you click the correct location of countries, capitals and flags. It is plain HTML, CSS and JavaScript (no libraries), works offline, and is built to run inside the [Kolibri](https://learningequality.org/kolibri/) Offline Learning Platform as an HTML5 app. It is a *Scored Game* made with [EduGame Kit](https://github.com/togetherings/edugame-kit), so it works with the [Kolibri Games](https://github.com/togetherings/kolibri-games) plugin's scoreboards. Scores are saved through SCORM 1.2 in Kolibri (and in the browser when played elsewhere).
 
-**Maps:** Sierra Leone (18 districts, including the new Bandajuma and Kpanguima), United States, British Isles (the UK's four nations, Ireland, the Crown Dependencies, Cornwall, and Scotland's three island groups), France (18 regions, the overseas ones in boxes), Africa (seven maps: the African Union's five regions, the whole continent, and every country and territory), Asia (seven maps: North and Central, East, Southeast, South and West Asia, the whole continent, and every country and territory), World (two versions: UN members only, or every country, territory and island).
+**Maps:** Sierra Leone (18 districts, including the new Bandajuma and Kpanguima), United States, British Isles (the UK's four nations, Ireland, the Crown Dependencies, Cornwall, the Isle of Wight, and Scotland's three island groups), France (18 regions, the overseas ones in boxes), Africa (seven maps: the African Union's five regions, the whole continent, and every country and territory), Asia (seven maps: North and Central, East, Southeast, South and West Asia, the whole continent, and every country and territory), Europe (eight maps: Northern, Western, Central, Southern, Southeast and Eastern Europe, the whole continent, and every country and territory), World (two versions: UN members only, or every country, territory and island).
 **Modes:** Practice, Regions, Capitals, Flags (each can be turned on or off per map).
 
 **Current version: 0.4.0** (see [CHANGELOG.md](CHANGELOG.md)).
@@ -26,6 +26,7 @@ SINGE comes in separate zipped packages of maps. Download them from the [Release
 | `singe-world-<version>.zip` | World (UN countries) and World (all countries, territories and islands) |
 | `singe-africa-<version>.zip` | North, West, Central, East and Southern Africa, Africa (UN countries) and Africa (all countries and territories) |
 | `singe-asia-<version>.zip` | North and Central, East, Southeast, South and West Asia, Asia (UN countries) and Asia (all countries and territories) |
+| `singe-europe-<version>.zip` | Northern, Western, Central, Southern, Southeast and Eastern Europe, Europe (UN countries) and Europe (all countries and territories) |
 
 All packages are the same game (same id), so a learner's scores from every package appear together on the scoreboards. Each zip has every language (English and French); learners choose theirs with the Options button, and get Kolibri's language until they do. To make your own package, add it to `packages` in `edugame.json` and run `edugame build . -o dist` (see [docs/GUIDE.md](docs/GUIDE.md)).
 

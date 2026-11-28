@@ -1,0 +1,300 @@
+{
+  "name": "Europe",
+  "blurb": "Trouvez les pays d'Europe",
+  "credit": "Limites et capitales : Natural Earth (domaine public, naturalearthdata.com), comme sur la carte du monde. Les frontières suivent les lignes de fait de Natural Earth. Les petits pays et les îles sont marqués par des cercles.",
+  "variants": {
+    "europe_north": {
+      "name": "Europe du Nord",
+      "blurb": "Trouvez les 8 pays d'Europe du Nord : les pays nordiques et baltes"
+    },
+    "europe_west": {
+      "name": "Europe de l'Ouest",
+      "blurb": "Trouvez les 6 pays d'Europe de l'Ouest"
+    },
+    "europe_central": {
+      "name": "Europe centrale",
+      "blurb": "Trouvez les 8 pays d'Europe centrale"
+    },
+    "europe_south": {
+      "name": "Europe du Sud",
+      "blurb": "Trouvez les 11 pays d'Europe du Sud"
+    },
+    "europe_southeast": {
+      "name": "Europe du Sud-Est",
+      "blurb": "Trouvez les 8 pays d'Europe du Sud-Est : les Balkans"
+    },
+    "europe_east": {
+      "name": "Europe de l'Est",
+      "blurb": "Trouvez les 9 pays d'Europe de l'Est",
+      "credit": "Limites et capitales : Natural Earth (domaine public, naturalearthdata.com), comme sur la carte du monde. Les frontières suivent les lignes de fait de Natural Earth. Les petits pays et les îles sont marqués par des cercles. La Russie et le Kazakhstan sont coupés à 59° E."
+    },
+    "europe": {
+      "name": "Europe : pays de l'ONU",
+      "blurb": "Trouvez les 50 pays d'Europe (49 membres de l'ONU et la Cité du Vatican)",
+      "credit": "Limites et capitales : Natural Earth (domaine public, naturalearthdata.com), comme sur la carte du monde. Les frontières suivent les lignes de fait de Natural Earth. Les petits pays et les îles sont marqués par des cercles. La Russie et le Kazakhstan sont coupés à 59° E. Le Svalbard et les Açores sont montrés dans des cadres."
+    },
+    "europe_all": {
+      "name": "Europe : tous les pays et territoires",
+      "blurb": "Trouvez chaque pays et territoire d'Europe",
+      "credit": "Limites et capitales : Natural Earth (domaine public, naturalearthdata.com), comme sur la carte du monde. Les frontières suivent les lignes de fait de Natural Earth. Les petits pays et les îles sont marqués par des cercles. La Russie et le Kazakhstan sont coupés à 59° E. Le Svalbard et les Açores sont montrés dans des cadres."
+    }
+  },
+  "cutouts": {
+    "svalbard": "Svalbard (Norvège)",
+    "azores": "Açores (Portugal)"
+  },
+  "regions": {
+    "Abkhazia": {
+      "name": "Abkhazie",
+      "capital": "Soukhoumi",
+      "info": "Sur la côte de la mer Noire, une partie de la Géorgie. Elle a fait sécession après une guerre en 1992-1993 et se gouverne elle-même avec le soutien de la Russie. La Russie et quelques autres pays la reconnaissent comme indépendante depuis 2008 ; la plupart des pays la considèrent comme une partie de la Géorgie. Comme la Géorgie, elle est généralement comptée en Asie, et souvent aussi en Europe."
+    },
+    "Albania": {
+      "name": "Albanie"
+    },
+    "Andorra": {
+      "name": "Andorre",
+      "capital": "Andorre-la-Vieille"
+    },
+    "Armenia": {
+      "name": "Arménie",
+      "capital": "Erevan",
+      "info": "Toute l'Arménie se trouve au sud des montagnes du Caucase, donc en Asie, mais elle est membre du Conseil de l'Europe et souvent comptée aussi en Europe."
+    },
+    "Austria": {
+      "name": "Autriche",
+      "capital": "Vienne"
+    },
+    "Azerbaijan": {
+      "name": "Azerbaïdjan",
+      "capital": "Bakou",
+      "info": "L'Azerbaïdjan est entre l'Europe et l'Asie. La plus grande partie se trouve au sud de la ligne de crête du Caucase, souvent prise comme limite entre les deux, donc il est généralement compté en Asie ; un peu du nord se trouve au-delà. Il est membre du Conseil de l'Europe et souvent compté aussi en Europe. Le Nakhitchevan est un lieu à part sur les cartes de tous les pays et territoires."
+    },
+    "Azores": {
+      "name": "Açores",
+      "info": "Des îles en plein Atlantique, une région autonome du Portugal. Elles sont montrées dans un cadre, déplacées vers l'est par rapport à leur vraie place."
+    },
+    "Balearic Islands": {
+      "name": "Îles Baléares"
+    },
+    "Belarus": {
+      "name": "Biélorussie",
+      "info": "Aussi appelée Bélarus."
+    },
+    "Belgium": {
+      "name": "Belgique",
+      "capital": "Bruxelles"
+    },
+    "Bosnia and Herzegovina": {
+      "name": "Bosnie-Herzégovine",
+      "info": "Le pays est formé de deux parties (entités), chacune avec son propre gouvernement : la Fédération de Bosnie-et-Herzégovine et la République serbe de Bosnie (Republika Srpska). Le district de Brčko appartient aux deux et se gouverne lui-même."
+    },
+    "Bulgaria": {
+      "name": "Bulgarie"
+    },
+    "Corsica": {
+      "name": "Corse"
+    },
+    "Crete": {
+      "name": "Crète"
+    },
+    "Crimea": {
+      "name": "Crimée",
+      "info": "Une péninsule sur la mer Noire, une partie de l'Ukraine ; la Russie l'occupe depuis 2014 et la revendique. Son drapeau est utilisé par les deux."
+    },
+    "Croatia": {
+      "name": "Croatie"
+    },
+    "Cyprus": {
+      "name": "Chypre",
+      "capital": "Nicosie",
+      "info": "L'île de Chypre est en Asie, au sud de la Turquie, mais Chypre est membre de l'Union européenne et généralement comptée aussi en Europe."
+    },
+    "Czechia": {
+      "name": "Tchéquie",
+      "info": "Aussi appelée République tchèque."
+    },
+    "Denmark": {
+      "name": "Danemark",
+      "capital": "Copenhague",
+      "info": "Les îles Féroé et le Groenland sont des lieux à part sur les cartes de tous les pays et territoires. Le Groenland, la plus grande île du monde, fait partie du royaume de Danemark mais se gouverne lui-même ; géographiquement, il fait partie de l'Amérique du Nord. Les îles Féroé se gouvernent elles-mêmes aussi."
+    },
+    "Estonia": {
+      "name": "Estonie"
+    },
+    "Faroe Islands": {
+      "name": "Îles Féroé"
+    },
+    "Finland": {
+      "name": "Finlande",
+      "info": "Les îles Åland forment un lieu à part sur les cartes de tous les pays et territoires."
+    },
+    "France": {
+      "info": "La Corse, la Guyane, la Polynésie française, la Guadeloupe, la Martinique, Mayotte, la Nouvelle-Calédonie, La Réunion, Saint-Barthélemy, Saint-Martin, Saint-Pierre-et-Miquelon et Wallis-et-Futuna sont des lieux à part sur les cartes de tous les pays et territoires."
+    },
+    "Georgia": {
+      "name": "Géorgie",
+      "capital": "Tbilissi",
+      "info": "La Géorgie est entre l'Europe et l'Asie. La plus grande partie se trouve au sud de la ligne de crête du Caucase, souvent prise comme limite entre les deux, donc elle est généralement comptée en Asie ; un peu se trouve au nord. Elle est membre du Conseil de l'Europe et souvent comptée aussi en Europe."
+    },
+    "Germany": {
+      "name": "Allemagne"
+    },
+    "Greece": {
+      "name": "Grèce",
+      "capital": "Athènes",
+      "info": "La Crète est un lieu à part sur les cartes de tous les pays et territoires."
+    },
+    "Guernsey": {
+      "name": "Guernesey"
+    },
+    "Hebrides": {
+      "name": "Hébrides"
+    },
+    "Hungary": {
+      "name": "Hongrie"
+    },
+    "Iceland": {
+      "name": "Islande",
+      "capital": "Reykjavik"
+    },
+    "Ireland": {
+      "name": "Irlande"
+    },
+    "Isle of Man": {
+      "name": "Île de Man"
+    },
+    "Italy": {
+      "name": "Italie",
+      "info": "La Sardaigne et la Sicile sont des lieux à part sur les cartes de tous les pays et territoires."
+    },
+    "Kaliningrad": {
+      "info": "L'exclave de la Russie sur la mer Baltique, entre la Pologne et la Lituanie."
+    },
+    "Kazakhstan": {
+      "info": "Astana est la capitale depuis 1997 (avant, c'était Almaty) ; elle s'est appelée Noursoultan de 2019 à 2022. Le Kazakhstan est à la fois en Asie et en Europe : une petite partie, à l'ouest du fleuve Oural, est comptée en Europe. Cette carte est coupée à 59° E."
+    },
+    "Latvia": {
+      "name": "Lettonie"
+    },
+    "Lithuania": {
+      "name": "Lituanie"
+    },
+    "Malta": {
+      "name": "Malte",
+      "capital": "La Valette"
+    },
+    "Moldova": {
+      "name": "Moldavie",
+      "capital": "Chisinau",
+      "info": "Aussi appelée Moldova."
+    },
+    "Montenegro": {
+      "name": "Monténégro",
+      "info": "Podgorica est la capitale ; Cetinje, l'ancienne capitale royale, a toujours la résidence officielle du président."
+    },
+    "Nakhchivan": {
+      "name": "Nakhitchevan",
+      "info": "Une exclave de l'Azerbaïdjan : une république autonome, séparée du reste du pays par l'Arménie. Elle n'a pas de drapeau officiel. Comme l'Azerbaïdjan, elle est généralement comptée en Asie, et souvent aussi en Europe."
+    },
+    "Netherlands": {
+      "name": "Pays-Bas",
+      "info": "Souvent appelés Hollande, qui est en fait le nom de deux de ses provinces ; depuis 2020, le gouvernement n'utilise que « Pays-Bas » pour tout le pays. Amsterdam est la capitale ; le gouvernement, le parlement et le roi travaillent à La Haye. Aruba, Bonaire, Curaçao, Saba, Saint-Eustache et Saint-Martin (partie néerlandaise) sont des lieux à part sur les cartes de tous les pays et territoires."
+    },
+    "North Macedonia": {
+      "name": "Macédoine du Nord",
+      "info": "Appelée Macédoine jusqu'en 2019."
+    },
+    "Northern Cyprus": {
+      "name": "Chypre du Nord",
+      "capital": "Nicosie-Nord",
+      "info": "L'île de Chypre est en Asie, au sud de la Turquie, mais elle est généralement comptée aussi en Europe."
+    },
+    "Norway": {
+      "name": "Norvège",
+      "info": "Le Svalbard est un lieu à part sur les cartes de tous les pays et territoires. Le Svalbard, loin au nord, est montré dans un cadre sur ces cartes."
+    },
+    "Orkney Islands": {
+      "name": "Orcades"
+    },
+    "Poland": {
+      "name": "Pologne",
+      "capital": "Varsovie"
+    },
+    "Portugal": {
+      "capital": "Lisbonne",
+      "info": "Les Açores et Madère sont des lieux à part sur les cartes de tous les pays et territoires. Madère, au large de l'Afrique, est généralement comptée en Afrique (elle est sur les cartes de l'Afrique). Les Açores, en plein Atlantique, sont montrées dans un cadre sur ces cartes."
+    },
+    "Romania": {
+      "name": "Roumanie",
+      "capital": "Bucarest"
+    },
+    "Russia": {
+      "name": "Russie",
+      "capital": "Moscou",
+      "info": "Kaliningrad et Sakhaline sont des lieux à part sur les cartes de tous les pays et territoires. La Russie est à la fois en Europe et en Asie. La plupart des Russes vivent dans sa partie européenne, à l'ouest de l'Oural, où se trouve Moscou ; sa partie asiatique, la Sibérie, fait environ les trois quarts de son territoire. Cette carte est coupée à 59° E, près de l'Oural."
+    },
+    "San Marino": {
+      "name": "Saint-Marin",
+      "capital": "Saint-Marin"
+    },
+    "Sardinia": {
+      "name": "Sardaigne"
+    },
+    "Serbia": {
+      "name": "Serbie"
+    },
+    "Shetland Islands": {
+      "name": "Shetland"
+    },
+    "Sicily": {
+      "name": "Sicile"
+    },
+    "Slovakia": {
+      "name": "Slovaquie"
+    },
+    "Slovenia": {
+      "name": "Slovénie"
+    },
+    "South Ossetia": {
+      "name": "Ossétie du Sud",
+      "info": "Dans les montagnes du Caucase, une partie de la Géorgie. Elle a fait sécession en 1991-1992 et se gouverne elle-même avec le soutien de la Russie. La Russie et quelques autres pays la reconnaissent comme indépendante depuis 2008 ; la plupart des pays la considèrent comme une partie de la Géorgie. Comme la Géorgie, elle est généralement comptée en Asie, et souvent aussi en Europe."
+    },
+    "Spain": {
+      "name": "Espagne",
+      "info": "Les îles Baléares, les îles Canaries, Ceuta et Melilla sont des lieux à part sur les cartes de tous les pays et territoires. L'Espagne est surtout en Europe ; les îles Canaries, Ceuta et Melilla sont en Afrique (elles sont sur les cartes de l'Afrique)."
+    },
+    "Svalbard": {
+      "info": "Des îles arctiques, une partie de la Norvège. Elles sont montrées dans un cadre, déplacées vers le sud par rapport à leur vraie place, loin au nord de la Norvège."
+    },
+    "Sweden": {
+      "name": "Suède"
+    },
+    "Switzerland": {
+      "name": "Suisse",
+      "capital": "Berne"
+    },
+    "Transnistria": {
+      "name": "Transnistrie",
+      "info": "Une bande de terre le long du Dniestr, une partie de la Moldavie. Elle a fait sécession en 1990-1992 et se gouverne elle-même depuis, avec des troupes russes sur place. Aucun membre de l'ONU ne la reconnaît ; la plupart des pays la considèrent comme une partie de la Moldavie."
+    },
+    "Türkiye": {
+      "name": "Turquie",
+      "info": "Aussi appelée Türkiye, le nom que le pays a demandé en 2022 et que l'ONU utilise. La Turquie est à la fois en Asie et en Europe : la plus grande partie est l'Anatolie, en Asie ; la petite partie à l'ouest du Bosphore, avec une partie d'Istanbul, est en Europe."
+    },
+    "Ukraine": {
+      "capital": "Kyiv"
+    },
+    "United Kingdom": {
+      "name": "Royaume-Uni",
+      "capital": "Londres",
+      "info": "Anguilla, les Bermudes, les îles Vierges britanniques, les îles Caïmans, les îles Malouines, Gibraltar, Guernesey, les Hébrides, l'île de Man, Jersey, Montserrat, les Orcades, les îles Pitcairn, Sainte-Hélène, les Shetland, Tristan da Cunha et les îles Turques-et-Caïques sont des lieux à part sur les cartes de tous les pays et territoires."
+    },
+    "Vatican City": {
+      "name": "Cité du Vatican"
+    },
+    "Åland Islands": {
+      "name": "Îles Åland"
+    }
+  }
+}

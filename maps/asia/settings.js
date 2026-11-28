@@ -118,7 +118,8 @@
         'Abkhazia', 'Afghanistan', 'Armenia', 'Azerbaijan', 'Bahrain', 'Bangladesh', 'Bhutan', 'Brunei', 'Cambodia',
         'China', 'Christmas Island', 'Cocos (Keeling) Islands', 'Cyprus', 'Egypt', 'Georgia', 'Hong Kong', 'India',
         'Indonesia', 'Iran', 'Iraq', 'Israel', 'Japan', 'Jordan', 'Kazakhstan', 'Kuwait', 'Kyrgyzstan', 'Laos',
-        'Lebanon', 'Macau', 'Malaysia', 'Maldives', 'Mongolia', 'Myanmar', 'Nepal', 'North Korea', 'Northern Cyprus',
+        'Lebanon', 'Macau', 'Malaysia', 'Maldives', 'Mongolia', 'Myanmar', 'Nakhchivan', 'Nepal', 'North Korea',
+        'Northern Cyprus',
         'Okinawa Islands', 'Oman', 'Pakistan', 'Palestine', 'Philippines', 'Qatar', 'Russia', 'Sakhalin',
         'Saudi Arabia', 'Singapore', 'South Korea', 'South Ossetia', 'Sri Lanka', 'Syria', 'Taiwan', 'Tajikistan',
         'Thailand', 'Timor-Leste', 'Turkmenistan', 'Türkiye', 'United Arab Emirates', 'Uzbekistan', 'Vietnam', 'Yemen'
@@ -144,7 +145,7 @@
     },
     'Azerbaijan': {
       capital: { name: 'Baku', lat: 40.3972, lon: 49.8603, info: '' },
-      info: 'Azerbaijan is between Europe and Asia. Most of it lies south of the main ridge of the Caucasus mountains, which is often taken as the line between them, so it is usually counted in Asia; a little of the north lies beyond it. It is a member of the Council of Europe and is often counted in Europe too.',
+      info: 'Azerbaijan is between Europe and Asia. Most of it lies south of the main ridge of the Caucasus mountains, which is often taken as the line between them, so it is usually counted in Asia; a little of the north lies beyond it. It is a member of the Council of Europe and is often counted in Europe too. Nakhchivan is a separate place on the maps of all countries and territories.',
       flag: 'maps/world/flags/az.svg'
     },
     'Bahrain': {
@@ -174,7 +175,7 @@
     },
     'China': {
       capital: { name: 'Beijing', lat: 39.9017, lon: 116.3942, info: '' },
-      info: '',
+      info: 'Hong Kong and Macau are separate places on the maps of all countries and territories.',
       flag: 'maps/world/flags/cn.svg'
     },
     'Christmas Island': {
@@ -231,7 +232,7 @@
     },
     'Japan': {
       capital: { name: 'Tokyo', lat: 35.687, lon: 139.7495, info: '' },
-      info: '',
+      info: 'The Okinawa Islands are a separate place on the maps of all countries and territories.',
       flag: 'maps/world/flags/jp.svg'
     },
     'Jordan': {
@@ -288,6 +289,10 @@
       info: 'Formerly called Burma (the name changed in 1989, and some countries still use it). Naypyidaw has been the capital since 2005; before that it was Yangon (Rangoon), the largest city.',
       flag: 'maps/world/flags/mm.svg'
     },
+    'Nakhchivan': {
+      info: 'An exclave of Azerbaijan: an autonomous republic, cut off from the rest of the country by Armenia. It has no official flag of its own. Like Azerbaijan, it is usually counted in Asia, and often in Europe too.',
+      flag: ''
+    },
     'Nepal': {
       capital: { name: 'Kathmandu', lat: 27.7186, lon: 85.3147, info: '' },
       info: '',
@@ -334,7 +339,7 @@
     },
     'Russia': {
       capital: { name: 'Moscow', lat: 55.7541, lon: 37.6136, info: '' },
-      info: 'Russia is in both Europe and Asia. Its Asian part, Siberia, east of the Ural Mountains, is about three-quarters of its land, but most Russians live in its European part, west of the Urals, where Moscow is. This map is cut off in the north and east, so northern Siberia, Kamchatka and Chukotka don\'t show.',
+      info: 'Russia is in both Europe and Asia. Its Asian part, Siberia, east of the Ural Mountains, is about three-quarters of its land, but most Russians live in its European part, west of the Urals, where Moscow is. This map is cut off in the north and east, so northern Siberia, Kamchatka and Chukotka don\'t show. Kaliningrad and Sakhalin are separate places on the maps of all countries and territories.',
       flag: 'maps/world/flags/ru.svg'
     },
     'Sakhalin': {
