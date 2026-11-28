@@ -73,9 +73,10 @@
 
   /* ---------- The kit's header (Options; on the website, the link to the sets of maps) and Options panel ----------
      The same buttons as the rest of the game: an outline in the border colour, teal on hover. */
-  .eg-header .eg-options-button, .eg-header .eg-menu-link, .eg-card .eg-actions button {
+  .eg-header .eg-options-button, .eg-header .eg-keys-button, .eg-header .eg-menu-link, .eg-card .eg-actions button, .eg-keys .eg-keys-close {
     font: inherit; border: 2px solid var(--line); background: var(--card); color: var(--text); border-radius: 6px; }
   .eg-header .eg-options-button:hover, .eg-header .eg-options-button:focus-visible,
+  .eg-header .eg-keys-button:hover, .eg-header .eg-keys-button:focus-visible, .eg-keys .eg-keys-close:hover, .eg-keys .eg-keys-close:focus-visible,
   .eg-header .eg-menu-link:hover, .eg-header .eg-menu-link:focus-visible,
   .eg-card .eg-actions button:hover, .eg-card .eg-actions button:focus-visible { background: var(--accent); color: #fff; outline: none; }
   .eg-card .eg-actions .eg-primary { background: var(--accent); color: #fff; }
@@ -152,7 +153,6 @@
   #bar:empty { display: none; }
   #row1 { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); column-gap: 8px; align-items: start; }
   #topBtns { grid-column: 1; justify-self: start; display: flex; gap: 6px; }
-  #keysBtn, #menuKeys { min-width: 2.4em; padding: 6px 10px; font-weight: bold; }
   #skipBtns { grid-column: 2; justify-self: center; display: flex; gap: 6px; }
   #skipBtns.hidden { display: none; }
   #skipBtns button { min-width: 2.4em; padding: 6px 10px; font-weight: bold; }
@@ -323,26 +323,10 @@
   #kbdRing { position: fixed; z-index: 3; pointer-events: none; border-radius: 50%; border: 4px solid var(--point);
              box-shadow: 0 0 0 2px var(--line), inset 0 0 0 2px var(--line); }
   #kbdRing.hidden { display: none; }                 /* the highlight shows where the keyboard is */
-  #kbdHint { position: fixed; z-index: 6; bottom: 12px; left: 50%; transform: translateX(-50%); pointer-events: none;
-             padding: 4px 12px; border-radius: 4px; background: var(--tip-bg); color: var(--tip-text); font-size: .95rem;
-             width: max-content; max-width: calc(100vw - 24px); text-align: center; white-space: pre-wrap; }   /* (keeps the spaces round the dots) */
-  #kbdHint.hidden { display: none; }
-  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  #keysBack { position: fixed; inset: 0; z-index: 10; background: var(--backdrop);
-              display: flex; align-items: center; justify-content: center; padding: 16px; }
-  #keysBack.hidden { display: none; }
-  #keysCard { position: relative; background: var(--card); border: 2px solid var(--line); border-radius: 8px;
-              padding: 16px 20px; max-width: 520px; width: 100%; max-height: 85vh; overflow-y: auto; }
-  #keysCard h3 { margin: 0 32px 8px 0; font-size: 1.4rem; }
-  #keysClose { position: absolute; top: 8px; right: 8px; width: 2em; padding: 2px 0; font-size: 1.1rem; line-height: 1; }
-  html[dir="rtl"] #keysClose { right: auto; left: 8px; }
-  /* Opened on the menu, the list has the menu's keys first; opened in a game only the map's (F only in Flags mode) */
-  #keysCard:not(.onMenu) .menuRow, #keysCard:not(.flagMode) .flagRow, #keysCard.onMenu .mapHelp { display: none; }
-  #keysList .keysHead { grid-column: 1 / -1; font-size: 1.05rem; margin-top: 8px; }
-  #keysList .keysHead:first-child { margin-top: 0; }
-  #keysList { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; }
-  #keysList dt { font-weight: bold; white-space: nowrap; }
-  #keysList dd { margin: 0; }
+  /* The kit's list of keys (EduGame.addKeys, js/game.js) is a card like the Options panel (below); its first-key hint
+     at the bottom of the screen is the name label's colours */
+  body .eg-key-hint { background: var(--tip-bg); color: var(--tip-text); font: .95rem/1.4 Georgia, "Times New Roman", serif; border-radius: 4px; }
+  .eg-overlay.eg-keys .eg-card { max-width: 520px; max-height: 85vh; overflow-y: auto; }
 
   /* ---------- Options page ---------- */
 
@@ -364,7 +348,6 @@
     <div id="menuTop">
       <h2 data-t="menu.title"></h2>
       <span id="menuDone"></span>
-      <button id="menuKeys" type="button" data-t-attr="title:keys.button,aria-label:keys.button" aria-haspopup="dialog">&#x2328;&#xFE0E;</button>
     </div>
     <div id="menuList"></div>
   </div>
@@ -376,7 +359,6 @@
       <div id="row1">
         <span id="topBtns">
           <button id="backBtn" data-t="game.back" data-t-attr="title:game.back_hint,aria-label:game.back_hint"></button>
-          <button id="keysBtn" data-t-attr="title:keys.button,aria-label:keys.button" aria-haspopup="dialog">&#x2328;&#xFE0E;</button>
         </span>
         <span id="skipBtns" class="hidden">
           <button id="skipPrev" data-t="skip.prev_icon" data-t-attr="title:skip.prev,aria-label:skip.prev"></button>
@@ -392,12 +374,11 @@
         </div>
       </div>
       <div id="row2">
-        <div id="prompt" aria-live="polite"></div>
+        <div id="prompt"></div>
         <img id="promptFlag" class="hidden" tabindex="0" role="button" data-t-attr="alt:flag.alt,title:flag.hint">
       </div>
-      <div id="feedback" aria-live="polite"></div>
+      <div id="feedback"></div>
     </div>
-    <div id="kbdHint" class="hidden" data-t="keys.hint"></div>
     <div id="mapWrap">
       <div id="mapTop"></div>   <!-- the bar's lines that lie over the map -->
       <span id="zoomBtns">
@@ -407,7 +388,6 @@
       </span>
       <div id="mapBox" tabindex="-1" role="application" data-t-attr="aria-label:keys.map"></div>
     </div>
-    <div id="kbdSay" class="sr" aria-live="polite"></div>
     <div id="stripBox"></div>   <!-- world map: the fixed boxes under the map (Caribbean, Pacific) -->
     <div id="gameCredit" class="credit"></div>
   </div>
@@ -439,36 +419,6 @@
   <div id="flagCard" role="dialog" aria-modal="true" data-t-attr="aria-label:flag.full_alt">
     <button id="flagClose" data-t-attr="aria-label:common.close">&times;</button>
     <img id="flagBig" data-t-attr="alt:flag.full_alt">
-  </div>
-</div>
-
-<!-- The keyboard's keys (the ⌨ button or the ? key) -->
-<div id="keysBack" class="hidden">
-  <div id="keysCard" role="dialog" aria-modal="true" aria-labelledby="keysTitle">
-    <button id="keysClose" data-t-attr="aria-label:common.close">&times;</button>
-    <h3 id="keysTitle" data-t="keys.title"></h3>
-    <!-- One list, so the two columns line up. Opened on the menu it has the menu's keys first, then the map's;
-         in a game only the map's (and F in Flags mode). game.js openKeys sets onMenu and flagMode. -->
-    <dl id="keysList">
-      <dt class="keysHead menuRow" data-t="keys.on_menu"></dt>
-      <dt class="menuRow" data-t="keys.k_tab_menu"></dt><dd class="menuRow" data-t="keys.t_tab_menu"></dd>
-      <dt class="menuRow" data-t="keys.k_ends"></dt><dd class="menuRow" data-t="keys.t_ends"></dd>
-      <dt class="menuRow" data-t="keys.k_choose"></dt><dd class="menuRow" data-t="keys.t_choose_menu"></dd>
-      <dt class="menuRow" data-t="keys.k_help"></dt><dd class="menuRow" data-t="keys.t_help"></dd>
-      <dt class="keysHead menuRow" data-t="keys.on_map"></dt>
-      <dt data-t="keys.k_tab"></dt><dd data-t="keys.t_tab"></dd>
-      <dt data-t="keys.k_arrows"></dt><dd data-t="keys.t_arrows"></dd>
-      <dt data-t="keys.k_choose"></dt><dd data-t="keys.t_choose"></dd>
-      <dt data-t="keys.k_pan"></dt><dd data-t="keys.t_pan"></dd>
-      <dt data-t="keys.k_zoom"></dt><dd data-t="keys.t_zoom"></dd>
-      <dt data-t="keys.k_zoomout"></dt><dd data-t="keys.t_zoomout"></dd>
-      <dt data-t="keys.k_full"></dt><dd data-t="keys.t_full"></dd>
-      <dt data-t="keys.k_skip"></dt><dd data-t="keys.t_skip"></dd>
-      <dt data-t="keys.k_back"></dt><dd data-t="keys.t_back"></dd>
-      <dt class="flagRow" data-t="keys.k_flag"></dt><dd class="flagRow" data-t="keys.t_flag"></dd>
-      <dt class="mapHelp" data-t="keys.k_help"></dt><dd class="mapHelp" data-t="keys.t_help"></dd>
-      <dt data-t="keys.k_menu"></dt><dd data-t="keys.t_menu"></dd>
-    </dl>
   </div>
 </div>
 

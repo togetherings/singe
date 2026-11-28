@@ -55,16 +55,14 @@
     el("egMenuMore").textContent = t("kit.menu_more", { names: more.map(function (l) { return l.name; }).join(", ") });
   }
 
-  // The list of keys: the ⌨ button, ? or /. EduGame.dialog holds the keyboard while it's open (Escape, Close or a
-  // click outside closes it, and the keyboard goes back).
-  var keys = EduGame.dialog(el("egKeysBack"), { card: el("egKeysCard"), close: el("egKeysClose") });
-  el("egMenuKeys").addEventListener("click", keys.open);
-  document.addEventListener("keydown", function (e) {
-    if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey || keys.isOpen()) { return; }
-    var tg = e.target;
-    if ((tg && tg.closest && tg.closest(".eg-overlay")) || (tg && /^(INPUT|SELECT|TEXTAREA)$/.test(tg.tagName))) { return; }
-    if (e.key === "?" || e.key === "/") { e.preventDefault(); keys.open(); }
-  });
+  // The list of keys: the kit's (EduGame.addKeys) puts a ⌨ button beside Options and opens the list with it, ? and /.
+  EduGame.addKeys({ id: "menu", keys: [
+    { keys: ["Tab", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"], label: "keys.k_tab_menu", does: "keys.t_tab_menu" },
+    { keys: ["Home", "End"], label: "keys.k_ends", does: "keys.t_ends" },
+    { keys: ["Enter", " "], label: "keys.k_choose", does: "keys.t_choose_menu" },
+    { keys: ["1", "2", "3", "4", "5", "6", "7", "8", "9"], label: "keys.k_number", does: "keys.t_number" },
+    { help: true }
+  ] });
   // The arrow keys go to the nearest set of maps that way (from nowhere: to "Next"), Home and End to the first and
   // last, and 1-9 open the one with that number.
   EduGame.arrowNav(el("egMenuList"), ".eg-menu-item", { numbers: true, start: ".next" });

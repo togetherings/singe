@@ -39,12 +39,13 @@ body { margin: 0; background: var(--sea); color: var(--text); font: 16px/1.5 Geo
 .eg-menu-get p, .eg-menu-get li { margin: .3rem 0; }
 .eg-menu-get a { color: var(--text); font-weight: bold; text-decoration-thickness: 2px; }
 
-/* Buttons: the Keyboard button, the kit's header (Options; on a package's page the link back here) and its Options
-   panel. The same as the game's: an outline in the border colour, teal on hover. */
-.eg-button, .eg-header .eg-options-button, .eg-header .eg-menu-link, .eg-card .eg-actions button {
+/* Buttons: the kit's header (⌨ and Options; on a package's page the link back here), its Options panel and its list
+   of keys. The same as the game's: an outline in the border colour, teal on hover. */
+.eg-header .eg-options-button, .eg-header .eg-keys-button, .eg-header .eg-menu-link, .eg-card .eg-actions button, .eg-keys .eg-keys-close {
   font: inherit; cursor: pointer; border: 2px solid var(--line); background: var(--card); color: var(--text);
   border-radius: 6px; padding: 6px 14px; }
-.eg-button:hover, .eg-button:focus-visible, .eg-header .eg-options-button:hover, .eg-header .eg-options-button:focus-visible,
+.eg-header .eg-options-button:hover, .eg-header .eg-options-button:focus-visible,
+.eg-header .eg-keys-button:hover, .eg-header .eg-keys-button:focus-visible, .eg-keys .eg-keys-close:hover, .eg-keys .eg-keys-close:focus-visible,
 .eg-header .eg-menu-link:hover, .eg-header .eg-menu-link:focus-visible,
 .eg-card .eg-actions button:hover, .eg-card .eg-actions button:focus-visible { background: var(--accent); color: #fff; outline: none; }
 .eg-card .eg-actions .eg-primary { background: var(--accent); color: #fff; }
@@ -55,16 +56,7 @@ html .eg-overlay .eg-card, html[data-theme=dark] .eg-overlay .eg-card { backgrou
 .eg-overlay .eg-card label { border-radius: 6px; padding-left: 6px; padding-right: 6px; }
 .eg-card label:hover, .eg-card label:focus-within { background: var(--accent-tint); }
 
-/* The list of keys (the Keyboard button or ?), like the game's */
-#egKeysBack { position: fixed; inset: 0; z-index: 10; background: rgba(0,0,0,.55); display: flex;
-              align-items: center; justify-content: center; padding: 16px; }
-#egKeysBack[hidden] { display: none; }
-#egKeysCard { position: relative; background: var(--card); border: 2px solid var(--line); border-radius: 8px;
-              padding: 14px 18px 16px; max-width: 30rem; width: 100%; }
-#egKeysCard h3 { margin: 0 32px 8px 0; font-size: 1.4rem; }
-#egMenuKeys { min-width: 2.4em; padding: 6px 10px; font-weight: bold; }
-#egKeysClose { position: absolute; top: 8px; right: 8px; width: 2em; padding: 2px 0; font-size: 1.1rem; line-height: 1; }
-html[dir="rtl"] #egKeysClose { right: auto; left: 8px; }
-#egKeysList { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; }
-#egKeysList dt { font-weight: bold; white-space: nowrap; }
-#egKeysList dd { margin: 0; }
+/* The kit's list of keys (EduGame.addKeys) is a card like the Options panel */
+.eg-keys .eg-card { max-width: 520px; }
+.eg-keys .eg-keys-close { width: 2em; padding: 2px 0; font-size: 1.1rem; line-height: 1; }
+.eg-header .eg-keys-button { padding: 6px 10px; font-weight: bold; }

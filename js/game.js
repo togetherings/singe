@@ -1005,7 +1005,7 @@
     focusMap();
     if (practice) {
       showPrompt();
-      $('feedback').textContent = '';
+      setFeedback('');
     } else {
       g.target = undefined;
       nextTarget();
@@ -1071,19 +1071,22 @@
     }
     showPrompt();
     var left = MAX_TRIES - g.tries;
-    $('feedback').textContent = !g.tries ? '' : left > 0 ? tr('feedback.retry', { n: left }) : tr('feedback.hint');
+    setFeedback(!g.tries ? '' : left > 0 ? tr('feedback.retry', { n: left }) : tr('feedback.hint'));
     if (g.tries && left <= 0) addCls(shapeEls(g.target), 'hint');   // the answer was shown before: show it again
     drawPointers();
     $('found').textContent = g.found;
   }
 
   // The prompt's words (made again when the learner chooses another language in Options).
+  // The right/wrong line under the prompt; screen readers read it out (the kit's EduGame.say)
+  function setFeedback(text) { $('feedback').textContent = text; if (text) EduGame.say(text); }
   function showPrompt() {
     if (g.mode === 'practice') $('prompt').textContent = tr('prompt.practice');
     else if (g.mode === 'flags') $('prompt').textContent = tr('prompt.flag');
     else if (g.target !== undefined) {
       $('prompt').textContent = tr('prompt.find', { name: regionStr(g.map, g.map.regions[g.target], g.mode === 'capitals' ? 'capital' : 'name') });
     }
+    EduGame.say($('prompt').textContent);               // (in Flags mode the question is only for screen readers)
   }
 
   // Text for the hover label of an element, or null if it has none right now. A shape shared by combined places
@@ -1148,8 +1151,7 @@
       show: function (el) { el.classList.remove('hidden'); }, hide: function (el) { el.classList.add('hidden'); },
       onClose: function () { if (!onMenu()) focusMap(); } });
   }
-  var infoPanel = panel('infoBack', 'infoCard', 'infoClose'), keysPanel = panel('keysBack', 'keysCard', 'keysClose'),
-      flagPanel = panel('flagBack', 'flagCard', 'flagClose');
+  var infoPanel = panel('infoBack', 'infoCard', 'infoClose'), flagPanel = panel('flagBack', 'flagCard', 'flagClose');
 
   function openInfo(item) {
     hideTip();
@@ -1189,7 +1191,7 @@
     if (g.mode !== 'capitals' && pickedR.part_of && pickedR.part_of === askedR.name) {
       addCls(shape, 'notmain'); drawPointers();
       setTimeout(function () { remCls(shape, 'notmain'); drawPointers(); }, 700);
-      $('feedback').textContent = tr('feedback.not_main', { name: regionStr(g.map, askedR, 'name') });
+      setFeedback(tr('feedback.not_main', { name: regionStr(g.map, askedR, 'name') }));
       return;
     }
 
@@ -1222,9 +1224,9 @@
       setTimeout(function () { remCls(shape, 'wrong'); }, 350);
       var left = MAX_TRIES - g.tries;
       if (left > 0) {
-        $('feedback').textContent = tr('feedback.retry', { n: left });
+        setFeedback(tr('feedback.retry', { n: left }));
       } else {
-        $('feedback').textContent = tr('feedback.hint');
+        setFeedback(tr('feedback.hint'));
         addCls(shapeEls(g.target), 'hint');   // reveal the answer
         drawPointers();
       }
@@ -1267,7 +1269,6 @@
   function leaveGame() {
     if (g.timer) clearInterval(g.timer);
     kbClear();
-    $('kbdHint').classList.add('hidden');
     $('stripBox').style.marginTop = '';
     hideTip();
     closeInfo();
@@ -1526,7 +1527,7 @@
     var el = kbFind(kbTargets(), t.key), r = el ? el.el.getBoundingClientRect() : null;
     var label = el ? labelFor(el.el) : null;
     if (label && r) showTip(label, r.left + r.width / 2, r.top + r.height / 2); else hideTip();
-    $('kbdSay').textContent = label || tr('keys.unknown');
+    EduGame.say(label || tr('keys.unknown'));       // never the name of a place not found yet
   }
   // Answered already: a region or circle found, or a capital found (in a game Tab passes over these)
   function kbDone(t) {
@@ -1574,7 +1575,7 @@
     onMapClick({ target: t.el, currentTarget: null, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 });
     if (kb.key && g.mode !== 'practice') {           // say how it went, and the place's name once it's found
       var lab = labelFor(t.el);
-      $('kbdSay').textContent = lab || '';
+      if (lab) EduGame.say(lab);
     }
   }
   function kbZoom(f) {
@@ -1587,35 +1588,50 @@
     if ($('game').classList.contains('hidden')) return;
     try { $('mapBox').focus({ preventScroll: true }); } catch (e) {}
   }
-  function kbShowHint() {
-    if (kb.used) return;
-    kb.used = true;
-    $('kbdHint').classList.remove('hidden');
-    clearTimeout(kb.hintTimer);
-    kb.hintTimer = setTimeout(function () { $('kbdHint').classList.add('hidden'); }, 8000);
-  }
-  // The list of keys. Opened on the menu it has the menu's keys first, then the map's; in a game only the map's.
   function isFlagKey(e) { var c = String(e.key).toLowerCase(); return c === 'f' || c === 'd'; }   // F for flag, D for drapeau
   function onMenu() { return !$('menu').classList.contains('hidden'); }
-  function openKeys() {
-    hideTip();
-    $('keysCard').classList.toggle('onMenu', onMenu());
-    $('keysCard').classList.toggle('flagMode', !onMenu() && g.mode === 'flags');
-    keysPanel.open();
+  function inGame() { return !$('game').classList.contains('hidden'); }
+
+  // The list of keys: the kit's (EduGame.addKeys) puts a ⌨ button beside Options and opens the list with it, ? and /.
+  // On the menu it has the menu's keys, then the map's; in a game only the map's (F only in Flags mode). The game
+  // handles these keys itself (below); the kit shows the hint the first time a key is used in a game.
+  function row(k, does, more) {
+    var r = { keys: more && more.keys || [], label: 'keys.k_' + k, does: 'keys.t_' + (does || k) };
+    if (more) Object.keys(more).forEach(function (n) { if (n !== 'keys') r[n] = more[n]; });
+    return r;
   }
-  function closeKeys() { keysPanel.close(); }
+  EduGame.addKeys({ id: 'menu', title: 'keys.on_menu', when: onMenu, keys: [
+    row('tab_menu', null, { keys: ['Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'] }),
+    row('ends', null, { keys: ['Home', 'End'] }),
+    row('choose', 'choose_menu', { keys: ['Enter', ' '] }),
+    { help: true }
+  ] });
+  EduGame.addKeys({ id: 'map', title: 'keys.on_map', when: function () { return onMenu() || inGame(); },
+    hint: function () { return inGame() ? 'keys.hint' : ''; }, keys: [
+    row('tab', null, { keys: ['Tab'] }),
+    row('arrows', null, { keys: ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'] }),
+    row('choose', null, { keys: ['Enter', ' '] }),
+    row('pan'),
+    row('zoom', null, { keys: ['+', '=', 'PageUp'] }),
+    row('zoomout', null, { keys: ['-', '_', 'PageDown'] }),
+    row('full', null, { keys: ['Home', '0'] }),
+    row('skip', null, { keys: ['.', '>', ';'] }),
+    row('back', null, { keys: [',', '<'] }),
+    row('flag', null, { keys: ['f', 'd'], hint: false, when: function () { return inGame() && g.mode === 'flags'; } }),
+    { help: true },
+    row('menu', null, { keys: ['Escape'], hint: false })
+  ] });
 
   document.addEventListener('keydown', function (e) {
     // (A panel's Escape and Tab are the kit's EduGame.dialog's, and the Options panel's are its own: both come first.)
     if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
-    if (keysPanel.isOpen() || infoPanel.isOpen() || flagPanel.isOpen()) {
+    if (EduGame.keysOpen() || infoPanel.isOpen() || flagPanel.isOpen()) {
       if (isFlagKey(e) && flagPanel.isOpen()) { e.preventDefault(); closeFlag(); }   // F (D) again closes the big flag
       return;
     }
     if ($('game').classList.contains('hidden')) {    // the menu (its arrow keys: EduGame.arrowNav, below) or the results
       var mt = e.target;
       if (!onMenu() || (mt && mt.closest && mt.closest('.eg-overlay')) || (mt && /^(INPUT|SELECT|TEXTAREA)$/.test(mt.tagName))) return;
-      if (e.key === '?' || e.key === '/') { e.preventDefault(); openKeys(); }
       return;
     }
     var t = e.target, tag = t && t.tagName;
@@ -1636,13 +1652,12 @@
     // (; too: next to , on a French keyboard, where . needs Shift)
     else if (k === '.' || k === '>' || k === ';') { if (!$('skipBtns').classList.contains('hidden')) skipPrompt(); }
     else if (k === ',' || k === '<') { if (!$('skipBtns').classList.contains('hidden')) backPrompt(); }
-    else if (k === '?' || k === '/') openKeys();
     else if (isFlagKey(e)) { if (g.mode === 'flags') openFlag(); else done = false; }
     else if (k === 'Escape') leaveGame();
     else done = false;
     if (!done) return;
     e.preventDefault();
-    if (k !== 'Escape' && k !== '?' && k !== '/' && !isFlagKey(e)) { kbShowHint(); if (document.activeElement !== $('mapBox')) focusMap(); }
+    if (k !== 'Escape' && !isFlagKey(e)) { kb.used = true; if (document.activeElement !== $('mapBox')) focusMap(); }
   });
   // A button clicked with the mouse gives the keyboard back to the map; so does a click on the map, which also
   // drops the keyboard highlight (the mouse is in charge then).
@@ -1657,8 +1672,6 @@
   }
   if (window.ResizeObserver) new ResizeObserver(placeZoom).observe($('mapTop'));
   $('mapBox').addEventListener('pointerdown', function () { kbClear(); });
-  $('keysBtn').onclick = openKeys;
-  $('menuKeys').onclick = openKeys;
   // The menu's arrow keys: the nearest mode button that way, Home and End the first and last (the kit's).
   EduGame.arrowNav($('menuList'), '.modeBtn');
 

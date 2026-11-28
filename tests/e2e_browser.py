@@ -20,6 +20,7 @@ import tempfile
 import threading
 
 from playwright.sync_api import sync_playwright
+from edugame import testing
 
 from edugame import cli
 
@@ -161,10 +162,12 @@ def check_keyboard(browser, errors, shots):
         frame = page.frames[1]
         assert frame.evaluate("document.activeElement.id") == "mapBox"
         lit = lambda: frame.evaluate("[...new Set([...document.querySelectorAll('#mapBox .kbd')].map(e => e.getAttribute('data-name')))]")
+        said = lambda: frame.evaluate("(document.querySelector('.eg-say[aria-live=polite]') || {}).textContent || ''")   # the kit's EduGame.say
         page.keyboard.press("Tab")
         first = lit()
         assert len(first) == 1, first
-        assert frame.locator("#kbdSay").inner_text() == "A place you haven't found yet"   # never the answer
+        frame.wait_for_function("(document.querySelector('.eg-say[aria-live=polite]') || {}).textContent === \"A place you haven't found yet\"")   # never the answer
+        assert frame.locator(".eg-key-hint:has-text('Tab or Arrows')").is_visible()  # the kit's first-key hint
         assert frame.locator("#mapBox .ptr-band").count() >= 1                       # the outline on top
         page.keyboard.press("Tab")
         assert lit() != first
@@ -189,7 +192,8 @@ def check_keyboard(browser, errors, shots):
             page.keyboard.press("Tab")
         page.keyboard.press("Enter")
         frame.locator("#found:has-text('1')").wait_for()
-        assert frame.locator("#kbdSay").inner_text() == target                      # found: now its name may be said
+        page.wait_for_timeout(100)
+        assert target in said(), said()                                            # found: now its name may be said
         for _ in range(20):                                                         # Tab passes over answered places
             page.keyboard.press("Tab")
             assert lit() != [target], "Tab went to a place already answered"
@@ -198,15 +202,15 @@ def check_keyboard(browser, errors, shots):
         assert frame.evaluate("document.querySelector('#mapBox svg').getAttribute('viewBox')") != full
         page.keyboard.press("Home")
         assert frame.evaluate("document.querySelector('#mapBox svg').getAttribute('viewBox')") == full
-        page.keyboard.press("/")                                                    # / opens the list too (not Firefox's Quick Find)
-        frame.locator("#keysBack:not(.hidden)").wait_for()
-        page.keyboard.press("Escape")
-        page.keyboard.press("?")
-        frame.locator("#keysBack:not(.hidden)").wait_for()
+        # ? and / open the kit's list of keys (/ also keeps Firefox's Quick Find away); in a game only the map's keys
+        rows = testing.check_keys_list(page, where=frame)
+        assert rows[0] == ("Tab, Shift+Tab", "Move to the next or previous place") and ("F", "Show the flag bigger (F again or Escape: close it)") not in rows, rows
+        assert ("? /", "This list") in rows and rows[-1] == ("Escape", "Close a panel, or go back to the menu"), rows
         if shots:
+            frame.evaluate("EduGame.openKeys()")
             page.screenshot(path=os.path.join(shots, "keyboard-keys.png"))
-        page.keyboard.press("Escape")                                               # closes the list...
-        assert frame.locator("#keysBack").get_attribute("class") == "hidden"
+            frame.evaluate("EduGame.closeKeys()")
+        assert frame.locator(".eg-header .eg-keys-button + .eg-options-button").count() == 1   # ⌨ beside Options
         assert not frame.locator("#game").get_attribute("class")
         page.keyboard.press("Escape")                                               # ...then back to the menu
         frame.locator("#menu:not(.hidden)").wait_for()
@@ -220,9 +224,8 @@ def check_keyboard(browser, errors, shots):
         assert not focused().startswith(here.split(":")[0] + ":"), focused()
         page.keyboard.press("Home")
         assert focused().endswith(":practice"), focused()
-        page.keyboard.press("?")
-        frame.locator("#keysCard.onMenu").wait_for()
-        page.keyboard.press("Escape")
+        rows = testing.check_keys_list(page, where=frame, keys=("?",))             # on the menu: its keys, then the map's
+        assert rows[0] == ("On the menu", None) and ("On a map", None) in rows, rows
         assert focused().endswith(":practice"), focused()
         context.close()
     finally:
@@ -258,10 +261,9 @@ def check_site(browser, shots):
             page.screenshot(path=os.path.join(shots, "site-menu.png"), full_page=True)
         page.keyboard.press("ArrowDown")                                  # from nowhere: "Next"
         assert "next" in page.evaluate("document.activeElement.className")
-        page.keyboard.press("/")
-        page.locator("#egKeysBack:not([hidden])").wait_for()
-        page.keyboard.press("Escape")
-        assert page.locator("#egKeysBack").get_attribute("hidden") is not None
+        rows = testing.check_keys_list(page)                              # the kit's list of keys: ? and /
+        assert ("1–9", "Open the set of maps with that number") in rows, rows
+        assert "next" in page.evaluate("document.activeElement.className")   # the keyboard went back
 
         page.locator(".eg-menu-item").first.click()                       # Countries: SINGE's own map menu
         page.locator("#menu .mapCard").first.wait_for()
