@@ -45,10 +45,14 @@ While a map is on screen it has the keyboard; Escape goes back to the menu (it c
 - **Tab / Shift+Tab**: the next or previous place, in reading order (rows from the top, left to right, then the boxes under a world map). It wraps round and never leaves the map. In a game it passes over places already answered (Practice goes through all of them).
 - **Arrow keys**: the nearest place in that direction (round the world on the World map). **Shift + arrows** move the map.
 - **Enter or Space**: answer with the highlighted place (in Practice, open its information).
-- **+ Page Up** and **− Page Down**: zoom in and out (on the highlighted place); **Home or 0**: the whole map.
-- **. >** and **, <**: Skip and Back (the same keys with or without Shift, like **?**). **?** (or the ⌨ button next to zoom): the list of keys.
+- **+ Page Up** and **− Page Down**: zoom in and out (on the highlighted place); **Home or 0**: the whole map (the 0 key by its place, so it works without Shift on a French keyboard).
+- **. >** (and **;**) and **, <**: Skip and Back, with or without Shift. **;** is for French keyboards, where it sits next to **,** and **.** needs Shift; each language's list shows its easiest keys.
+- **F** (or **D**, for drapeau): in Flags mode, the flag bigger; again, or Escape, closes it.
+- **? or /** (or the ⌨ button): the list of keys. **/** also keeps Firefox's Quick Find from opening.
 
-The highlight is the pointing outline (see Colours above), plus a ring at least 26 pixels across around a small place. It never says the name of a place the learner hasn't found (screen readers hear "a place you haven't found yet"), except in Practice. The map scrolls to keep it in view. The first key in a game shows a line of help at the bottom for a few seconds, and the map menu has a line about the keyboard. `js/game.js`, section 5d.
+On the map menu: Tab or the arrow keys move between the mode buttons (an arrow goes to the nearest button that way), Home and End go to the first and last, Enter or Space starts a game, and ? or / (or the ⌨ button at the top right) lists the keys, the menu's first. Back from a game puts the keyboard on that game's button. The website's menu (`menu/menu.js`) does the same, plus 1-9 for the set of maps with that number; with nothing chosen an arrow goes to "Next".
+
+The highlight is the pointing outline (see Colours above), plus a ring at least 26 pixels across around a small place. It never says the name of a place the learner hasn't found (screen readers hear "a place you haven't found yet"), except in Practice. The map scrolls to keep it in view. The first key in a game shows a line of help at the bottom for a few seconds. `js/game.js`, section 5d.
 
 ## Languages
 **Interface text.** Every piece of text the game shows is in `lang/<code>.json`, one entry per text. To add a language, run `edugame translate . sw` (this copies the English text into `lang/sw.json` and adds `sw` to `languages` in `edugame.json`), put the language's own name in `_language`, and translate. Keep the `{words in braces}`: the game fills them in. Entries with `one` / `other` give separate wording for singular and plural (languages with more forms can add `few`, `many`...). Anything missing falls back to English; `edugame check .` lists what's missing. See the kit's docs/LANGUAGES.md.
