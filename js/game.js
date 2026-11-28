@@ -285,7 +285,7 @@
                   zoom_levels: s.zoom_levels, zoom_step: s.zoom_step, orientation: s.orientation,
                   pass_accuracy: s.pass_accuracy, skip: s.skip, modes: s.modes, regions: regions,
                   wrap: shape.wrap, strip: insets.length ? shape.strip : null, strip_y: insets.length ? shape.strip_y : null,
-                  total: insets.length ? shape.total : null, lakes: shape.lakes, window: !!inGame, view_pad: s.view_pad,
+                  total: insets.length ? shape.total : null, lakes: shape.lakes, window: !!inGame, view_pad: s.view_pad, view: s.view,
                   insets: insets, scope: scope, max_map_height: s.max_map_height,
                   infinite_scroll: s.infinite_scroll, page_width: s.page_width, fit_all_min_height: s.fit_all_min_height,
                   circle_ratio: s.circle_ratio, marker_px: s.marker_px, nudge_zoom_levels: s.nudge_zoom_levels });
@@ -897,7 +897,15 @@
   // A WINDOW on a world map (settings "in_game", the Africa maps): the view is the box around the regions in the game,
   // with some room around it ("view_pad", a share of the box's longer side) so the grey neighbours show. The map
   // can't be zoomed out or dragged beyond it. Needs the map to be visible, because it measures the shapes.
+  // "view": [west, south, east, north] in degrees sets the box by hand instead (the Asia maps: it cuts Russia off, so
+  // northern Siberia, Kamchatka and Chukotka don't take up most of the map). Places in the game may reach beyond it.
   function fitWindow(svg) {
+    if (g.map.view) {
+      var v = g.map.view, a = toXY(g.map, null, v[0], v[3]), b = toXY(g.map, null, v[2], v[1]);
+      g.view = { x: a[0], y: a[1], w: b[0] - a[0], h: b[1] - a[1] };
+      svg.setAttribute('viewBox', [g.view.x, g.view.y, g.view.w, g.view.h].join(' '));
+      return;
+    }
     var x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, items = svg.querySelectorAll('.region:not(.inactive)');
     for (var i = 0; i < items.length; i++) {
       var b = items[i].getBBox();

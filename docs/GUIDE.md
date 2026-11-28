@@ -135,6 +135,23 @@ those regions (plus `view_pad`) and can't be zoomed out or dragged beyond it; th
 Somaliland into Somalia in 'un' scope. Capitals, info and flags are the map's own, in `regions`. Another continent
 can be made the same way (a folder with a settings file and its package in edugame.json).
 
+## Asia maps
+Seven more windows on the World map (`maps/asia/settings.js`, `maps/asia/lang/fr.json`), made like the Africa maps.
+The regions: North and Central Asia (ESCAP's: Russia, Georgia, Armenia, Azerbaijan and the five Central Asian
+countries), East Asia (M49's Eastern Asia), Southeast Asia (ASEAN, 11 with Timor-Leste), South Asia (SAARC: with
+Afghanistan, without Iran) and West Asia (M49's Western Asia without the Caucasus, plus Iran and Egypt). The regional
+maps have UN countries only (and Palestine); "Asia: all" adds Taiwan, Hong Kong, Macau, Northern Cyprus, Abkhazia,
+South Ossetia, Sakhalin, the Okinawa Islands, Christmas Island and the Cocos (Keeling) Islands (Australian, but on the
+Asian side of the Wallace Line).
+- **`view`** (`[west, south, east, north]` in degrees) sets a window's box by hand instead of fitting it to the places
+  in the game. North and Central Asia (`[26, 30, 150, 62]`) and the two whole-Asia maps (`[26, -13.5, 150, 62]`) use it
+  to cut Russia off at 62 deg N and 150 deg E: the World map's projection stretches the far north, and the whole of
+  Siberia would fill most of the map. Places can reach beyond the box; they are still clicked where they show.
+- **Places in two continents** have a note saying so (Practice mode): Russia, Türkiye and Kazakhstan (Asia and
+  Europe), Georgia, Azerbaijan and Armenia (in Asia by the Caucasus's main ridge, often counted in Europe), Cyprus and
+  Northern Cyprus, Egypt (Sinai is in Asia) and Indonesia (Western New Guinea is in Oceania). They can be on the
+  other continents' maps too.
+
 ## World map (and later continent maps)
 `maps/world.js` is generated from Natural Earth data (public domain: ne_10m_admin_0_countries) by `tools/world.py`;
 `maps/world/settings.js` (capitals and options) was first written by `tools/world_settings.py` from Natural Earth's
