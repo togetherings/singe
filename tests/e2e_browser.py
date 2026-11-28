@@ -61,7 +61,8 @@ def check(browser, package, shots):
         if shots:
             page.screenshot(path=os.path.join(shots, package + "-menu.png"))
         game.locator(".modeBtn").nth(1).click()                         # Regions
-        game.locator("#prompt:has-text('Trouvez')").wait_for()
+        game.locator("#prompt:not(:empty)").wait_for()
+        game.locator("#backBtn:has-text('Retour')").wait_for()            # in French
         if shots:
             page.screenshot(path=os.path.join(shots, package + "-game.png"))
         game.locator("#backBtn").click()
@@ -76,7 +77,7 @@ def check_africa(game):
     """Each Africa map asks about the right number of places, and Somaliland is part of Somalia except on the last."""
     for i, total in enumerate(AFRICA_TOTALS):
         game.locator("#menu .mapCard").nth(i).locator(".modeBtn").nth(1).click()
-        game.locator("#prompt:has-text('Trouvez')").wait_for()
+        game.locator("#prompt:not(:empty)").wait_for()
         assert game.locator("#total").inner_text() == str(total), (i, game.locator("#total").inner_text())
         somaliland = game.locator('.region[data-name="Somaliland"]')
         if i == 6:
@@ -104,9 +105,9 @@ def check_tries_and_label(browser, errors):
         page.select_option("#mode", "local")
         game = page.frame_locator("#game")
         game.locator(".mapCard").first.locator(".modeBtn").nth(1).evaluate("b => b.click()")   # Sierra Leone, Regions
-        game.locator("#prompt:has-text('Find')").wait_for()
+        game.locator("#prompt:not(:empty)").wait_for()
         frame = page.frames[1]
-        asked = lambda: frame.locator("#prompt").inner_text().split(": ", 1)[1]
+        asked = lambda: frame.locator("#prompt").inner_text()
         def click(name, x=None):
             # (dispatched: on a phone held upright a "turn your phone" note covers the map)
             frame.evaluate("""([n, x]) => { const e = [...document.querySelectorAll('#mapBox .region')]
@@ -156,7 +157,7 @@ def check_keyboard(browser, errors, shots):
         page.select_option("#mode", "local")
         game = page.frame_locator("#game")
         game.locator(".mapCard").first.locator(".modeBtn").nth(1).click()          # Sierra Leone, Regions
-        game.locator("#prompt:has-text('Find')").wait_for()
+        game.locator("#prompt:not(:empty)").wait_for()
         frame = page.frames[1]
         assert frame.evaluate("document.activeElement.id") == "mapBox"
         lit = lambda: frame.evaluate("[...new Set([...document.querySelectorAll('#mapBox .kbd')].map(e => e.getAttribute('data-name')))]")
@@ -177,7 +178,7 @@ def check_keyboard(browser, errors, shots):
         page.keyboard.press(",")                                                    # back
         assert frame.locator("#prompt").inner_text() == asked
         # Answer: walk to the place asked for with Tab, then Enter.
-        target = asked.split(": ", 1)[1]
+        target = asked
         for _ in range(40):
             if lit() == [target]:
                 break
@@ -185,6 +186,9 @@ def check_keyboard(browser, errors, shots):
         page.keyboard.press("Enter")
         frame.locator("#found:has-text('1')").wait_for()
         assert frame.locator("#kbdSay").inner_text() == target                      # found: now its name may be said
+        for _ in range(20):                                                         # Tab passes over answered places
+            page.keyboard.press("Tab")
+            assert lit() != [target], "Tab went to a place already answered"
         full = frame.evaluate("document.querySelector('#mapBox svg').getAttribute('viewBox')")
         page.keyboard.press("PageUp")
         assert frame.evaluate("document.querySelector('#mapBox svg').getAttribute('viewBox')") != full

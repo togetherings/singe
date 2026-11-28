@@ -31,14 +31,22 @@ The appearance is kept on the device. The language is kept in the learner's save
 
 **Colours** (`index.html`, top): contrast only where it matters. Text is 4.5:1 or more on its background; borders (black in light, white in dark), answered places against unanswered land, and the pointer outline are 3:1 or more; the page and sea, places not in the game, lakes and boxes are calm and don't need contrast. Answers: first try green, a later try yellow, needed the hint vermillion (Okabe-Ito and Paul Tol colour-blind-safe palettes), which differ in lightness too, so they stay apart with colour blindness (checked with simulations). The light theme's yellow is under 3:1 on white land: a real yellow can't be darker. Capitals mode shows countries in the plain land colour.
 
-**Pointing** (hover and keyboard): the place gets `--shade` darker (lighter in dark) and an outline drawn above everything (`drawPointers` in `js/game.js`: copies of the shape's outline at the end of its group; a ring 5 pixels round a circle), a band of `--point` edged with `--line`. The hint and the wrong-part flash get a thick dashed outline.
+**Pointing** (hover and keyboard): an unanswered place turns `--land-hover` (white in light, grey in dark), an answered one gets `--shade` (15%) lighter, and it gets an outline drawn above everything (`drawPointers` in `js/game.js`: copies of the shape's outline at the end of its group; a ring 5 pixels round a circle), a band of `--point` edged with `--line`. The hint and the wrong-part flash get a thick dashed outline.
+## The site's menu
+`menu.html` with `menu/menu.css` and `menu/menu.js` (made by `edugame menu`, then restyled): the first page of the website and of the all-maps offline copy, listing the three packages. Its colours, font, frame and cards match the game's own map menu, in light and dark; keep `menu/menu.css`'s colours in step with `index.html`'s.
+
+## The game bar and zoom buttons
+Line 1: Back and the keyboard button (left), Skip back / Skip (middle), Time and Found, or Practice's totals (right). Line 2: what to find, alone in the middle (just the name, no "Find:"; the flag in Flags mode, whose question is only for screen readers). Line 3: the feedback. The zoom buttons are a stack, ⌂ (the whole map) over + over −, at the top right of the map.
+
+Each line, and the zoom stack, either sits above the map or lies over its top (on see-through chips), set per map in its settings file: `overlay: { buttons: false, prompt: false, feedback: true, zoom: true }` (these are the defaults; on a world map that isn't a window, `buttons` and `prompt` default to `true` too). `zoom: false` puts the stack beside the map. The stack stays under the button and prompt lines laid over the map, and doesn't move when a message shows (`placeZoom` in `js/game.js`).
+
 ## Keyboard
 While a map is on screen it has the keyboard; Escape goes back to the menu (it closes an open panel first).
-- **Tab / Shift+Tab**: the next or previous place, in reading order (rows from the top, left to right, then the boxes under a world map). It wraps round and never leaves the map.
+- **Tab / Shift+Tab**: the next or previous place, in reading order (rows from the top, left to right, then the boxes under a world map). It wraps round and never leaves the map. In a game it passes over places already answered (Practice goes through all of them).
 - **Arrow keys**: the nearest place in that direction (round the world on the World map). **Shift + arrows** move the map.
 - **Enter or Space**: answer with the highlighted place (in Practice, open its information).
-- **+ − Page Up Page Down**: zoom (on the highlighted place); **Home or 0**: the whole map.
-- **.** and **,**: Skip and Back. **?** (or the ⌨ button next to zoom): the list of keys.
+- **+ Page Up** and **− Page Down**: zoom in and out (on the highlighted place); **Home or 0**: the whole map.
+- **. >** and **, <**: Skip and Back (the same keys with or without Shift, like **?**). **?** (or the ⌨ button next to zoom): the list of keys.
 
 The highlight is the pointing outline (see Colours above), plus a ring at least 26 pixels across around a small place. It never says the name of a place the learner hasn't found (screen readers hear "a place you haven't found yet"), except in Practice. The map scrolls to keep it in view. The first key in a game shows a line of help at the bottom for a few seconds, and the map menu has a line about the keyboard. `js/game.js`, section 5d.
 
