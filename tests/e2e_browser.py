@@ -166,7 +166,9 @@ def check_keyboard(browser, errors, shots):
         page.keyboard.press("Tab")
         first = lit()
         assert len(first) == 1, first
-        frame.wait_for_function("(document.querySelector('.eg-say[aria-live=polite]') || {}).textContent === \"A place you haven't found yet\"")   # never the answer
+        # never the answer (said together with the prompt when Tab comes straight after the round starts)
+        frame.wait_for_function("((document.querySelector('.eg-say[aria-live=polite]') || {}).textContent || '').endsWith(\"A place you haven't found yet\")")
+        assert first[0] not in said(), said()
         assert frame.locator(".eg-key-hint:has-text('Tab or Arrows')").is_visible()  # the kit's first-key hint
         assert frame.locator("#mapBox .ptr-band").count() >= 1                       # the outline on top
         page.keyboard.press("Tab")
