@@ -29,7 +29,9 @@
     --shade: 1.15;       /* hover and keyboard: an answered place gets this much lighter */
     --land-hover: #ffffff;   /* hover and keyboard: an unanswered place (and an unanswered circle) */
     --card: #ffffff;     /* menu cards, information panel, buttons */
-    --accent: #0b5394;   /* button hover */
+    --accent: #1f6f8b;   /* button hover: teal */
+    --accent-strong: #155266;   /* hover on a button that is already teal (Apply in Options) */
+    --accent-tint: rgba(31,111,139,.15);   /* hover on a choice in Options */
     --met-bg: #d7f0e1; --met-line: #117733;   /* mode button once its accuracy goal is reached */
     --header-bg: #000000; --header-text: #ffffff;
     --frame-bg: rgba(255,255,255,.55);   /* the outlined page area */
@@ -49,7 +51,7 @@
     --sea: #0b1d2e; --land: #2a2a2a; --text: #ffffff; --line: #ffffff; --done-line: #ffffff;
     --good: #009E73; --retry: #F0E442; --bad: #D55E00;   /* the same Okabe-Ito green, yellow and vermillion */
     --point: #000000; --land-hover: #3d3d3d;
-    --card: #17314a; --accent: #0072B2; --met-bg: #00382a; --met-line: #2fd3a0;
+    --card: #17314a; --accent: #2f7f9f; --accent-strong: #24657f; --accent-tint: rgba(47,127,159,.3); --met-bg: #00382a; --met-line: #2fd3a0;
     --header-bg: #000000; --header-text: #ffffff;
     --frame-bg: rgba(255,255,255,.04);
     --hint-pulse: #5a2a12; --bar-bg: rgba(11,29,46,.92); --water: #0b1d2e;
@@ -68,6 +70,21 @@
            background: var(--card); color: var(--text); border-radius: 6px; padding: 6px 14px; }
   button:hover, button:focus-visible { background: var(--accent); color: #fff; outline: none; }
 
+  /* ---------- The kit's header (Options; on the website, the link to the sets of maps) and Options panel ----------
+     The same buttons as the rest of the game: an outline in the border colour, teal on hover. */
+  .eg-header .eg-options-button, .eg-header .eg-menu-link, .eg-card .eg-actions button {
+    font: inherit; border: 2px solid var(--line); background: var(--card); color: var(--text); border-radius: 6px; }
+  .eg-header .eg-options-button:hover, .eg-header .eg-options-button:focus-visible,
+  .eg-header .eg-menu-link:hover, .eg-header .eg-menu-link:focus-visible,
+  .eg-card .eg-actions button:hover, .eg-card .eg-actions button:focus-visible { background: var(--accent); color: #fff; outline: none; }
+  .eg-card .eg-actions .eg-primary { background: var(--accent); color: #fff; }
+  .eg-card .eg-actions .eg-primary:hover, .eg-card .eg-actions .eg-primary:focus-visible { background: var(--accent-strong); }
+  html .eg-overlay .eg-card, html[data-theme=dark] .eg-overlay .eg-card { background: var(--card); color: var(--text); border: 2px solid var(--line); border-radius: 8px;
+           font: 16px/1.45 Georgia, "Times New Roman", serif; }
+  .eg-overlay .eg-card fieldset { border-color: var(--line); }
+  .eg-overlay .eg-card label { border-radius: 6px; padding-left: 6px; padding-right: 6px; }
+  .eg-card label:hover, .eg-card label:focus-within { background: var(--accent-tint); }
+
   /* ---------- Header (shown on every page) and outlined frame ---------- */
   #siteHeader { background: var(--header-bg); color: var(--header-text); }
   #siteHeader.hidden { display: none; }
@@ -82,7 +99,11 @@
            border-radius: 8px; background: var(--frame-bg); }
 
   /* ---------- Menu: one card per map, one button per game mode ---------- */
-  #menuList { display: grid; gap: 14px; margin-top: 16px; }
+  /* The menu's top line: the heading, then how many are done and the Keyboard button at the end (as on the website's menu) */
+  #menuTop { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; }
+  #menuTop h2 { flex: 1; margin: 0; }
+  #menuDone { font-weight: bold; opacity: .8; }
+  #menuList { display: grid; gap: 14px; margin-top: 14px; }
   .mapCard { background: var(--card); border: 2px solid var(--line); border-radius: 8px; padding: 12px 16px 16px; }
   /* optional picture on a map's card (set as "image" in the map's settings): floats to the right of the
      name and description and is scaled down so it can never push the mode buttons around */
@@ -130,7 +151,7 @@
   #bar:empty { display: none; }
   #row1 { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); column-gap: 8px; align-items: start; }
   #topBtns { grid-column: 1; justify-self: start; display: flex; gap: 6px; }
-  #keysBtn { min-width: 2.4em; padding: 6px 10px; font-weight: bold; }
+  #keysBtn, #menuKeys { min-width: 2.4em; padding: 6px 10px; font-weight: bold; }
   #skipBtns { grid-column: 2; justify-self: center; display: flex; gap: 6px; }
   #skipBtns.hidden { display: none; }
   #skipBtns button { min-width: 2.4em; padding: 6px 10px; font-weight: bold; }
@@ -248,6 +269,8 @@
   body.needRotate #rotateHint { display: flex; }
   /* a region whose outline is a separate path (see addRegion in js/game.js) */
   .region.nostroke { stroke: none; }
+  .rstroke.off, .lake.off { stroke: var(--off-line); }   /* a grey region's outline; a lake's shore, where grey (greyLakes) */
+  .lakeline { fill: none; stroke: var(--line); stroke-width: 1; stroke-linejoin: round; pointer-events: none; vector-effect: non-scaling-stroke; }
   .rstroke { fill: none; stroke: var(--line); stroke-width: 1.2; stroke-linejoin: round; pointer-events: none;
              vector-effect: non-scaling-stroke; }
 
@@ -304,7 +327,6 @@
              width: max-content; max-width: calc(100vw - 24px); text-align: center; white-space: pre-wrap; }   /* (keeps the spaces round the dots) */
   #kbdHint.hidden { display: none; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .keysLine { font-size: .9rem; opacity: .85; }
   #keysBack { position: fixed; inset: 0; z-index: 10; background: var(--backdrop);
               display: flex; align-items: center; justify-content: center; padding: 16px; }
   #keysBack.hidden { display: none; }
@@ -313,6 +335,10 @@
   #keysCard h3 { margin: 0 32px 8px 0; font-size: 1.4rem; }
   #keysClose { position: absolute; top: 8px; right: 8px; width: 2em; padding: 2px 0; font-size: 1.1rem; line-height: 1; }
   html[dir="rtl"] #keysClose { right: auto; left: 8px; }
+  /* Opened on the menu, the list has the menu's keys first; opened in a game only the map's (F only in Flags mode) */
+  #keysCard:not(.onMenu) .menuRow, #keysCard:not(.flagMode) .flagRow, #keysCard.onMenu .mapHelp { display: none; }
+  #keysList .keysHead { grid-column: 1 / -1; font-size: 1.05rem; margin-top: 8px; }
+  #keysList .keysHead:first-child { margin-top: 0; }
   #keysList { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; }
   #keysList dt { font-weight: bold; white-space: nowrap; }
   #keysList dd { margin: 0; }
@@ -334,9 +360,11 @@
 
   <!-- ======================= MENU PAGE ======================= -->
   <div id="menu">
-    <h2 data-t="menu.title"></h2>
-    <p data-t="menu.intro"></p>
-    <p class="keysLine" data-t="menu.keyboard"></p>
+    <div id="menuTop">
+      <h2 data-t="menu.title"></h2>
+      <span id="menuDone"></span>
+      <button id="menuKeys" type="button" data-t-attr="title:keys.button,aria-label:keys.button" aria-haspopup="dialog">&#x2328;&#xFE0E;</button>
+    </div>
     <div id="menuList"></div>
   </div>
 
@@ -418,7 +446,15 @@
   <div id="keysCard" role="dialog" aria-modal="true" aria-labelledby="keysTitle">
     <button id="keysClose" data-t-attr="aria-label:common.close">&times;</button>
     <h3 id="keysTitle" data-t="keys.title"></h3>
+    <!-- One list, so the two columns line up. Opened on the menu it has the menu's keys first, then the map's;
+         in a game only the map's (and F in Flags mode). game.js openKeys sets onMenu and flagMode. -->
     <dl id="keysList">
+      <dt class="keysHead menuRow" data-t="keys.on_menu"></dt>
+      <dt class="menuRow" data-t="keys.k_tab_menu"></dt><dd class="menuRow" data-t="keys.t_tab_menu"></dd>
+      <dt class="menuRow" data-t="keys.k_ends"></dt><dd class="menuRow" data-t="keys.t_ends"></dd>
+      <dt class="menuRow" data-t="keys.k_choose"></dt><dd class="menuRow" data-t="keys.t_choose_menu"></dd>
+      <dt class="menuRow" data-t="keys.k_help"></dt><dd class="menuRow" data-t="keys.t_help"></dd>
+      <dt class="keysHead menuRow" data-t="keys.on_map"></dt>
       <dt data-t="keys.k_tab"></dt><dd data-t="keys.t_tab"></dd>
       <dt data-t="keys.k_arrows"></dt><dd data-t="keys.t_arrows"></dd>
       <dt data-t="keys.k_choose"></dt><dd data-t="keys.t_choose"></dd>
@@ -428,7 +464,8 @@
       <dt data-t="keys.k_full"></dt><dd data-t="keys.t_full"></dd>
       <dt data-t="keys.k_skip"></dt><dd data-t="keys.t_skip"></dd>
       <dt data-t="keys.k_back"></dt><dd data-t="keys.t_back"></dd>
-      <dt data-t="keys.k_help"></dt><dd data-t="keys.t_help"></dd>
+      <dt class="flagRow" data-t="keys.k_flag"></dt><dd class="flagRow" data-t="keys.t_flag"></dd>
+      <dt class="mapHelp" data-t="keys.k_help"></dt><dd class="mapHelp" data-t="keys.t_help"></dd>
       <dt data-t="keys.k_menu"></dt><dd data-t="keys.t_menu"></dd>
     </dl>
   </div>

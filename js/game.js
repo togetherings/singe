@@ -419,6 +419,7 @@
       list.textContent = tr('menu.no_maps');
     }
     loadErrors.forEach(function (src) { list.appendChild(el('p', 'credit', tr('menu.load_error', { file: src }))); });
+    var done = 0, total = 0;                          // "3 of 40 done": game modes (not Practice) whose goal is met
     MAPS.forEach(function (map) {
       var card = el('div', 'mapCard');
       if (map.image) {                                // optional picture, floated right (see .mapImg in index.html)
@@ -439,6 +440,7 @@
       var row = el('div', 'modes');
       modesFor(map).forEach(function (mode) {
         var b = el('button', 'modeBtn');
+        b.setAttribute('data-map', map.id); b.setAttribute('data-mode', mode);
         b.appendChild(el('b', '', modeLabel(mode)));
         if (mode === 'practice') {
           b.appendChild(el('small', '', tr('menu.practice_hint')));
@@ -448,6 +450,8 @@
           b.appendChild(el('small', '', bestLine(saveId(map, mode))));
           if (s && s[2]) b.appendChild(el('small', '', tr('menu.completed', { n: s[2] })));
           if (goal && s && s[0] >= goal) { b.classList.add('met'); b.title = tr('menu.goal_met'); }
+          total++;
+          if (s && (!goal || s[0] >= goal)) done++;  // (a mode with no goal is done once played)
         }
         b.onclick = function () { startGame(map, mode); };
         row.appendChild(b);
@@ -455,6 +459,7 @@
       card.appendChild(row);
       list.appendChild(card);
     });
+    $('menuDone').textContent = total ? tr('menu.done', { n: done, total: total }) : '';
   }
 
   /* =====================================================================
@@ -765,19 +770,46 @@
   function addRegion(parent, r, i, d, s) {
     var cls = r.inactive ? (r.off ? 'region inactive off' : 'region inactive') : 'region';
     parent.appendChild(svgEl('path', { d: d, 'class': s ? cls + ' nostroke' : cls, 'data-name': r.name, 'data-i': i }));
-    if (s) parent.appendChild(svgEl('path', { d: s, 'class': 'rstroke' }));
+    if (s) parent.appendChild(svgEl('path', { d: s, 'class': r.off ? 'rstroke off' : 'rstroke' }));   // (grey for a grey region: Cyprus)
+  }
+  // Grey regions first, so a border shared by a grey region and one in the game is drawn in the game's colour.
+  function inOrder(map, each) {
+    map.regions.forEach(function (r, i) { if (r.off) each(r, i); });
+    map.regions.forEach(function (r, i) { if (!r.off) each(r, i); });
   }
   function buildWorld(map) {
     var svg = svgEl('svg', { viewBox: '0 0 ' + map.size[0] + ' ' + map.size[1] });
     var tile = svgEl('g', { 'class': 'tile' });
     // (No wide invisible "halo" outlines on a world map: the circles of tiny regions do that job, and a halo several
     // times bigger than a tiny island overlapped its neighbours - Wallis and Futuna next to Samoa, for one.)
-    map.regions.forEach(function (r, i) { if (r.d) addRegion(tile, r, i, r.d, r.s); });
+    inOrder(map, function (r, i) { if (r.d) addRegion(tile, r, i, r.d, r.s); });
     // big lakes that cross borders (Great Lakes, Victoria, Malawi...) are drawn as water on top of the land
     (map.lakes || []).forEach(function (l) { tile.appendChild(svgEl('path', { d: l.d, 'class': 'lake' })); });
     svg.appendChild(tile);
     g.tile = tile;
     return svg;
+  }
+  // Lakes on a map with grey regions: the shore is grey, and the stretches of it inside a region in the game are drawn
+  // again in the game's colour (a copy of the outline clipped to those regions: a region's shape covers its share of
+  // the lake). So a lake shared with a grey country is grey on that country's side. Needs the map on the page.
+  function greyLakes(tile) {
+    var lakes = tile.querySelectorAll('.lake'), regs = tile.querySelectorAll('.region:not(.off)');
+    if (!lakes.length || !tile.querySelector('.region.off')) return;
+    var boxes = [];
+    for (var j = 0; j < regs.length; j++) boxes.push(regs[j].getBBox());
+    for (var i = 0; i < lakes.length; i++) {
+      var lake = lakes[i], lb = lake.getBBox(), clip = null;
+      lake.classList.add('off');
+      for (j = 0; j < regs.length; j++) {
+        var bx = boxes[j];
+        if (bx.x > lb.x + lb.width || bx.x + bx.width < lb.x || bx.y > lb.y + lb.height || bx.y + bx.height < lb.y) continue;
+        if (!clip) clip = svgEl('clipPath', { id: 'lakeIn' + i });
+        clip.appendChild(svgEl('path', { d: regs[j].getAttribute('d') }));
+      }
+      if (!clip) continue;
+      lake.parentNode.insertBefore(clip, lake.nextSibling);
+      lake.parentNode.insertBefore(svgEl('path', { d: lake.getAttribute('d'), 'class': 'lakeline', 'clip-path': 'url(#lakeIn' + i + ')' }), clip.nextSibling);
+    }
   }
   function buildStrip(map) {
     var svg = svgEl('svg', { viewBox: '0 0 ' + map.strip[0] + ' ' + map.strip[1] });
@@ -787,7 +819,7 @@
       svg.appendChild(clip);
       svg.appendChild(svgEl('rect', { 'class': 'inbox', x: ins.x, y: ins.y, width: ins.w, height: ins.h }));
       var grp = svgEl('g', { 'clip-path': 'url(#clip_' + ins.id + ')' });
-      map.regions.forEach(function (r, i) {
+      inOrder(map, function (r, i) {
         ((r.ins && r.ins[ins.id]) || []).forEach(function (p) { if (p.d) addRegion(grp, r, i, p.d, p.s); });
       });
       svg.appendChild(grp);
@@ -889,6 +921,7 @@
       v.addEventListener('pointerout',  function (e) { hoverHalo(e, false); });
     });
     $('mapBox').appendChild(svg);
+    if (wrap) greyLakes(g.tile);
     if (g.strip) {                                   // the fixed boxes: no zoom, but they have name labels too
       $('stripBox').appendChild(g.strip);
       g.strip.addEventListener('pointermove', function (e) {
@@ -1186,6 +1219,9 @@
     closeInfo();
     buildMenu();
     show('menu');
+    // the keyboard goes back to the button of the game just left (and the page scrolls to it)
+    var mb = g.map && $('menuList').querySelector('.modeBtn[data-map="' + g.map.id + '"][data-mode="' + g.mode + '"]');
+    if (mb) mb.focus();
   }
 
   /* =====================================================================
@@ -1502,8 +1538,35 @@
     clearTimeout(kb.hintTimer);
     kb.hintTimer = setTimeout(function () { $('kbdHint').classList.add('hidden'); }, 8000);
   }
-  function openKeys() { hideTip(); $('keysBack').classList.remove('hidden'); $('keysClose').focus(); }
-  function closeKeys() { $('keysBack').classList.add('hidden'); focusMap(); }
+  // Arrow keys on the menu: the nearest button in that direction (its middle mostly along the arrow, a little across).
+  function nearestButton(from, list, dx, dy) {
+    var a = from.getBoundingClientRect(), ax = a.left + a.width / 2, ay = a.top + a.height / 2, best = null, bestScore = 1e9;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i] === from) continue;
+      var c = list[i].getBoundingClientRect(), x = c.left + c.width / 2 - ax, y = c.top + c.height / 2 - ay;
+      var along = x * dx + y * dy, across = Math.abs(x * dy) + Math.abs(y * dx);
+      if (along < 4) continue;
+      var score = along + 2 * across;
+      if (score < bestScore) { bestScore = score; best = list[i]; }
+    }
+    return best;
+  }
+  // The list of keys. Opened on the menu it has the menu's keys first, then the map's; in a game only the map's.
+  var keysOpener = null;
+  function isFlagKey(e) { var c = String(e.key).toLowerCase(); return c === 'f' || c === 'd'; }   // F for flag, D for drapeau
+  function onMenu() { return !$('menu').classList.contains('hidden'); }
+  function openKeys() {
+    hideTip();
+    keysOpener = document.activeElement;
+    $('keysCard').classList.toggle('onMenu', onMenu());
+    $('keysCard').classList.toggle('flagMode', !onMenu() && g.mode === 'flags');
+    $('keysBack').classList.remove('hidden'); $('keysClose').focus();
+  }
+  function closeKeys() {
+    $('keysBack').classList.add('hidden');
+    if (onMenu()) { if (keysOpener && keysOpener.focus && document.body.contains(keysOpener)) keysOpener.focus(); }
+    else focusMap();
+  }
 
   document.addEventListener('keydown', function (e) {
     if (e.defaultPrevented) return;                  // (the kit's Options panel took it: its Escape, its Tab)
@@ -1512,10 +1575,27 @@
       if (!$('infoBack').classList.contains('hidden')) { closeInfo(); return; }
       if (!$('flagBack').classList.contains('hidden')) { closeFlag(); return; }
     }
-    if ($('game').classList.contains('hidden') || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if ($('game').classList.contains('hidden')) {    // the menu (or the results)
+      var mt = e.target;
+      if (!$('keysBack').classList.contains('hidden')) { if (e.key === 'Tab') e.preventDefault(); return; }
+      if (!onMenu() || (mt && mt.closest && mt.closest('.eg-overlay')) || (mt && /^(INPUT|SELECT|TEXTAREA)$/.test(mt.tagName))) return;
+      if (e.key === '?' || e.key === '/') { e.preventDefault(); openKeys(); return; }
+      var mk = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+      var btns = $('menuList').querySelectorAll('.modeBtn');
+      if (!btns.length || (!mk && e.key !== 'Home' && e.key !== 'End')) return;
+      e.preventDefault();
+      var cur = document.activeElement, inList = cur && cur.classList && cur.classList.contains('modeBtn');
+      if (e.key === 'Home') btns[0].focus();
+      else if (e.key === 'End') btns[btns.length - 1].focus();
+      else if (!inList) btns[0].focus();
+      else { var to = nearestButton(cur, btns, mk[0], mk[1]); if (to) to.focus(); }
+      return;
+    }
     if (!$('keysBack').classList.contains('hidden') || !$('infoBack').classList.contains('hidden') ||
         !$('flagBack').classList.contains('hidden')) {             // a panel has the keyboard (its one button: Close)
       if (e.key === 'Tab') e.preventDefault();
+      if (isFlagKey(e) && !$('flagBack').classList.contains('hidden')) { e.preventDefault(); closeFlag(); }   // F (D) again
       return;
     }
     var t = e.target, tag = t && t.tagName;
@@ -1531,15 +1611,18 @@
     else if ((k === 'Enter' || k === ' ') && !onButton) kbChoose();
     else if (k === '+' || k === '=' || k === 'PageUp') kbZoom(step);
     else if (k === '-' || k === '_' || k === 'PageDown') kbZoom(1 / step);
-    else if (k === 'Home' || k === '0') { if (zc) zc.reset(); }
-    else if (k === '.' || k === '>') { if (!$('skipBtns').classList.contains('hidden')) skipPrompt(); }
+    // (0 by the key's place, so the 0 key works on a French keyboard too, where it types à without Shift)
+    else if (k === 'Home' || k === '0' || e.code === 'Digit0' || e.code === 'Numpad0') { if (zc) zc.reset(); }
+    // (; too: next to , on a French keyboard, where . needs Shift)
+    else if (k === '.' || k === '>' || k === ';') { if (!$('skipBtns').classList.contains('hidden')) skipPrompt(); }
     else if (k === ',' || k === '<') { if (!$('skipBtns').classList.contains('hidden')) backPrompt(); }
-    else if (k === '?') openKeys();
+    else if (k === '?' || k === '/') openKeys();
+    else if (isFlagKey(e)) { if (g.mode === 'flags') openFlag(); else done = false; }
     else if (k === 'Escape') leaveGame();
     else done = false;
     if (!done) return;
     e.preventDefault();
-    if (k !== 'Escape' && k !== '?') { kbShowHint(); if (document.activeElement !== $('mapBox')) focusMap(); }
+    if (k !== 'Escape' && k !== '?' && k !== '/' && !isFlagKey(e)) { kbShowHint(); if (document.activeElement !== $('mapBox')) focusMap(); }
   });
   // A button clicked with the mouse gives the keyboard back to the map; so does a click on the map, which also
   // drops the keyboard highlight (the mouse is in charge then).
@@ -1555,6 +1638,7 @@
   if (window.ResizeObserver) new ResizeObserver(placeZoom).observe($('mapTop'));
   $('mapBox').addEventListener('pointerdown', function () { kbClear(); });
   $('keysBtn').onclick = openKeys;
+  $('menuKeys').onclick = openKeys;
   $('keysClose').onclick = closeKeys;
   $('keysBack').onclick = function (e) { if (e.target === this) closeKeys(); };
 

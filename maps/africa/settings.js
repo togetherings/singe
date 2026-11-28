@@ -103,7 +103,7 @@
     },
     africa_all: {
       name: 'Africa: all countries and territories',
-      blurb: 'Find every country and territory of Africa, including the small ones',
+      blurb: 'Find every country and territory of Africa',
       orientation: 'vertical',
       in_game: [
         'Algeria', 'Angola', 'Benin', 'Botswana', 'Burkina Faso', 'Burundi', 'Cabo Verde', 'Cameroon',

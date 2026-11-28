@@ -177,6 +177,10 @@ def check_keyboard(browser, errors, shots):
         assert frame.locator("#prompt").inner_text() != asked
         page.keyboard.press(",")                                                    # back
         assert frame.locator("#prompt").inner_text() == asked
+        page.keyboard.press(";")                                                    # ; skips too (French keyboards)
+        assert frame.locator("#prompt").inner_text() != asked
+        page.keyboard.press("<")
+        assert frame.locator("#prompt").inner_text() == asked
         # Answer: walk to the place asked for with Tab, then Enter.
         target = asked
         for _ in range(40):
@@ -194,6 +198,9 @@ def check_keyboard(browser, errors, shots):
         assert frame.evaluate("document.querySelector('#mapBox svg').getAttribute('viewBox')") != full
         page.keyboard.press("Home")
         assert frame.evaluate("document.querySelector('#mapBox svg').getAttribute('viewBox')") == full
+        page.keyboard.press("/")                                                    # / opens the list too (not Firefox's Quick Find)
+        frame.locator("#keysBack:not(.hidden)").wait_for()
+        page.keyboard.press("Escape")
         page.keyboard.press("?")
         frame.locator("#keysBack:not(.hidden)").wait_for()
         if shots:
@@ -203,6 +210,20 @@ def check_keyboard(browser, errors, shots):
         assert not frame.locator("#game").get_attribute("class")
         page.keyboard.press("Escape")                                               # ...then back to the menu
         frame.locator("#menu:not(.hidden)").wait_for()
+        # the keyboard is back on the button of the game just left; arrows move round the buttons; ? lists the keys
+        focused = lambda: frame.evaluate("(document.activeElement.getAttribute('data-map') || '') + ':' + (document.activeElement.getAttribute('data-mode') || '')")
+        here = focused()
+        assert here.endswith(":regions"), here
+        page.keyboard.press("ArrowRight")
+        assert focused() == here.split(":")[0] + ":capitals", focused()
+        page.keyboard.press("ArrowDown")
+        assert not focused().startswith(here.split(":")[0] + ":"), focused()
+        page.keyboard.press("Home")
+        assert focused().endswith(":practice"), focused()
+        page.keyboard.press("?")
+        frame.locator("#keysCard.onMenu").wait_for()
+        page.keyboard.press("Escape")
+        assert focused().endswith(":practice"), focused()
         context.close()
     finally:
         server.shutdown()
@@ -235,6 +256,12 @@ def check_site(browser, shots):
         assert page.locator(".eg-menu-link").count() == 0                # no link to the menu on the menu
         if shots:
             page.screenshot(path=os.path.join(shots, "site-menu.png"), full_page=True)
+        page.keyboard.press("ArrowDown")                                  # from nowhere: "Next"
+        assert "next" in page.evaluate("document.activeElement.className")
+        page.keyboard.press("/")
+        page.locator("#egKeysBack:not([hidden])").wait_for()
+        page.keyboard.press("Escape")
+        assert page.locator("#egKeysBack").get_attribute("hidden") is not None
 
         page.locator(".eg-menu-item").first.click()                       # Countries: SINGE's own map menu
         page.locator("#menu .mapCard").first.wait_for()

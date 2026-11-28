@@ -1,9 +1,9 @@
 /* The site's menu of map packages (menu.html), styled like the game's own map menu (index.html): the same colours,
    font, outlined frame and cards, in light and dark (the kit puts data-theme on <html>). Keep the colours in step
    with index.html's. */
-:root { --sea: #d6e9f5; --text: #000000; --line: #000000; --card: #ffffff; --accent: #0b5394; --good: #009E73;
+:root { --sea: #d6e9f5; --text: #000000; --line: #000000; --card: #ffffff; --accent: #1f6f8b; --accent-strong: #155266; --accent-tint: rgba(31,111,139,.15); --good: #009E73;
         --frame-bg: rgba(255,255,255,.55); --muted: #3d4650; --next-bg: #fffbe0; }
-:root[data-theme="dark"] { --sea: #0b1d2e; --text: #ffffff; --line: #ffffff; --card: #17314a; --accent: #0072B2; --good: #009E73;
+:root[data-theme="dark"] { --sea: #0b1d2e; --text: #ffffff; --line: #ffffff; --card: #17314a; --accent: #2f7f9f; --accent-strong: #24657f; --accent-tint: rgba(47,127,159,.3); --good: #009E73;
                            --frame-bg: rgba(255,255,255,.04); --muted: #c6d0da; --next-bg: #1f3d5c; color-scheme: dark; }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--sea); color: var(--text); font: 16px/1.5 Georgia, "Times New Roman", serif; }
@@ -11,7 +11,8 @@ body { margin: 0; background: var(--sea); color: var(--text); font: 16px/1.5 Geo
            background: var(--frame-bg); }
 .eg-menu-card { background: var(--card); border: 2px solid var(--line); border-radius: 8px; padding: 12px 16px 16px; margin-bottom: 14px; }
 .eg-menu-card:last-child { margin-bottom: 0; }
-.eg-menu-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .3rem 1rem; margin-bottom: 10px; }
+.eg-menu-top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-bottom: 10px; }
+.eg-menu-top h2 { flex: 1; }
 .eg-menu-top h2, .eg-menu-get h2 { margin: 0; font-size: 1.6rem; }
 #egMenuDone { opacity: .8; font-weight: bold; }
 .eg-menu-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 10px; }
@@ -37,3 +38,33 @@ body { margin: 0; background: var(--sea); color: var(--text); font: 16px/1.5 Geo
 #egMenuMore { margin: 10px 0 0; opacity: .8; }
 .eg-menu-get p, .eg-menu-get li { margin: .3rem 0; }
 .eg-menu-get a { color: var(--text); font-weight: bold; text-decoration-thickness: 2px; }
+
+/* Buttons: the Keyboard button, the kit's header (Options; on a package's page the link back here) and its Options
+   panel. The same as the game's: an outline in the border colour, teal on hover. */
+.eg-button, .eg-header .eg-options-button, .eg-header .eg-menu-link, .eg-card .eg-actions button {
+  font: inherit; cursor: pointer; border: 2px solid var(--line); background: var(--card); color: var(--text);
+  border-radius: 6px; padding: 6px 14px; }
+.eg-button:hover, .eg-button:focus-visible, .eg-header .eg-options-button:hover, .eg-header .eg-options-button:focus-visible,
+.eg-header .eg-menu-link:hover, .eg-header .eg-menu-link:focus-visible,
+.eg-card .eg-actions button:hover, .eg-card .eg-actions button:focus-visible { background: var(--accent); color: #fff; outline: none; }
+.eg-card .eg-actions .eg-primary { background: var(--accent); color: #fff; }
+.eg-card .eg-actions .eg-primary:hover, .eg-card .eg-actions .eg-primary:focus-visible { background: var(--accent-strong); }
+html .eg-overlay .eg-card, html[data-theme=dark] .eg-overlay .eg-card { background: var(--card); color: var(--text); border: 2px solid var(--line); border-radius: 8px;
+           font: 16px/1.45 Georgia, "Times New Roman", serif; }
+.eg-overlay .eg-card fieldset { border-color: var(--line); }
+.eg-overlay .eg-card label { border-radius: 6px; padding-left: 6px; padding-right: 6px; }
+.eg-card label:hover, .eg-card label:focus-within { background: var(--accent-tint); }
+
+/* The list of keys (the Keyboard button or ?), like the game's */
+#egKeysBack { position: fixed; inset: 0; z-index: 10; background: rgba(0,0,0,.55); display: flex;
+              align-items: center; justify-content: center; padding: 16px; }
+#egKeysBack[hidden] { display: none; }
+#egKeysCard { position: relative; background: var(--card); border: 2px solid var(--line); border-radius: 8px;
+              padding: 14px 18px 16px; max-width: 30rem; width: 100%; }
+#egKeysCard h3 { margin: 0 32px 8px 0; font-size: 1.4rem; }
+#egMenuKeys { min-width: 2.4em; padding: 6px 10px; font-weight: bold; }
+#egKeysClose { position: absolute; top: 8px; right: 8px; width: 2em; padding: 2px 0; font-size: 1.1rem; line-height: 1; }
+html[dir="rtl"] #egKeysClose { right: auto; left: 8px; }
+#egKeysList { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; }
+#egKeysList dt { font-weight: bold; white-space: nowrap; }
+#egKeysList dd { margin: 0; }

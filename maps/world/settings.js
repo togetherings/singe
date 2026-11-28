@@ -56,7 +56,7 @@
   variants: {
     world: { name: 'World: UN countries', blurb: 'Find the 193 UN member countries, plus Vatican City and Palestine' },
     world_all: { name: 'World: all countries, territories and islands',
-                 blurb: 'Find every country, territory and island of the world, including the small ones' }
+                 blurb: 'Find every country, territory and island of the world' }
   },
   insets: { caribbean: { title: 'Caribbean Islands' }, pacific: { title: 'Pacific Islands' } },
   pass_accuracy: { regions: 80, capitals: 0, flags: 0 },
