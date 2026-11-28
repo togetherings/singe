@@ -2,7 +2,8 @@
 
 SINGE uses `major.minor.patch` version numbers. Builds made before versioning (v001 to v024) are treated as 0.1.0.
 
-## Unreleased
+## 0.4.0
+### Keyboard play, new colours, menus and maps
 - **EduGame Kit 0.3.10.** The list of keys is the kit's (`EduGame.addKeys`): its ⌨ button now sits beside Options in the header on every page (the game bar's and the map menu's are gone), and it opens with ?, / and that button, with the menu's part first on a menu and the F row only in Flags mode. The first-key hint is the kit's too. The prompt, the right and wrong messages and the highlighted place are read out with `EduGame.say`. The information and big-flag panels use `EduGame.dialog`, and both menus' arrow keys `EduGame.arrowNav`; in Options, Enter on a choice applies. The browser test checks the list of keys with `edugame.testing`.
 - **Menus:** the map menu's top line has the heading and "x of y done" (game modes, not Practice, whose goal is met), like the website's menu; the two lines under the heading are gone. Buttons are the same everywhere: an outline in the border colour and teal on hover, including Options and "Sets of maps" in the title bar and the buttons and choices in the Options panel, which now has the game's colours and font.
 - **More keys:** / opens the list of keys too (in Firefox it opened Quick Find); ; skips (on a French keyboard it's next to , and . needs Shift); the 0 key shows the whole map without Shift on a French keyboard; F (or D, for drapeau) shows the flag bigger in Flags mode. On the menus the arrow keys go to the nearest button, Home and End to the first and last, and 1-9 open a set of maps on the website's menu. Back from a game puts the keyboard on the button of the game just left. The list of keys has the menu's keys first when opened on a menu, in one aligned list.
@@ -46,7 +47,6 @@ SINGE uses `major.minor.patch` version numbers. Builds made before versioning (v
 - **Releases get bundles** (`release-bundles`): one zip with every package's zip, one per language, and `singe-all-maps-<version>.zip`, the website to use offline. The Sierra Leone data zip is attached as before.
 - `tests/e2e_browser.py` also plays the website: the menu, a counted round that ticks its set, and the menu in French.
 
-## 0.4.0
 ### Options, languages and maps, the EduGame Kit way
 - **Options** is now the kit's: a header at the top with the title and an Options button, which opens a panel over the game (Appearance and Language) instead of a separate page. The appearance shows straight away; the language changes on Apply. On the Kolibri Games games page, the header has only the button.
 - **Language:** a learner who hasn't chosen one gets Kolibri's language (on the Kolibri Games games page), then the browser's. The choice is kept in the learner's save. Saves from earlier versions keep their scores but not the theme or language choice.
